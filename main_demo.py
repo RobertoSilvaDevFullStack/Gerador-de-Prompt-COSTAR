@@ -100,6 +100,14 @@ async def preview_prompt(prompt_data: PromptData):
             # Usar geração básica sem IA
             prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
         
+        # Determinar modo baseado no conteúdo do prompt
+        modo = "Básico (sem IA)"
+        if gemini_enabled:
+            if "**Context (Contexto)**" in prompt_aprimorado and len(prompt_aprimorado) > 500:
+                modo = "AI aprimorado"
+            elif len(prompt_aprimorado) > 300:
+                modo = "AI simulado (quota excedida)"
+        
         return {
             "message": "Preview gerado com sucesso (modo demo)",
             "prompt_original": {
@@ -112,7 +120,7 @@ async def preview_prompt(prompt_data: PromptData):
             },
             "prompt_aprimorado": prompt_aprimorado,
             "timestamp": datetime.now().isoformat(),
-            "modo": "AI aprimorado" if gemini_enabled else "Básico (sem IA)"
+            "modo": modo
         }
     except Exception as e:
         logger.error(f"Erro ao gerar preview do prompt: {e}")
@@ -592,7 +600,15 @@ Gere agora o prompt COSTAR aprimorado:
         )
         return enhanced_prompt
     except Exception as e:
-        logger.error(f"Erro ao gerar prompt aprimorado com IA: {e}")
+        error_msg = str(e)
+        logger.error(f"Erro ao gerar prompt aprimorado com IA: {error_msg}")
+        
+        # Se for erro de quota (429), usar simulação avançada
+        if "429" in error_msg or "quota" in error_msg.lower() or "RESOURCE_EXHAUSTED" in error_msg:
+            logger.info("Quota do Gemini excedida, usando simulação avançada")
+            return generate_advanced_ai_simulation(prompt_data)
+        
+        # Para outros erros, usar fallback básico
         return generate_costar_prompt_basic(prompt_data)
 
 def generate_advanced_ai_simulation(prompt_data: PromptData) -> str:
