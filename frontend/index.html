@@ -765,8 +765,13 @@
                 document.getElementById('generatedPrompt').style.display = 'block';
 
                 try {
+                    // Detectar ambiente e construir URL correta
+                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                        ? '' 
+                        : window.location.origin;
+                    
                     // Call API to generate enhanced prompt
-                    const response = await fetch('/api/prompts/preview', {
+                    const response = await fetch(`${baseUrl}/api/prompts/preview`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1027,8 +1032,13 @@ ${data.response}`;
                     // Scroll to analysis
                     analysisDiv.scrollIntoView({ behavior: 'smooth' });
 
+                    // Detectar ambiente e construir URL correta
+                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                        ? '' 
+                        : window.location.origin;
+                    
                     // Call analysis API
-                    const response = await fetch('/api/prompts/analyze', {
+                    const response = await fetch(`${baseUrl}/api/prompts/analyze`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
