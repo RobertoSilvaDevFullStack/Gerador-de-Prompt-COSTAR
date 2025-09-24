@@ -1,0 +1,46 @@
+# Arquivos e pastas a serem ignorados no deployment Vercel
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Arquivos locais
+.env
+.env.local
+.env.*.local
+
+# Backups e logs
+backups/
+logs/
+*.log
+
+# Docker
+docker/
+Dockerfile*
+docker-compose*
+
+# Scripts
+scripts/
+
+# Documentação de desenvolvimento
+docs/CONFIGURAR_*
+docs/MELHORIAS_*
+docs/ANALISE_*
