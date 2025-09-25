@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Dict, List
+from typing import Dict, List, Optional
 import os
 import asyncio
 import aiohttp
@@ -19,7 +19,7 @@ class NotificationService:
         to_email: str, 
         subject: str, 
         html_content: str, 
-        text_content: str | None = None
+        text_content: Optional[str] = None
     ):
         """Enviar email"""
         try:
