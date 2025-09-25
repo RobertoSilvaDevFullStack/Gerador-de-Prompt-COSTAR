@@ -10,7 +10,7 @@ class SupabaseService:
         self.key = os.getenv("SUPABASE_ANON_KEY")
         self.client: Client = create_client(self.url, self.key)
     
-    async def create_user(self, email: str, password: str, metadata: Dict[str, Any] = None):
+    async def create_user(self, email: str, password: str, metadata: Dict[str, Any] | None = None):
         """Criar novo usuário"""
         try:
             response = self.client.auth.sign_up({
