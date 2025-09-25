@@ -189,8 +189,21 @@ dump.rdb
 logs/
 *.log
 
-# Debug and test files
-debug_*.py
-test_*.py
+# Debug and test files (now organized in folders)
+debug/
+tests/
+logs/
 *_debug.py
 *_test.py
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# AI usage stats (pode conter dados sensíveis)
+ai_usage_stats.json
+
+# Cache directories
+__pycache__/
+.pytest_cache/
