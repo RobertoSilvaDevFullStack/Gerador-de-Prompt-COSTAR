@@ -9,7 +9,7 @@ Esta documentação descreve a nova estrutura organizacional do projeto.
 ```
 📁 Gerador-de-Prompt-COSTAR/
 ├── 📄 main.py                 # Aplicação principal
-├── 📄 main_demo.py           # Versão demo da aplicação  
+├── 📄 main_demo.py           # Versão demo da aplicação
 ├── 📄 requirements.txt       # Dependências Python
 ├── 📄 README.md             # Documentação principal
 ├── 📄 .env.example          # Exemplo de configuração
@@ -71,6 +71,7 @@ Esta documentação descreve a nova estrutura organizacional do projeto.
 ## 🎯 **Categorias de Arquivos**
 
 ### ✅ **PRODUÇÃO** (essenciais):
+
 - **Raiz**: Apenas arquivos essenciais para funcionamento
 - **frontend/**: Interface completa do usuário
 - **services/**: Lógica de negócio e integrações
@@ -79,18 +80,21 @@ Esta documentação descreve a nova estrutura organizacional do projeto.
 - **docs/**: Documentação oficial
 
 ### 🛠️ **DESENVOLVIMENTO** (organizados):
+
 - **tests/**: Todos os arquivos de teste
 - **debug/**: Scripts de diagnóstico e debug
 - **logs/**: Histórico de correções e logs
 - **scripts/**: Ferramentas e automações
 
 ### ⚙️ **INFRAESTRUTURA**:
+
 - **docker/**: Configurações de container
 - **database/**: Esquemas e migrações
 
 ## 🚀 **Como Executar**
 
 ### 🖥️ **Servidor Principal**:
+
 ```bash
 python main.py
 # ou
@@ -98,18 +102,21 @@ python main_demo.py  # versão demo
 ```
 
 ### 🧪 **Executar Testes**:
+
 ```bash
 python tests/test_prompt_generation.py
 python tests/test_analysis_endpoint.py
 ```
 
 ### 🔍 **Debug**:
+
 ```bash
 python debug/debug_multi_ai.py
 python debug/debug_gemini.py
 ```
 
 ### 📦 **Scripts**:
+
 ```bash
 python scripts/create_admin_user.py
 python scripts/validate_api_keys.py

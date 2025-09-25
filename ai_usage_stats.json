@@ -1,7 +1,7 @@
 {
   "groq": {
-    "requests_made": 5,
-    "last_reset": "2025-09-25T19:10:53.766567",
+    "requests_made": 3,
+    "last_reset": "2025-09-25T19:23:15.190887",
     "success_rate": 1.0,
     "avg_response_time": 0.0,
     "is_active": true,
@@ -10,7 +10,7 @@
   },
   "gemini": {
     "requests_made": 0,
-    "last_reset": "2025-09-25T19:10:53.766679",
+    "last_reset": "2025-09-25T19:23:15.191050",
     "success_rate": 1.0,
     "avg_response_time": 0.0,
     "is_active": true,
@@ -19,7 +19,7 @@
   },
   "huggingface": {
     "requests_made": 0,
-    "last_reset": "2025-09-25T19:10:53.766781",
+    "last_reset": "2025-09-25T19:23:15.191214",
     "success_rate": 1.0,
     "avg_response_time": 0.0,
     "is_active": true,
@@ -28,7 +28,7 @@
   },
   "cohere": {
     "requests_made": 0,
-    "last_reset": "2025-09-25T19:10:53.766879",
+    "last_reset": "2025-09-25T19:23:15.191401",
     "success_rate": 1.0,
     "avg_response_time": 0.0,
     "is_active": true,
@@ -37,7 +37,7 @@
   },
   "together": {
     "requests_made": 0,
-    "last_reset": "2025-09-25T19:10:53.766975",
+    "last_reset": "2025-09-25T19:23:15.191588",
     "success_rate": 1.0,
     "avg_response_time": 0.0,
     "is_active": true,
