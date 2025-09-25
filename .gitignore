@@ -188,3 +188,9 @@ dump.rdb
 # Logs
 logs/
 *.log
+
+# Debug and test files
+debug_*.py
+test_*.py
+*_debug.py
+*_test.py
