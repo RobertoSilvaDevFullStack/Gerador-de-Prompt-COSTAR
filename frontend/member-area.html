@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área de Membros - COSTAR Prompt Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #f8fafc;
+            --accent-color: #06d6a0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .member-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .member-header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-nav {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 8px;
+            margin-right: 10px;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .quota-bar {
+            background: #f1f5f9;
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .quota-progress {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .quota-progress.good {
+            background: var(--success-color);
+        }
+
+        .quota-progress.warning {
+            background: var(--warning-color);
+        }
+
+        .quota-progress.danger {
+            background: var(--danger-color);
+        }
+
+        .template-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
+        }
+
+        .template-rating {
+            color: #fbbf24;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #3730a3;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .subscription-free {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .subscription-premium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .subscription-enterprise {
+            background: #ddd6fe;
+            color: #7c3aed;
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .member-container {
+                padding: 15px;
+            }
+
+            .member-header {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="member-container">
+        <!-- Header da Área de Membros -->
+        <div class="member-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="bi bi-person-circle text-primary me-2"></i>
+                        Área de Membros
+                    </h1>
+                    <p class="text-muted mb-0">Gerencie seus prompts, templates e configurações</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <span id="subscriptionBadge" class="subscription-badge subscription-free">Carregando...</span>
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="logout()">
+                            <i class="bi bi-box-arrow-right me-1"></i>Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="member-nav">
+            <ul class="nav nav-pills" id="memberTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard"
+                        type="button" role="tab">
+                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="templates-tab" data-bs-toggle="pill" data-bs-target="#templates"
+                        type="button" role="tab">
+                        <i class="bi bi-collection me-2"></i>Meus Templates
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="explore-tab" data-bs-toggle="pill" data-bs-target="#explore"
+                        type="button" role="tab">
+                        <i class="bi bi-compass me-2"></i>Explorar Templates
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile"
+                        type="button" role="tab">
+                        <i class="bi bi-gear me-2"></i>Perfil
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="subscription-tab" data-bs-toggle="pill" data-bs-target="#subscription"
+                        type="button" role="tab">
+                        <i class="bi bi-star me-2"></i>Assinatura
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div class="tab-content" id="memberTabContent">
+            <!-- Dashboard -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <h3 class="mb-4">Dashboard</h3>
+
+                <!-- Estatísticas -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalPrompts">0</div>
+                        <div class="stat-label">Prompts Gerados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="monthlyPrompts">0</div>
+                        <div class="stat-label">Este Mês</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="savedTemplates">0</div>
+                        <div class="stat-label">Templates Salvos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="memberSince">-</div>
+                        <div class="stat-label">Membro Desde</div>
+                    </div>
+                </div>
+
+                <!-- Quotas de Uso -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="member-card">
+                            <h5><i class="bi bi-bar-chart me-2"></i>Quota de Prompts</h5>
+                            <div id="promptsQuota">
+                                <div class="d-flex justify-content-between">
+                                    <span>Usado: <span id="promptsUsed">0</span></span>
+                                    <span>Limite: <span id="promptsLimit">50</span></span>
+                                </div>
+                                <div class="quota-bar">
+                                    <div class="quota-progress good" id="promptsProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="member-card">
+                            <h5><i class="bi bi-collection me-2"></i>Quota de Templates</h5>
+                            <div id="templatesQuota">
+                                <div class="d-flex justify-content-between">
+                                    <span>Usado: <span id="templatesUsed">0</span></span>
+                                    <span>Limite: <span id="templatesLimit">5</span></span>
+                                </div>
+                                <div class="quota-bar">
+                                    <div class="quota-progress good" id="templatesProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meus Templates -->
+            <div class="tab-pane fade" id="templates" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Meus Templates</h3>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTemplateModal">
+                        <i class="bi bi-plus-circle me-2"></i>Criar Template
+                    </button>
+                </div>
+
+                <div id="userTemplates" class="row">
+                    <!-- Templates serão carregados dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Explorar Templates -->
+            <div class="tab-pane fade" id="explore" role="tabpanel">
+                <h3 class="mb-4">Explorar Templates Públicos</h3>
+
+                <!-- Filtros -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">Todas as Categorias</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="educacao">Educação</option>
+                            <option value="negocios">Negócios</option>
+                            <option value="criativo">Criativo</option>
+                            <option value="tecnico">Técnico</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="searchFilter" placeholder="Buscar templates...">
+                    </div>
+                </div>
+
+                <div id="publicTemplates" class="row">
+                    <!-- Templates públicos serão carregados dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Perfil -->
+            <div class="tab-pane fade" id="profile" role="tabpanel">
+                <h3 class="mb-4">Configurações do Perfil</h3>
+
+                <form id="profileForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nome de Usuário</label>
+                                <input type="text" class="form-control" id="username">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 mb-3">Preferências</h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="defaultStyle" class="form-label">Estilo Padrão</label>
+                                <select class="form-select" id="defaultStyle">
+                                    <option value="professional">Profissional</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="creative">Criativo</option>
+                                    <option value="technical">Técnico</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="defaultTone" class="form-label">Tom Padrão</label>
+                                <select class="form-select" id="defaultTone">
+                                    <option value="neutral">Neutro</option>
+                                    <option value="friendly">Amigável</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="enthusiastic">Entusiástico</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="autoSavePrompts">
+                            <label class="form-check-label" for="autoSavePrompts">
+                                Salvar prompts automaticamente
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications">
+                            <label class="form-check-label" for="emailNotifications">
+                                Receber notificações por email
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Salvar Alterações
+                    </button>
+                </form>
+            </div>
+
+            <!-- Assinatura -->
+            <div class="tab-pane fade" id="subscription" role="tabpanel">
+                <h3 class="mb-4">Gerenciar Assinatura</h3>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="member-card text-center">
+                            <h5>Gratuito</h5>
+                            <div class="h3 text-muted">R$ 0/mês</div>
+                            <ul class="list-unstyled mt-3">
+                                <li><i class="bi bi-check text-success me-2"></i>50 prompts/mês</li>
+                                <li><i class="bi bi-check text-success me-2"></i>5 templates salvos</li>
+                                <li><i class="bi bi-check text-success me-2"></i>Suporte básico</li>
+                            </ul>
+                            <button class="btn btn-outline-secondary" disabled>Plano Atual</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="member-card text-center border-primary">
+                            <h5>Premium</h5>
+                            <div class="h3 text-primary">R$ 29/mês</div>
+                            <ul class="list-unstyled mt-3">
+                                <li><i class="bi bi-check text-success me-2"></i>500 prompts/mês</li>
+                                <li><i class="bi bi-check text-success me-2"></i>50 templates salvos</li>
+                                <li><i class="bi bi-check text-success me-2"></i>Múltiplas IAs</li>
+                                <li><i class="bi bi-check text-success me-2"></i>Suporte prioritário</li>
+                            </ul>
+                            <button class="btn btn-primary" onclick="upgradeSubscription('premium')">
+                                Fazer Upgrade
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="member-card text-center">
+                            <h5>Enterprise</h5>
+                            <div class="h3 text-success">R$ 99/mês</div>
+                            <ul class="list-unstyled mt-3">
+                                <li><i class="bi bi-check text-success me-2"></i>Prompts ilimitados</li>
+                                <li><i class="bi bi-check text-success me-2"></i>Templates ilimitados</li>
+                                <li><i class="bi bi-check text-success me-2"></i>Todas as IAs</li>
+                                <li><i class="bi bi-check text-success me-2"></i>API personalizada</li>
+                            </ul>
+                            <button class="btn btn-success" onclick="upgradeSubscription('enterprise')">
+                                Fazer Upgrade
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Criar Template -->
+    <div class="modal fade" id="createTemplateModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Criar Novo Template</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createTemplateForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="templateName" class="form-label">Nome do Template</label>
+                                    <input type="text" class="form-control" id="templateName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="templateCategory" class="form-label">Categoria</label>
+                                    <select class="form-select" id="templateCategory" required>
+                                        <option value="">Selecione uma categoria</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="educacao">Educação</option>
+                                        <option value="negocios">Negócios</option>
+                                        <option value="criativo">Criativo</option>
+                                        <option value="tecnico">Técnico</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="templateDescription" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="templateDescription" rows="3" required></textarea>
+                        </div>
+
+                        <h6>Conteúdo do Template (COSTAR)</h6>
+
+                        <div class="mb-3">
+                            <label for="templateContext" class="form-label">Context (Contexto)</label>
+                            <textarea class="form-control" id="templateContext" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="templateTask" class="form-label">Task (Tarefa)</label>
+                            <textarea class="form-control" id="templateTask" rows="2"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="templateStyle" class="form-label">Style (Estilo)</label>
+                                    <input type="text" class="form-control" id="templateStyle">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="templateTone" class="form-label">Tone (Tom)</label>
+                                    <input type="text" class="form-control" id="templateTone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="templateAudience" class="form-label">Audience (Audiência)</label>
+                            <input type="text" class="form-control" id="templateAudience">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="templateResponse" class="form-label">Response (Resposta)</label>
+                            <textarea class="form-control" id="templateResponse" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="templateTags" class="form-label">Tags (separadas por vírgula)</label>
+                            <input type="text" class="form-control" id="templateTags" placeholder="tag1, tag2, tag3">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="templatePublic">
+                                <label class="form-check-label" for="templatePublic">
+                                    Tornar este template público
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="createTemplate()">Criar Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3">Carregando...</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="member-area.js"></script>
+</body>
+
+</html>

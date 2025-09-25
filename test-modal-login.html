@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Modal Login - COSTAR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+
+        .test-btn {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        .test-btn:hover {
+            background: #0056b3;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Teste Modal Login - COSTAR</h1>
+
+    <button class="test-btn" onclick="showLogin()">🔐 Abrir Modal de Login</button>
+    <button class="test-btn" onclick="testDirectLogin()">⚡ Teste Login Direto</button>
+    <button class="test-btn" onclick="checkAuth()">👤 Verificar Autenticação</button>
+
+    <div id="status"></div>
+
+    <script>
+        // Modal login functions (copiadas da página principal)
+        function showLogin() {
+            console.log('🚀 showLogin() chamada');
+            const modal = createAuthModal('login');
+            console.log('📝 Modal criado:', modal);
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            console.log('✅ Modal exibido');
+        }
+
+        function createAuthModal(type) {
+            const modal = document.createElement('div');
+            modal.id = `${type}Modal`;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+
+            const isLogin = type === 'login';
+            const title = isLogin ? 'Entrar' : 'Criar Conta';
+            const submitText = isLogin ? 'Entrar' : 'Registrar';
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">×</button>
+                    
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">
+                        ${title}
+                    </h2>
+                    
+                    <form id="${type}Form" onsubmit="handleAuth(event, '${type}'); return false;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 500;">Email</label>
+                            <input type="email" name="email" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" placeholder="seu@email.com" value="admin@costar.com">
+                        </div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 500;">Senha</label>
+                            <input type="password" name="password" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" placeholder="Sua senha" value="admin123">
+                        </div>
+                        
+                        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s ease;">
+                            ${submitText}
+                        </button>
+                    </form>
+                </div>
+            `;
+
+            return modal;
+        }
+
+        async function handleAuth(event, type) {
+            event.preventDefault();
+
+            console.log('🔐 handleAuth chamada - tipo:', type);
+            console.log('📋 Event target:', event.target);
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            console.log('📤 Dados do formulário:', data);
+            showStatus('Fazendo login...', 'info');
+
+            try {
+                const endpoint = type === 'login' ? '/api/members/auth/login' : '/api/members/auth/register';
+                console.log('🌐 Endpoint:', endpoint);
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log('📥 Response status:', response.status);
+                const result = await response.json();
+                console.log('📥 Response data:', result);
+
+                if (response.ok) {
+                    // Store authentication info
+                    localStorage.setItem('authToken', result.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+
+                    // Close modal
+                    const modal = document.getElementById(`${type}Modal`);
+                    if (modal) {
+                        modal.remove();
+                    }
+
+                    showStatus(`✅ Login realizado com sucesso!\n👤 Usuário: ${result.user.email}\n🎭 Role: ${result.user.role}`, 'success');
+
+                } else {
+                    showStatus(`❌ Erro: ${result.detail || result.message || 'Erro na autenticação'}`, 'error');
+                }
+            } catch (error) {
+                console.error('❌ Erro de conexão:', error);
+                showStatus(`❌ Erro de conexão: ${error.message}`, 'error');
+            }
+
+            return false;
+        }
+
+        async function testDirectLogin() {
+            const data = {
+                email: 'admin@costar.com',
+                password: 'admin123'
+            };
+
+            showStatus('Testando login direto...', 'info');
+
+            try {
+                const response = await fetch('/api/members/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('authToken', result.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+                    showStatus(`✅ Login direto bem-sucedido!\n👤 Usuário: ${result.user.email}\n🎭 Role: ${result.user.role}`, 'success');
+                } else {
+                    showStatus(`❌ Erro no login direto: ${result.detail || result.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const userInfo = localStorage.getItem('userInfo');
+
+            if (token && userInfo) {
+                const user = JSON.parse(userInfo);
+                showStatus(`✅ Usuário autenticado\n👤 Email: ${user.email}\n🎭 Role: ${user.role}\n🎫 Token: ${token.substring(0, 50)}...`, 'success');
+            } else {
+                showStatus('❌ Usuário não autenticado', 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        // Verificar se já está logado
+        window.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+        });
+    </script>
+</body>
+
+</html>

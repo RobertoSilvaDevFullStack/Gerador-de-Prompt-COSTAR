@@ -503,6 +503,25 @@
 </head>
 
 <body>
+    <!-- Navigation Menu -->
+    <nav style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 10px 0; margin-bottom: 20px;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: white; font-weight: bold; font-size: 1.2rem;">
+                <i class="fas fa-magic"></i> COSTAR AI
+            </div>
+            <div id="navButtons">
+                <button onclick="showLogin()" class="nav-btn" id="loginBtn"
+                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button onclick="showRegister()" class="nav-btn"
+                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-user-plus"></i> Registrar
+                </button>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-magic"></i> COSTAR Prompt Generator</h1>
@@ -766,10 +785,10 @@
 
                 try {
                     // Detectar ambiente e construir URL correta
-                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                        ? '' 
+                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                        ? ''
                         : window.location.origin;
-                    
+
                     // Call API to generate enhanced prompt
                     const response = await fetch(`${baseUrl}/api/prompts/preview`, {
                         method: 'POST',
@@ -1033,10 +1052,10 @@ ${data.response}`;
                     analysisDiv.scrollIntoView({ behavior: 'smooth' });
 
                     // Detectar ambiente e construir URL correta
-                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                        ? '' 
+                    const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                        ? ''
                         : window.location.origin;
-                    
+
                     // Call analysis API
                     const response = await fetch(`${baseUrl}/api/prompts/analyze`, {
                         method: 'POST',
@@ -1306,7 +1325,7 @@ ${data.response}`;
             document.body.appendChild(particles);
         }
 
-        // Add CSS for particle animation
+        // Add CSS for particle animation and other effects
         const particleStyle = document.createElement('style');
         particleStyle.textContent = `
             @keyframes float {
@@ -1325,11 +1344,259 @@ ${data.response}`;
                     opacity: 0;
                 }
             }
+            
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            .nav-btn:hover {
+                background: rgba(255,255,255,0.3) !important;
+                transform: translateY(-2px);
+            }
         `;
         document.head.appendChild(particleStyle);
 
         // Initialize particles
         createParticles();
+
+        // ==================== AUTHENTICATION FUNCTIONS ====================
+
+        // Check if user is authenticated
+        function checkAuthentication() {
+            const token = localStorage.getItem('authToken');
+            const userInfo = localStorage.getItem('userInfo');
+
+            if (token && userInfo) {
+                const user = JSON.parse(userInfo);
+                updateNavForAuthenticatedUser(user);
+                return true;
+            }
+            return false;
+        }
+
+        // Update navigation for authenticated user
+        function updateNavForAuthenticatedUser(user) {
+            const navButtons = document.getElementById('navButtons');
+            navButtons.innerHTML = `
+                <span style="color: white; margin-right: 15px;">
+                    <i class="fas fa-user"></i> ${user.username}
+                </span>
+                <button onclick="goToMemberArea()" class="nav-btn" style="background: rgba(6,214,160,0.8); color: white; border: none; padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-user-circle"></i> Área de Membros
+                </button>
+                ${user.role === 'ADMIN' ? `
+                <button onclick="goToAdminDashboard()" class="nav-btn" style="background: rgba(239,68,68,0.8); color: white; border: none; padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-cog"></i> Admin
+                </button>
+                ` : ''}
+                <button onclick="logout()" class="nav-btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            `;
+        }
+
+        // Show login modal
+        function showLogin() {
+            const modal = createAuthModal('login');
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }
+
+        // Show register modal
+        function showRegister() {
+            const modal = createAuthModal('register');
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }
+
+        // Create authentication modal
+        function createAuthModal(type) {
+            const modal = document.createElement('div');
+            modal.id = `${type}Modal`;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+
+            const isLogin = type === 'login';
+            const title = isLogin ? 'Entrar' : 'Criar Conta';
+            const submitText = isLogin ? 'Entrar' : 'Registrar';
+            const switchText = isLogin ? 'Não tem conta? Registre-se' : 'Já tem conta? Entre';
+            const switchAction = isLogin ? 'showRegister()' : 'showLogin()';
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                    <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">×</button>
+                    
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">
+                        <i class="fas fa-${isLogin ? 'sign-in-alt' : 'user-plus'}"></i> ${title}
+                    </h2>
+                    
+                    <form id="${type}Form" onsubmit="handleAuth(event, '${type}'); return false;">
+                        ${!isLogin ? `
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 500;">Nome de Usuário</label>
+                            <input type="text" name="username" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" placeholder="Seu nome de usuário">
+                        </div>
+                        ` : ''}
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 500;">Email</label>
+                            <input type="email" name="email" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" placeholder="seu@email.com" ${isLogin ? 'value="admin@costar.com"' : ''}>
+                        </div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <label style="display: block; margin-bottom: 5px; color: #555; font-weight: 500;">Senha</label>
+                            <input type="password" name="password" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" placeholder="Sua senha" ${isLogin ? 'value="admin123"' : ''}>
+                        </div>
+                        
+                        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s ease;">
+                            <i class="fas fa-${isLogin ? 'sign-in-alt' : 'user-plus'}"></i> ${submitText}
+                        </button>
+                    </form>
+                    
+                    <p style="text-align: center; margin-top: 20px; color: #666;">
+                        <a href="#" onclick="${switchAction}; this.parentElement.parentElement.parentElement.remove();" style="color: #667eea; text-decoration: none; font-weight: 500;">${switchText}</a>
+                    </p>
+                </div>
+            `;
+
+            return modal;
+        }
+
+        // Handle authentication
+        async function handleAuth(event, type) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const endpoint = type === 'login' ? '/api/members/auth/login' : '/api/members/auth/register';
+
+                showNotification('Fazendo login...', 'info');
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Store authentication info
+                    localStorage.setItem('authToken', result.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+
+                    // Update navigation
+                    updateNavForAuthenticatedUser(result.user);
+
+                    // Close modal
+                    const modal = document.getElementById(`${type}Modal`);
+                    if (modal) {
+                        modal.remove();
+                    }
+
+                    // Show success message
+                    showNotification(type === 'login' ? 'Login realizado com sucesso!' : 'Conta criada com sucesso!', 'success');
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (result.user.role === 'admin') {
+                            goToAdminDashboard();
+                        } else {
+                            goToMemberArea();
+                        }
+                    }, 1500);
+
+                } else {
+                    showNotification(result.detail || result.message || 'Erro na autenticação', 'error');
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+                showNotification('Erro de conexão. Verifique se o servidor está ativo.', 'error');
+            }
+
+            return false;
+        }
+
+        // Go to member area
+        function goToMemberArea() {
+            window.location.href = '/member-area';
+        }
+
+        // Go to admin dashboard
+        function goToAdminDashboard() {
+            window.location.href = '/admin-dashboard';
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userInfo');
+            location.reload();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type]};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 10001;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuthentication();
+        });
 
         // Service Worker for offline functionality (optional)
         if ('serviceWorker' in navigator) {

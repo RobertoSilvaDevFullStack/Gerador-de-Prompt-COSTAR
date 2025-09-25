@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login - COSTAR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>🔐 Teste de Login - COSTAR</h1>
+        <p>Use este formulário para testar o sistema de login:</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="admin@costar.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" value="admin123" required>
+            </div>
+
+            <button type="submit" class="btn">🚀 Fazer Login</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="info">⏳ Fazendo login...</div>';
+
+            const formData = new FormData(event.target);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+
+            console.log('📤 Enviando dados:', data);
+
+            try {
+                const response = await fetch('/api/members/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log('📥 Response status:', response.status);
+
+                const result = await response.json();
+                console.log('📥 Response data:', result);
+
+                if (response.ok) {
+                    // Login bem-sucedido
+                    localStorage.setItem('authToken', result.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ LOGIN REALIZADO COM SUCESSO!
+                            
+                            👤 Usuário: ${result.user.email}
+                            🎭 Role: ${result.user.role}
+                            🎫 Token: ${result.access_token.substring(0, 50)}...
+                            
+                            🎯 Próximos passos:
+                            • Acesse: /member-area.html
+                            • Ou: /admin-dashboard.html
+                            
+                            Token salvo no localStorage!
+                        </div>
+                    `;
+
+                    // Redirecionar após 3 segundos
+                    setTimeout(() => {
+                        if (result.user.role === 'admin') {
+                            window.location.href = '/admin-dashboard.html';
+                        } else {
+                            window.location.href = '/member-area.html';
+                        }
+                    }, 3000);
+
+                } else {
+                    // Erro no login
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ ERRO NO LOGIN
+                            
+                            Status: ${response.status}
+                            Mensagem: ${result.detail || result.message || 'Erro desconhecido'}
+                            
+                            Resposta completa:
+                            ${JSON.stringify(result, null, 2)}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Erro de conexão:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ ERRO DE CONEXÃO
+                        
+                        ${error.message}
+                        
+                        Verifique se o servidor está rodando na porta 8000.
+                    </div>
+                `;
+            }
+        });
+
+        // Verificar se já está logado
+        window.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('authToken');
+            const userInfo = localStorage.getItem('userInfo');
+
+            if (token && userInfo) {
+                const user = JSON.parse(userInfo);
+                document.getElementById('result').innerHTML = `
+                    <div class="info">
+                        ℹ️ VOCÊ JÁ ESTÁ LOGADO
+                        
+                        👤 Usuário: ${user.email}
+                        🎭 Role: ${user.role}
+                        
+                        <button onclick="logout()" style="margin-top: 10px; padding: 5px 10px;">🚪 Logout</button>
+                    </div>
+                `;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userInfo');
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

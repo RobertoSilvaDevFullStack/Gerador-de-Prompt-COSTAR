@@ -1,1 +1,56 @@
-[]
+{
+  "20ba0c39-a1c9-41be-890b-0744488b8277": {
+    "id": "20ba0c39-a1c9-41be-890b-0744488b8277",
+    "email": "admin@costar.com",
+    "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "admin",
+    "created_at": "2025-09-24T16:21:00.429955",
+    "last_login": "2025-09-25T15:42:01.041242",
+    "is_active": true,
+    "profile": {
+      "name": "",
+      "company": "",
+      "preferences": {
+        "default_style": "Profissional",
+        "default_tone": "Formal",
+        "favorite_use_cases": []
+      }
+    }
+  },
+  "54d95b5a-e7fc-4bb2-8c9c-739581793efc": {
+    "id": "54d95b5a-e7fc-4bb2-8c9c-739581793efc",
+    "email": "user@test.com",
+    "password_hash": "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446",
+    "role": "free",
+    "created_at": "2025-09-24T16:21:00.555764",
+    "last_login": null,
+    "is_active": true,
+    "profile": {
+      "name": "",
+      "company": "",
+      "preferences": {
+        "default_style": "Profissional",
+        "default_tone": "Formal",
+        "favorite_use_cases": []
+      }
+    }
+  },
+  "98be1b43-77d3-4376-ad77-43083695fdcf": {
+    "id": "98be1b43-77d3-4376-ad77-43083695fdcf",
+    "email": "premium@test.com",
+    "password_hash": "29599be933750365966a0677feacbf69d48cdc64ac3c22ec1b02bc78cf3ddbde",
+    "role": "premium",
+    "created_at": "2025-09-24T16:21:00.557731",
+    "last_login": null,
+    "is_active": true,
+    "profile": {
+      "name": "",
+      "company": "",
+      "preferences": {
+        "default_style": "Profissional",
+        "default_tone": "Formal",
+        "favorite_use_cases": []
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import os
@@ -31,15 +33,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Servir arquivos estáticos
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+# Tentar importar e incluir as rotas de membros e admin
+try:
+    from routes.member_admin_routes import member_router, admin_router
+    app.include_router(member_router)
+    app.include_router(admin_router)
+    logger.info("✅ Rotas de membros e admin carregadas com sucesso")
+except ImportError as e:
+    logger.warning(f"⚠️ Não foi possível carregar rotas de membros/admin: {e}")
+except Exception as e:
+    logger.error(f"❌ Erro ao carregar rotas de membros/admin: {e}")
+
 # Verificar serviços disponíveis
 supabase_enabled = bool(os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_ANON_KEY") and 
                        os.getenv("SUPABASE_URL") != "your_supabase_url_here" and
                        os.getenv("SUPABASE_ANON_KEY") != "your_supabase_anon_key_here")
 
-gemini_key = os.getenv("GEMINI_API_KEY", "")
-gemini_enabled = bool(gemini_key and 
-                     gemini_key != "your_gemini_api_key_here" and
-                     len(gemini_key) > 20)  # Chaves reais são longas
+# Verificar disponibilidade de múltiplas IAs
+ai_keys = {
+    "gemini": os.getenv("GEMINI_API_KEY", ""),
+    "groq": os.getenv("GROQ_API_KEY", ""),
+    "huggingface": os.getenv("HUGGINGFACE_API_KEY", ""),
+    "cohere": os.getenv("COHERE_API_KEY", ""),
+    "together": os.getenv("TOGETHER_API_KEY", "")
+}
+
+# Verificar se pelo menos uma IA está configurada
+ai_enabled = any(
+    key and key != f"your_{name}_api_key_here" and len(key) > 10
+    for name, key in ai_keys.items()
+)
+
+# Manter compatibilidade com código legado
+gemini_enabled = ai_enabled
 
 # Modelos Pydantic
 class PromptData(BaseModel):
@@ -90,23 +119,25 @@ async def health_check():
 async def preview_prompt(prompt_data: PromptData):
     """Gerar preview do prompt COSTAR (modo demo)"""
     try:
-        # Gerar prompt COSTAR
-        if gemini_enabled:
-            # Importar e usar o serviço Gemini se disponível
-            from services.gemini_service import GeminiService
-            gemini_service = GeminiService()
-            prompt_aprimorado = await generate_costar_prompt_with_ai(prompt_data, gemini_service)
+        # Gerar prompt COSTAR com múltiplas IAs
+        if ai_enabled:
+            # Usar sistema de múltiplas IAs
+            from services.multi_ai_service import MultiAIService
+            multi_ai_service = MultiAIService()
+            prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
         else:
             # Usar geração básica sem IA
             prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
         
         # Determinar modo baseado no conteúdo do prompt
         modo = "Básico (sem IA)"
-        if gemini_enabled:
+        if ai_enabled:
             if "**Context (Contexto)**" in prompt_aprimorado and len(prompt_aprimorado) > 500:
-                modo = "AI aprimorado"
+                modo = "Multi-AI aprimorado"
             elif len(prompt_aprimorado) > 300:
-                modo = "AI simulado (quota excedida)"
+                modo = "AI simulado (fallback)"
+            elif "fallback" in prompt_aprimorado.lower():
+                modo = "Fallback inteligente"
         
         return {
             "message": "Preview gerado com sucesso (modo demo)",
@@ -293,31 +324,84 @@ configure a variável GEMINI_API_KEY no arquivo .env.
         logger.error(f"Erro ao gerar conteúdo: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/api/gemini/test")
-async def test_gemini_connection():
-    """Testar conexão com Gemini AI"""
+@app.get("/api/ai/status")
+async def get_ai_status():
+    """Obter status de todos os provedores de IA"""
     try:
-        if gemini_enabled:
-            from services.gemini_service import GeminiService
-            gemini_service = GeminiService()
-            result = await gemini_service.test_connection()
+        if not ai_enabled:
             return {
-                "gemini_enabled": True,
-                "connection_test": result,
-                "message": "Teste de conexão com Gemini AI"
+                "ai_enabled": False,
+                "message": "Nenhuma API de IA configurada",
+                "available_providers": 0,
+                "providers": []
             }
-        else:
-            return {
-                "gemini_enabled": False,
-                "message": "Gemini AI não configurado - adicione GEMINI_API_KEY no .env",
-                "api_key_status": "não configurada"
-            }
+        
+        from services.multi_ai_service import MultiAIService
+        multi_ai_service = MultiAIService()
+        status_report = multi_ai_service.get_status_report()
+        
+        return {
+            "ai_enabled": True,
+            "message": "Sistema Multi-AI ativo",
+            **status_report
+        }
+        
     except Exception as e:
         return {
-            "gemini_enabled": False,
+            "ai_enabled": False,
             "error": str(e),
-            "message": "Erro ao testar Gemini AI"
+            "message": "Erro ao verificar status das IAs"
         }
+
+@app.get("/api/ai/test")
+async def test_ai_connection():
+    """Testar conexão com sistema Multi-AI"""
+    try:
+        if not ai_enabled:
+            return {
+                "ai_enabled": False,
+                "connection_test": {
+                    "status": "disabled",
+                    "message": "Nenhuma API de IA configurada"
+                }
+            }
+        
+        from services.multi_ai_service import MultiAIService
+        multi_ai_service = MultiAIService()
+        
+        test_result = await multi_ai_service.generate_content(
+            prompt="Responda apenas: OK",
+            temperatura=0.1,
+            max_tokens=10
+        )
+        
+        return {
+            "ai_enabled": True,
+            "connection_test": {
+                "status": "success",
+                "response": test_result.strip(),
+                "working": True
+            },
+            "provider_used": "auto_selected",
+            "message": "Teste de conexão com Multi-AI"
+        }
+        
+    except Exception as e:
+        return {
+            "ai_enabled": True,
+            "connection_test": {
+                "status": "error",
+                "error": str(e),
+                "working": False
+            },
+            "message": "Teste de conexão com Multi-AI"
+        }
+
+@app.get("/api/gemini/test")
+async def test_gemini_connection():
+    """Testar conexão com Gemini AI (compatibilidade legada)"""
+    # Redirecionar para o novo endpoint Multi-AI
+    return await test_ai_connection()
 
 @app.get("/api/user/demo")
 async def get_demo_user():
@@ -541,8 +625,65 @@ CHECKLIST FINAL:
     
     return enhanced_format
 
+async def generate_costar_prompt_with_multi_ai(prompt_data: PromptData, multi_ai_service) -> str:
+    """Gerar prompt COSTAR aprimorado com sistema de múltiplas IAs"""
+    
+    enhancement_prompt = f"""
+Como especialista em prompt engineering, aprimore o seguinte prompt COSTAR, tornando-o mais detalhado, específico e eficaz. 
+
+DADOS FORNECIDOS:
+- Contexto: {prompt_data.contexto}
+- Objetivo: {prompt_data.objetivo}
+- Estilo: {prompt_data.estilo}
+- Tom: {prompt_data.tom}
+- Audiência: {prompt_data.audiencia}
+- Formato de Resposta: {prompt_data.resposta}
+
+INSTRUÇÕES:
+1. Mantenha a estrutura COSTAR (Context, Objective, Style, Tone, Audience, Response)
+2. Expanda cada seção com mais detalhes relevantes
+3. Adicione especificações técnicas quando apropriado
+4. Inclua exemplos ou diretrizes quando útil
+5. Torne o prompt mais claro e acionável
+6. Use linguagem profissional e precisa
+
+FORMATO DE SAÍDA:
+```
+**Context (Contexto)**
+[Versão expandida e melhorada do contexto]
+
+**Objective (Objetivo)**  
+[Versão expandida e melhorada do objetivo]
+
+**Style (Estilo)**
+[Versão expandida e melhorada do estilo]
+
+**Tone (Tom)**
+[Versão expandida e melhorada do tom]
+
+**Audience (Audiência)**
+[Versão expandida e melhorada da audiência]
+
+**Response (Formato de Resposta)**
+[Versão expandida e melhorada do formato de resposta]
+```
+
+Gere agora o prompt COSTAR aprimorado:
+"""
+    
+    try:
+        enhanced_prompt = await multi_ai_service.generate_content(
+            prompt=enhancement_prompt,
+            temperatura=0.7,
+            max_tokens=2048
+        )
+        return enhanced_prompt
+    except Exception as e:
+        logger.error(f"Erro ao gerar prompt aprimorado com múltiplas IAs: {e}")
+        return generate_costar_prompt_basic(prompt_data)
+
 async def generate_costar_prompt_with_ai(prompt_data: PromptData, gemini_service) -> str:
-    """Gerar prompt COSTAR aprimorado com IA"""
+    """Gerar prompt COSTAR aprimorado com IA (compatibilidade legada)"""
     
     # Se for a chave de demonstração, usar IA simulada mais avançada
     if os.getenv("GEMINI_API_KEY") == "AIzaSyCONFIGURE_SUA_CHAVE_AQUI_PARA_ATIVAR_IA":
@@ -1048,6 +1189,90 @@ def generate_next_steps(problems: List[str], suggestions: List[str]) -> List[str
     steps.append("4. Revisar e iterar baseado nos resultados")
     
     return steps[:4]
+
+# ==================== ROTAS PARA PÁGINAS HTML ====================
+
+@app.get("/", response_class=HTMLResponse)
+async def home_page():
+    """Servir página principal"""
+    try:
+        with open("frontend/index.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Página principal não encontrada")
+
+@app.get("/member-area", response_class=HTMLResponse)
+async def member_area_page():
+    """Servir página da área de membros"""
+    try:
+        with open("frontend/member-area.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Página não encontrada")
+
+@app.get("/admin-dashboard", response_class=HTMLResponse)
+async def admin_dashboard_page():
+    """Servir página do dashboard administrativo"""
+    try:
+        with open("frontend/admin-dashboard.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Página não encontrada")
+
+@app.get("/member-area.js")
+async def member_area_js():
+    """Servir JavaScript da área de membros"""
+    try:
+        with open("frontend/member-area.js", "r", encoding="utf-8") as f:
+            return Response(content=f.read(), media_type="application/javascript")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado")
+
+@app.get("/admin-dashboard.js")
+async def admin_dashboard_js():
+    """Servir JavaScript do dashboard administrativo"""
+    try:
+        with open("frontend/admin-dashboard.js", "r", encoding="utf-8") as f:
+            return Response(content=f.read(), media_type="application/javascript")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado")
+
+@app.get("/favicon.ico")
+async def favicon():
+    """Servir favicon"""
+    return Response(status_code=204)
+
+@app.get("/{path:path}")
+async def catch_all(path: str):
+    """Capturar todas as outras rotas e servir arquivos estáticos"""
+    # Lista de diretórios onde procurar arquivos
+    search_paths = [
+        f"frontend/{path}",  # Diretório frontend
+        path                 # Raiz do projeto
+    ]
+    
+    for file_path in search_paths:
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    
+                # Determinar media type baseado na extensão
+                if path.endswith('.js'):
+                    media_type = "application/javascript"
+                elif path.endswith('.css'):
+                    media_type = "text/css"
+                elif path.endswith('.html'):
+                    media_type = "text/html"
+                else:
+                    media_type = "text/plain"
+                    
+                return Response(content=content, media_type=media_type)
+            except:
+                continue
+    
+    # Se não encontrar o arquivo, retornar 404
+    raise HTTPException(status_code=404, detail=f"Arquivo {path} não encontrado")
 
 # Executar aplicação
 if __name__ == "__main__":
