@@ -343,6 +343,27 @@
             animation: pulse 2s infinite;
         }
 
+        .chart-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 8px;
+        }
+
+        .chart-loading p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
         @keyframes pulse {
             0% {
                 opacity: 1;
@@ -470,7 +491,15 @@
                             <div class="chart-header">
                                 <h5 class="chart-title">Uso da API - Últimos 7 Dias</h5>
                             </div>
-                            <canvas id="apiUsageChart" height="300"></canvas>
+                            <div id="apiChartContainer" style="position: relative; height: 300px;">
+                                <canvas id="apiUsageChart" height="300"></canvas>
+                                <div id="apiChartLoading" class="chart-loading" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Carregando gráfico...</span>
+                                    </div>
+                                    <p class="mt-2">Carregando dados do gráfico...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-4">
@@ -478,7 +507,15 @@
                             <div class="chart-header">
                                 <h5 class="chart-title">Distribuição de Provedores</h5>
                             </div>
-                            <canvas id="providerChart" height="300"></canvas>
+                            <div id="providerChartContainer" style="position: relative; height: 300px;">
+                                <canvas id="providerChart" height="300"></canvas>
+                                <div id="providerChartLoading" class="chart-loading" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Carregando gráfico...</span>
+                                    </div>
+                                    <p class="mt-2">Carregando dados do gráfico...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

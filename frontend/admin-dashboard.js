@@ -34,15 +34,23 @@ async function checkAdminAuthentication() {
     showLoading(true);
 
     // Verificar se é admin e carregar dashboard
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout de 10 segundos
+
     const response = await fetch(`${API_BASE}/admin/dashboard`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
+
     if (response.ok) {
-      dashboardData = await response.json();
+      const data = await response.json();
+      dashboardData = data;
+      console.log("Dashboard data loaded:", dashboardData);
       updateDashboard();
     } else if (response.status === 401) {
       localStorage.removeItem("authToken");
@@ -51,11 +59,25 @@ async function checkAdminAuthentication() {
       alert("Acesso negado: você não tem permissões de administrador");
       window.location.href = "index.html";
     } else {
-      showAlert("Erro ao carregar dashboard", "error");
+      console.error("Erro HTTP:", response.status, response.statusText);
+      showAlert(`Erro ao carregar dashboard: ${response.status}`, "error");
+
+      // Carregar dados padrão em caso de erro
+      dashboardData = createDefaultDashboardData();
+      updateDashboard();
     }
   } catch (error) {
-    console.error("Erro:", error);
-    showAlert("Erro de conexão", "error");
+    console.error("Erro de conexão:", error);
+
+    if (error.name === "AbortError") {
+      showAlert("Timeout na conexão com o servidor", "error");
+    } else {
+      showAlert("Erro de conexão com o servidor", "error");
+    }
+
+    // Carregar dados padrão em caso de erro
+    dashboardData = createDefaultDashboardData();
+    updateDashboard();
   } finally {
     showLoading(false);
   }
@@ -63,17 +85,56 @@ async function checkAdminAuthentication() {
 
 // Atualizar dashboard
 function updateDashboard() {
-  if (!dashboardData) return;
+  if (!dashboardData) {
+    console.warn("Dashboard data não disponível");
+    // Criar dados padrão se não existir
+    dashboardData = createDefaultDashboardData();
+  }
 
-  updateStatsOverview();
-  updateCharts();
-  updateRecentActivity();
+  try {
+    updateStatsOverview();
+    updateCharts();
+    updateRecentActivity();
+  } catch (error) {
+    console.error("Erro ao atualizar dashboard:", error);
+    showAlert("Erro ao carregar dados do dashboard", "error");
+  }
+}
+
+// Criar dados padrão para o dashboard
+function createDefaultDashboardData() {
+  return {
+    overview: {
+      total_users: 0,
+      active_users_24h: 0,
+      total_api_calls: 0,
+      api_calls_24h: 0,
+      error_rate_24h: 0,
+      avg_response_time_24h: 0,
+    },
+    charts_data: {
+      timeline: {
+        dates: [],
+        api_calls: [],
+        active_users: [],
+      },
+      provider_distribution: {
+        labels: [],
+        data: [],
+      },
+    },
+  };
 }
 
 // Atualizar estatísticas gerais
 function updateStatsOverview() {
-  const overview = dashboardData.overview;
+  const overview = dashboardData?.overview || {};
   const container = document.getElementById("statsOverview");
+
+  if (!container) {
+    console.error("Container statsOverview não encontrado");
+    return;
+  }
 
   container.innerHTML = `
         <div class="stat-card">
@@ -166,33 +227,154 @@ function updateStatsOverview() {
 
 // Atualizar gráficos
 function updateCharts() {
-  updateAPIUsageChart();
-  updateProviderChart();
+  showChartLoading("apiChartLoading", true);
+  showChartLoading("providerChartLoading", true);
+
+  try {
+    updateAPIUsageChart();
+    updateProviderChart();
+  } finally {
+    // Esconder loading depois de um pequeno delay
+    setTimeout(() => {
+      showChartLoading("apiChartLoading", false);
+      showChartLoading("providerChartLoading", false);
+    }, 500);
+  }
+}
+
+// Controlar loading dos gráficos
+function showChartLoading(loadingId, show) {
+  const loadingElement = document.getElementById(loadingId);
+  if (loadingElement) {
+    loadingElement.style.display = show ? "flex" : "none";
+  }
 }
 
 // Gráfico de uso da API
 function updateAPIUsageChart() {
-  const ctx = document.getElementById("apiUsageChart").getContext("2d");
+  const ctx = document.getElementById("apiUsageChart");
+
+  if (!ctx) {
+    console.error("Canvas apiUsageChart não encontrado");
+    return;
+  }
+
+  // Verificar se os dados existem
+  if (
+    !dashboardData ||
+    !dashboardData.charts_data ||
+    !dashboardData.charts_data.timeline
+  ) {
+    console.warn("Dados do gráfico não disponíveis, criando gráfico vazio");
+    createEmptyAPIChart(ctx);
+    return;
+  }
+
   const chartData = dashboardData.charts_data.timeline;
+
+  // Verificar se os arrays de dados existem
+  if (!chartData.dates || !chartData.api_calls || !chartData.active_users) {
+    console.warn("Arrays de dados não disponíveis, criando gráfico vazio");
+    createEmptyAPIChart(ctx);
+    return;
+  }
 
   if (apiUsageChart) {
     apiUsageChart.destroy();
   }
 
-  apiUsageChart = new Chart(ctx, {
+  try {
+    apiUsageChart = new Chart(ctx.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: chartData.dates.map((date) => {
+          try {
+            const d = new Date(date);
+            return d.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+            });
+          } catch (e) {
+            return date; // Fallback para string original
+          }
+        }),
+        datasets: [
+          {
+            label: "Chamadas API",
+            data: chartData.api_calls || [],
+            borderColor: "#4f46e5",
+            backgroundColor: "rgba(79, 70, 229, 0.1)",
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            label: "Usuários Ativos",
+            data: chartData.active_users || [],
+            borderColor: "#06d6a0",
+            backgroundColor: "rgba(6, 214, 160, 0.1)",
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "top",
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: "rgba(0,0,0,0.1)",
+            },
+          },
+          x: {
+            grid: {
+              color: "rgba(0,0,0,0.1)",
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao criar gráfico de API:", error);
+    createEmptyAPIChart(ctx);
+  }
+}
+
+// Criar gráfico vazio quando não há dados
+function createEmptyAPIChart(ctx) {
+  if (apiUsageChart) {
+    apiUsageChart.destroy();
+  }
+
+  const emptyDates = [];
+  const currentDate = new Date();
+
+  // Gerar últimos 7 dias
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() - i);
+    emptyDates.push(
+      date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+      })
+    );
+  }
+
+  apiUsageChart = new Chart(ctx.getContext("2d"), {
     type: "line",
     data: {
-      labels: chartData.dates.map((date) => {
-        const d = new Date(date);
-        return d.toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-        });
-      }),
+      labels: emptyDates,
       datasets: [
         {
           label: "Chamadas API",
-          data: chartData.api_calls,
+          data: [0, 0, 0, 0, 0, 0, 0],
           borderColor: "#4f46e5",
           backgroundColor: "rgba(79, 70, 229, 0.1)",
           tension: 0.4,
@@ -200,7 +382,7 @@ function updateAPIUsageChart() {
         },
         {
           label: "Usuários Ativos",
-          data: chartData.active_users,
+          data: [0, 0, 0, 0, 0, 0, 0],
           borderColor: "#06d6a0",
           backgroundColor: "rgba(6, 214, 160, 0.1)",
           tension: 0.4,
@@ -235,8 +417,36 @@ function updateAPIUsageChart() {
 
 // Gráfico de distribuição de provedores
 function updateProviderChart() {
-  const ctx = document.getElementById("providerChart").getContext("2d");
+  const ctx = document.getElementById("providerChart");
+
+  if (!ctx) {
+    console.error("Canvas providerChart não encontrado");
+    return;
+  }
+
+  // Verificar se os dados existem
+  if (
+    !dashboardData ||
+    !dashboardData.charts_data ||
+    !dashboardData.charts_data.provider_distribution
+  ) {
+    console.warn(
+      "Dados do gráfico de provedores não disponíveis, criando gráfico vazio"
+    );
+    createEmptyProviderChart(ctx);
+    return;
+  }
+
   const chartData = dashboardData.charts_data.provider_distribution;
+
+  // Verificar se os arrays de dados existem
+  if (!chartData.labels || !chartData.data || chartData.labels.length === 0) {
+    console.warn(
+      "Arrays de dados de provedores não disponíveis, criando gráfico vazio"
+    );
+    createEmptyProviderChart(ctx);
+    return;
+  }
 
   if (providerChart) {
     providerChart.destroy();
@@ -252,14 +462,52 @@ function updateProviderChart() {
     "#10b981",
   ];
 
-  providerChart = new Chart(ctx, {
+  try {
+    providerChart = new Chart(ctx.getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: chartData.labels || [],
+        datasets: [
+          {
+            data: chartData.data || [],
+            backgroundColor: colors.slice(0, (chartData.labels || []).length),
+            borderWidth: 2,
+            borderColor: "#ffffff",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao criar gráfico de provedores:", error);
+    createEmptyProviderChart(ctx);
+  }
+}
+
+// Criar gráfico vazio para provedores
+function createEmptyProviderChart(ctx) {
+  if (providerChart) {
+    providerChart.destroy();
+  }
+
+  const colors = ["#4f46e5", "#06d6a0", "#f59e0b", "#ef4444", "#8b5cf6"];
+
+  providerChart = new Chart(ctx.getContext("2d"), {
     type: "doughnut",
     data: {
-      labels: chartData.labels,
+      labels: ["Groq", "Gemini", "HuggingFace", "Cohere", "Together"],
       datasets: [
         {
-          data: chartData.data,
-          backgroundColor: colors.slice(0, chartData.labels.length),
+          data: [1, 1, 1, 1, 1], // Valores mínimos para mostrar o gráfico
+          backgroundColor: colors,
           borderWidth: 2,
           borderColor: "#ffffff",
         },
@@ -271,6 +519,13 @@ function updateProviderChart() {
       plugins: {
         legend: {
           position: "bottom",
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.label + ": Sem dados disponíveis";
+            },
+          },
         },
       },
     },
@@ -672,22 +927,56 @@ async function loadSectionData(sectionName) {
 
 // Atualização em tempo real
 function startRealTimeUpdates() {
+  // Limpar interval anterior se existir
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+  }
+
   // Atualizar a cada 30 segundos
   refreshInterval = setInterval(async () => {
     try {
       const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        console.warn("Token não encontrado, parando atualizações automáticas");
+        clearInterval(refreshInterval);
+        return;
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout de 5 segundos
+
       const response = await fetch(`${API_BASE}/admin/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (response.ok) {
-        dashboardData = await response.json();
+        const newData = await response.json();
+        dashboardData = newData;
         updateDashboard();
+        console.log("Dashboard atualizado automaticamente");
+      } else if (response.status === 401) {
+        console.warn("Token expirado, parando atualizações automáticas");
+        clearInterval(refreshInterval);
+        localStorage.removeItem("authToken");
+        window.location.href = "index.html";
+      } else {
+        console.warn("Erro na atualização automática:", response.status);
       }
     } catch (error) {
-      console.error("Erro na atualização automática:", error);
+      if (error.name === "AbortError") {
+        console.warn("Timeout na atualização automática");
+      } else {
+        console.error("Erro na atualização automática:", error);
+      }
     }
-  }, 30000);
+  }, 30000); // 30 segundos
 }
 
 // Exportar dados
