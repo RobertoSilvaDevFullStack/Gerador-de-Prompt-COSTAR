@@ -132,12 +132,34 @@ async def preview_prompt(prompt_data: PromptData):
         # Determinar modo baseado no conteúdo do prompt
         modo = "Básico (sem IA)"
         if ai_enabled:
-            if "**Context (Contexto)**" in prompt_aprimorado and len(prompt_aprimorado) > 500:
+            # Verificar se tem estrutura COSTAR completa (formato específico)
+            costar_patterns = [
+                "**Context (Contexto)**", "**Objective (Objetivo)**", "**Style (Estilo)**",
+                "**Tone (Tom)**", "**Audience (Audiência)**", "**Response (Formato de Resposta)**"
+            ]
+            
+            # Contar quantas seções COSTAR estão presentes
+            costar_sections_found = sum(1 for pattern in costar_patterns if pattern in prompt_aprimorado)
+            
+            # Verificar variações alternativas
+            alternative_patterns = [
+                "**CONTEXTO**", "**OBJETIVO**", "**ESTILO**",
+                "**TOM**", "**AUDIÊNCIA**", "**RESPOSTA**"
+            ]
+            alt_sections_found = sum(1 for pattern in alternative_patterns if pattern in prompt_aprimorado)
+            
+            total_sections = max(costar_sections_found, alt_sections_found)
+            
+            if total_sections >= 4 and len(prompt_aprimorado) > 800:
                 modo = "Multi-AI aprimorado"
-            elif len(prompt_aprimorado) > 300:
-                modo = "AI simulado (fallback)"
+            elif total_sections >= 3 and len(prompt_aprimorado) > 600:
+                modo = "Multi-AI processado"
+            elif "fallback inteligente" in prompt_aprimorado.lower():
+                modo = "Multi-AI (HuggingFace)"
+            elif len(prompt_aprimorado) > 400:
+                modo = "AI processado"
             elif "fallback" in prompt_aprimorado.lower():
-                modo = "Fallback inteligente"
+                modo = "Fallback básico"
         
         return {
             "message": "Preview gerado com sucesso (modo demo)",
@@ -628,8 +650,7 @@ CHECKLIST FINAL:
 async def generate_costar_prompt_with_multi_ai(prompt_data: PromptData, multi_ai_service) -> str:
     """Gerar prompt COSTAR aprimorado com sistema de múltiplas IAs"""
     
-    enhancement_prompt = f"""
-Como especialista em prompt engineering, aprimore o seguinte prompt COSTAR, tornando-o mais detalhado, específico e eficaz. 
+    enhancement_prompt = f"""Você é um especialista em prompt engineering. Crie um prompt COSTAR aprimorado e detalhado baseado nos dados fornecidos.
 
 DADOS FORNECIDOS:
 - Contexto: {prompt_data.contexto}
@@ -639,37 +660,45 @@ DADOS FORNECIDOS:
 - Audiência: {prompt_data.audiencia}
 - Formato de Resposta: {prompt_data.resposta}
 
-INSTRUÇÕES:
-1. Mantenha a estrutura COSTAR (Context, Objective, Style, Tone, Audience, Response)
-2. Expanda cada seção com mais detalhes relevantes
-3. Adicione especificações técnicas quando apropriado
-4. Inclua exemplos ou diretrizes quando útil
-5. Torne o prompt mais claro e acionável
-6. Use linguagem profissional e precisa
+INSTRUÇÕES OBRIGATÓRIAS:
+1. Use EXATAMENTE este formato de estrutura:
+   **Context (Contexto)**
+   **Objective (Objetivo)**  
+   **Style (Estilo)**
+   **Tone (Tom)**
+   **Audience (Audiência)**
+   **Response (Formato de Resposta)**
 
-FORMATO DE SAÍDA:
-```
+2. Para cada seção, expanda os dados fornecidos com:
+   - Detalhes específicos e relevantes
+   - Especificações técnicas quando apropriado
+   - Diretrizes claras e acionáveis
+   - Exemplos práticos quando útil
+
+3. Torne cada seção substancial (pelo menos 2-3 frases cada)
+4. Use linguagem profissional e precisa
+5. Mantenha foco na eficácia do prompt final
+
+FORMATO DE SAÍDA OBRIGATÓRIO:
 **Context (Contexto)**
-[Versão expandida e melhorada do contexto]
+[Expanda: {prompt_data.contexto} - adicione especificações, cenário detalhado, e contexto técnico relevante]
 
-**Objective (Objetivo)**  
-[Versão expandida e melhorada do objetivo]
+**Objective (Objetivo)**
+[Expanda: {prompt_data.objetivo} - defina metas específicas, critérios de sucesso, e resultados esperados]
 
 **Style (Estilo)**
-[Versão expandida e melhorada do estilo]
+[Expanda: {prompt_data.estilo} - especifique características de escrita, formatação, e abordagem metodológica]
 
 **Tone (Tom)**
-[Versão expandida e melhorada do tom]
+[Expanda: {prompt_data.tom} - defina nuances de comunicação, nível de formalidade, e personalidade]
 
 **Audience (Audiência)**
-[Versão expandida e melhorada da audiência]
+[Expande: {prompt_data.audiencia} - detalhe perfil, conhecimentos, necessidades, e expectativas]
 
 **Response (Formato de Resposta)**
-[Versão expandida e melhorada do formato de resposta]
-```
+[Expanda: {prompt_data.resposta} - especifique estrutura, elementos obrigatórios, e formato final]
 
-Gere agora o prompt COSTAR aprimorado:
-"""
+Gere o prompt aprimorado seguindo EXATAMENTE esta estrutura:"""
     
     try:
         enhanced_prompt = await multi_ai_service.generate_content(

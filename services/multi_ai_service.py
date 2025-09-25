@@ -10,6 +10,10 @@ import os
 import httpx
 from dataclasses import dataclass
 import logging
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente
+load_dotenv()
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -69,9 +73,9 @@ class MultiAIService:
         if gemini_key:
             self.providers.append(AIProvider(
                 name="gemini",
-                endpoint="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+                endpoint="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent",
                 api_key=gemini_key,
-                model="gemini-1.5-flash",
+                model="gemini-1.5-flash-latest",
                 daily_limit=50,  # Free tier
                 priority=2
             ))
@@ -83,7 +87,7 @@ class MultiAIService:
                 name="groq",
                 endpoint="https://api.groq.com/openai/v1/chat/completions",
                 api_key=groq_key,
-                model="llama-3.1-70b-versatile",
+                model="llama-3.1-8b-instant",  # Modelo ativo
                 daily_limit=6000,  # Por minuto na verdade
                 priority=1  # Mais alta prioridade
             ))
@@ -153,6 +157,14 @@ class MultiAIService:
         """Obter o próximo provedor disponível"""
         available = self.get_available_providers()
         return available[0] if available else None
+
+    def get_configured_providers_count(self) -> int:
+        """Retorna o número de provedores configurados"""
+        return len(self.providers)
+    
+    def get_provider_names(self) -> List[str]:
+        """Retorna lista com nomes dos provedores"""
+        return [provider.name for provider in self.providers]
     
     async def generate_content(self, prompt: str, temperatura: float = 0.7, max_tokens: int = 2048) -> str:
         """Gerar conteúdo usando o melhor provedor disponível"""
@@ -239,7 +251,7 @@ class MultiAIService:
             
             response = await client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="llama-3.1-70b-versatile",
+                model="llama-3.1-8b-instant",
                 temperature=temperatura,
                 max_tokens=max_tokens,
             )
