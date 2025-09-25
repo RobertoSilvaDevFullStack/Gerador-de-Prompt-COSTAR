@@ -3,15 +3,18 @@ import httpx
 from typing import Dict, Any, Optional
 import asyncio
 import json
+from dotenv import load_dotenv
 
 class GeminiService:
     def __init__(self):
+        # Carregar variáveis de ambiente
+        load_dotenv()
         self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key or self.api_key == "your_gemini_api_key_here":
             raise ValueError("GEMINI_API_KEY não configurada")
         
         self.base_url = "https://generativelanguage.googleapis.com/v1beta"
-        self.model = "gemini-1.5-flash"
+        self.model = "gemini-1.5-pro-latest"
     
     async def generate_content(
         self,

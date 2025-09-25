@@ -189,27 +189,67 @@ async def preview_prompt(prompt_data: PromptData):
 
 @app.post("/api/prompts/analyze")  
 async def analyze_prompt_quality(prompt_data: PromptData):
-    """Analisar qualidade do prompt COSTAR (modo demo)"""
+    """Analisar qualidade do prompt COSTAR usando Multi-AI"""
     try:
-        # Gerar prompt primeiro
-        if gemini_enabled:
-            from services.gemini_service import GeminiService
-            gemini_service = GeminiService()
-            prompt_aprimorado = await generate_costar_prompt_with_ai(prompt_data, gemini_service)
-            analise = await gemini_service.analyze_prompt_quality(prompt_aprimorado)
-        else:
-            prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
+        # Usar Multi-AI Service em vez de apenas Gemini
+        from services.multi_ai_service import MultiAIService
+        
+        multi_ai = MultiAIService()
+        await multi_ai.initialize()
+        
+        # Gerar prompt primeiro usando Multi-AI
+        prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai)
+        
+        # Criar prompt para análise de qualidade
+        analysis_prompt = f"""
+Analise a qualidade deste prompt COSTAR e forneça uma avaliação estruturada:
+
+{prompt_aprimorado}
+
+Forneça sua análise no seguinte formato JSON:
+{{
+  "pontuacao": [número de 0 a 100],
+  "qualidade": "[Excelente/Boa/Regular/Ruim]",
+  "resumo": "[breve resumo da análise]",
+  "pontos_fortes": ["ponto1", "ponto2"],
+  "sugestoes": ["sugestão1", "sugestão2"],
+  "metricas_detalhadas": {{
+    "completude": [0-100],
+    "especificidade": [0-100], 
+    "coerencia": [0-100],
+    "acionabilidade": [0-100]
+  }}
+}}
+"""
+        
+        # Gerar análise usando Multi-AI
+        analysis_response = await multi_ai.generate_content(analysis_prompt)
+        
+        # Tentar parsear JSON da resposta
+        try:
+            import json
+            # Extrair JSON da resposta (pode vir com texto extra)
+            json_start = analysis_response.find('{')
+            json_end = analysis_response.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                json_text = analysis_response[json_start:json_end]
+                analise = json.loads(json_text)
+            else:
+                raise ValueError("JSON não encontrado na resposta")
+        except:
+            # Fallback para análise básica se não conseguir parsear
             analise = generate_basic_analysis(prompt_data)
         
         return {
-            "message": "Análise concluída com sucesso (modo demo)",
+            "message": "Análise concluída com sucesso",
             "prompt_analisado": prompt_aprimorado,
             "analise": analise,
             "timestamp": datetime.now().isoformat(),
-            "modo": "AI aprimorado" if gemini_enabled else "Básico (sem IA)"
+            "modo": "Multi-AI aprimorado"
         }
+        
     except Exception as e:
-        logger.error(f"Erro ao analisar prompt: {e}")
+        logger.error(f"Erro ao analisar prompt com Multi-AI: {e}")
         # Fallback para análise básica
         prompt_basico = generate_costar_prompt_basic(prompt_data)
         analise_basica = generate_basic_analysis(prompt_data)
