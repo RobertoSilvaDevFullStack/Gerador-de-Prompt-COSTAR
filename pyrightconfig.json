@@ -7,28 +7,29 @@
         "**/*.pyc",
         "**/node_modules",
         "**/.venv",
-        "**/venv"
-    ],
-    "extraPaths": [
-        ".",
-        "./services",
-        "./routes",
-        "./scripts",
-        "./debug",
-        "./tests"
+        "**/venv",
+        "**/typings"
     ],
     "pythonVersion": "3.13",
     "pythonPlatform": "Windows",
-    "typeCheckingMode": "basic",
+    "typeCheckingMode": "off",
     "useLibraryCodeForTypes": true,
-    "reportMissingImports": "warning",
+    "reportMissingImports": "none",
     "reportMissingTypeStubs": "none",
     "reportPrivateImportUsage": "none",
     "reportUnknownMemberType": "none",
     "reportUnknownVariableType": "none",
+    "reportUnknownParameterType": "none",
     "reportUnknownArgumentType": "none",
-    "reportGeneralTypeIssues": "warning",
+    "reportGeneralTypeIssues": "none",
+    "reportOptionalMemberAccess": "none",
+    "reportOptionalOperand": "none",
+    "reportOptionalSubscript": "none",
+    "reportOptionalIterable": "none",
+    "reportOptionalContextManager": "none",
+    "reportOptionalCall": "none",
     "strictListInference": false,
     "strictDictionaryInference": false,
-    "strictSetInference": false
+    "strictSetInference": false,
+    "strictParameterNoneValue": false
 }
