@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Login - Página Principal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔍 Debug Login - Página Principal</h1>
+        <p>Testando o que está acontecendo com o login na página principal</p>
+
+        <div class="test-section">
+            <h3>1. Teste de Login Direto (Como na página de teste)</h3>
+            <button onclick="testDirectLogin()">🚀 Teste Direto</button>
+            <div id="directResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Simulação do Login da Página Principal</h3>
+            <p>Simulando exatamente como é feito na página principal:</p>
+            <button onclick="simulateMainPageLogin()">🎭 Simular Página Principal</button>
+            <div id="simulateResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Teste com Modal (Igual página principal)</h3>
+            <button onclick="createModalLogin()">📱 Criar Modal</button>
+            <div id="modalResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Login (igual da página principal) -->
+    <div id="loginModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 400px;">
+            <h3>🔐 Login</h3>
+            <form id="modalLoginForm" onsubmit="handleModalAuth(event, 'login')">
+                <div style="margin-bottom: 15px;">
+                    <label>Email:</label>
+                    <input type="email" name="email" value="admin@costar.com" required
+                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label>Senha:</label>
+                    <input type="password" name="password" value="admin123" required
+                        style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <button type="submit" style="width: 100%; padding: 12px;">🔐 Entrar</button>
+                <button type="button" onclick="closeModal()"
+                    style="width: 100%; padding: 12px; background: #6c757d; margin-top: 10px;">❌ Fechar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = message;
+            element.style.display = 'block';
+            log(message, type);
+        }
+
+        // 1. Teste direto (como na página de teste)
+        async function testDirectLogin() {
+            log('Iniciando teste direto de login');
+
+            try {
+                const data = {
+                    email: 'admin@costar.com',
+                    password: 'admin123'
+                };
+
+                log('Enviando requisição para /api/members/auth/login');
+
+                const response = await fetch('/api/members/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                log(`Resposta recebida: ${response.status}`);
+
+                const result = await response.json();
+                log(`Dados da resposta: ${JSON.stringify(result, null, 2)}`);
+
+                if (response.ok) {
+                    showResult('directResult', `
+                        <h4>✅ Login Direto FUNCIONOU!</h4>
+                        <p><strong>Email:</strong> ${result.user.email}</p>
+                        <p><strong>Role:</strong> ${result.user.role}</p>
+                        <p><strong>Token:</strong> ${result.access_token.substring(0, 30)}...</p>
+                    `, 'success');
+                } else {
+                    showResult('directResult', `
+                        <h4>❌ Erro no Login Direto</h4>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Mensagem:</strong> ${result.detail || result.message}</p>
+                    `, 'error');
+                }
+
+            } catch (error) {
+                log(`Erro no teste direto: ${error.message}`, 'error');
+                showResult('directResult', `
+                    <h4>💥 Erro de Conexão</h4>
+                    <p>${error.message}</p>
+                `, 'error');
+            }
+        }
+
+        // 2. Simulação exata da página principal
+        async function simulateMainPageLogin() {
+            log('Simulando login da página principal');
+
+            try {
+                // Criar um form simulado
+                const form = document.createElement('form');
+                const emailInput = document.createElement('input');
+                emailInput.name = 'email';
+                emailInput.value = 'admin@costar.com';
+                const passwordInput = document.createElement('input');
+                passwordInput.name = 'password';
+                passwordInput.value = 'admin123';
+
+                form.appendChild(emailInput);
+                form.appendChild(passwordInput);
+
+                // Simular o handleAuth da página principal
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                log('Dados do formulário:', data);
+
+                const endpoint = '/api/members/auth/login';
+                log(`Endpoint: ${endpoint}`);
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                log(`Status da simulação: ${response.status}`);
+                const result = await response.json();
+
+                if (response.ok) {
+                    showResult('simulateResult', `
+                        <h4>✅ Simulação da Página Principal FUNCIONOU!</h4>
+                        <p><strong>Email:</strong> ${result.user.email}</p>
+                        <p><strong>Role:</strong> ${result.user.role}</p>
+                        <p><strong>Token:</strong> ${result.access_token.substring(0, 30)}...</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `, 'success');
+                } else {
+                    showResult('simulateResult', `
+                        <h4>❌ Erro na Simulação</h4>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Resposta:</strong></p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `, 'error');
+                }
+
+            } catch (error) {
+                log(`Erro na simulação: ${error.message}`, 'error');
+                showResult('simulateResult', `
+                    <h4>💥 Erro na Simulação</h4>
+                    <p>${error.message}</p>
+                `, 'error');
+            }
+        }
+
+        // 3. Modal (igual página principal)
+        function createModalLogin() {
+            log('Criando modal de login');
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        // Função handleAuth igual da página principal
+        async function handleModalAuth(event, type) {
+            event.preventDefault();
+            log('handleModalAuth chamado');
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const endpoint = type === 'login' ? '/api/members/auth/login' : '/api/members/auth/register';
+                log(`Endpoint do modal: ${endpoint}`);
+
+                showResult('modalResult', '⏳ Fazendo login...', 'info');
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                log(`Resultado do modal: ${JSON.stringify(result)}`);
+
+                if (response.ok) {
+                    // Store authentication info (igual página principal)
+                    localStorage.setItem('authToken', result.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+
+                    closeModal();
+
+                    showResult('modalResult', `
+                        <h4>✅ Login via Modal FUNCIONOU!</h4>
+                        <p><strong>Email:</strong> ${result.user.email}</p>
+                        <p><strong>Role:</strong> ${result.user.role}</p>
+                        <p><strong>Salvo no localStorage:</strong> ✅</p>
+                        <p>Agora você pode acessar as áreas protegidas!</p>
+                    `, 'success');
+
+                } else {
+                    showResult('modalResult', `
+                        <h4>❌ Erro no Modal</h4>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Mensagem:</strong> ${result.detail || result.message}</p>
+                    `, 'error');
+                }
+            } catch (error) {
+                log(`Erro no modal: ${error.message}`, 'error');
+                showResult('modalResult', `
+                    <h4>💥 Erro no Modal</h4>
+                    <p>${error.message}</p>
+                `, 'error');
+            }
+
+            return false;
+        }
+
+        // Log inicial
+        window.addEventListener('load', function () {
+            log('Página de debug carregada');
+            log('Verificando localStorage...');
+            const token = localStorage.getItem('authToken');
+            const userInfo = localStorage.getItem('userInfo');
+            log(`Token atual: ${token ? token.substring(0, 30) + '...' : 'Nenhum'}`);
+            log(`User Info: ${userInfo || 'Nenhum'}`);
+        });
+    </script>
+</body>
+
+</html>

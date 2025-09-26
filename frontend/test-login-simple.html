@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Login COSTAR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .links a:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 Teste de Login COSTAR</h1>
+        <p>Teste o sistema de autenticação</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="admin@costar.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" value="admin123" required>
+            </div>
+
+            <button type="submit" id="loginBtn">🚀 Fazer Login</button>
+        </form>
+
+        <div id="result" class="result"></div>
+
+        <div class="links" style="display: none;" id="successLinks">
+            <h3>✅ Login realizado com sucesso!</h3>
+            <p>Acesse as áreas do sistema:</p>
+            <a href="/member-area.html" target="_blank">👥 Área de Membros</a>
+            <a href="/admin-dashboard.html" target="_blank">🔧 Dashboard Admin</a>
+            <a href="/" target="_blank">🏠 Página Principal</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('loginBtn');
+            const result = document.getElementById('result');
+            const successLinks = document.getElementById('successLinks');
+
+            // Resetar interface
+            result.style.display = 'none';
+            successLinks.style.display = 'none';
+            btn.textContent = '⏳ Fazendo login...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+
+                console.log('🔍 Enviando dados:', data);
+
+                const response = await fetch('/api/members/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log('📡 Resposta recebida:', response.status);
+
+                const responseData = await response.json();
+                console.log('📋 Dados da resposta:', responseData);
+
+                if (response.ok) {
+                    // Sucesso
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>✅ Login realizado com sucesso!</h3>
+                        <p><strong>👤 Usuário:</strong> ${responseData.user.email}</p>
+                        <p><strong>👑 Role:</strong> ${responseData.user.role}</p>
+                        <p><strong>📛 Username:</strong> ${responseData.user.username}</p>
+                        <p><strong>🎫 Token:</strong> ${responseData.access_token.substring(0, 50)}...</p>
+                    `;
+                    result.style.display = 'block';
+                    successLinks.style.display = 'block';
+
+                    // Salvar no localStorage
+                    localStorage.setItem('authToken', responseData.access_token);
+                    localStorage.setItem('userInfo', JSON.stringify(responseData.user));
+
+                    console.log('💾 Dados salvos no localStorage');
+
+                } else {
+                    // Erro
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <h3>❌ Erro no login</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Mensagem:</strong> ${responseData.detail || responseData.message || 'Erro desconhecido'}</p>
+                    `;
+                    result.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error('💥 Erro na requisição:', error);
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h3>💥 Erro de conexão</h3>
+                    <p>Não foi possível conectar com o servidor.</p>
+                    <p><strong>Erro:</strong> ${error.message}</p>
+                    <p>Verifique se o servidor está rodando em http://localhost:8000</p>
+                `;
+                result.style.display = 'block';
+            }
+
+            // Restaurar botão
+            btn.textContent = '🚀 Fazer Login';
+            btn.disabled = false;
+        });
+
+        // Verificar se já está logado
+        window.addEventListener('load', function () {
+            const token = localStorage.getItem('authToken');
+            const userInfo = localStorage.getItem('userInfo');
+
+            if (token && userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    const result = document.getElementById('result');
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>ℹ️ Você já está logado</h3>
+                        <p><strong>👤 Usuário:</strong> ${user.email}</p>
+                        <p><strong>👑 Role:</strong> ${user.role}</p>
+                        <p><strong>🎫 Token:</strong> ${token.substring(0, 50)}...</p>
+                    `;
+                    result.style.display = 'block';
+                    document.getElementById('successLinks').style.display = 'block';
+                } catch (e) {
+                    console.error('Erro ao verificar login salvo:', e);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

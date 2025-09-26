@@ -9,8 +9,7 @@ from datetime import datetime
 import jwt
 import os
 
-from services.auth_service import UserRole
-from services.supabase_auth_service import SupabaseAuthService
+from services.supabase_auth_service import SupabaseAuthService, UserRole
 from services.member_area_service import MemberAreaService, SubscriptionPlan
 from services.admin_analytics_service import AdminAnalyticsService
 
@@ -85,7 +84,16 @@ async def login(request: LoginRequest):
                 "id": user.id,
                 "email": user.email,
                 "role": user.role.value,
-                "profile": user.profile
+                "username": user.username,
+                "profile": {
+                    "name": user.full_name or user.username,
+                    "email": user.email,
+                    "avatar_url": user.avatar_url,
+                    "preferences": {
+                        "default_style": "Profissional",
+                        "default_tone": "Formal"
+                    }
+                }
             }
         }
     except Exception as e:
@@ -98,8 +106,6 @@ async def login(request: LoginRequest):
 async def register(request: RegisterRequest):
     """Registro de novo usuário"""
     try:
-        from services.auth_service import UserRole
-        
         # Verificar se email já existe
         existing_user = auth_service.get_user_by_email(request.email)
         if existing_user:
@@ -131,7 +137,16 @@ async def register(request: RegisterRequest):
                 "id": user.id,
                 "email": user.email,
                 "role": user.role.value,
-                "profile": user.profile
+                "username": user.username,
+                "profile": {
+                    "name": user.full_name or user.username,
+                    "email": user.email,
+                    "avatar_url": user.avatar_url,
+                    "preferences": {
+                        "default_style": "Profissional",
+                        "default_tone": "Formal"
+                    }
+                }
             },
             "message": "Usuário criado com sucesso"
         }
@@ -173,10 +188,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 async def get_admin_user(current_user = Depends(get_current_user)):
     """Verificar se o usuário é administrador"""
-    if current_user.role != UserRole.ADMIN:
+    # Conversão para string para facilitar comparação
+    user_role_str = str(current_user.role).lower()
+    
+    # Verificar se é admin (aceita vários formatos)
+    is_admin = (
+        current_user.role == UserRole.ADMIN or 
+        user_role_str == "admin" or 
+        "admin" in user_role_str
+    )
+    
+    if not is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso negado: necessário permissão de administrador"
+            detail=f"Acesso negado: necessário permissão de administrador. Role atual: {current_user.role}"
         )
     return current_user
 
@@ -187,7 +212,16 @@ async def get_current_user_info(current_user = Depends(get_current_user)):
         "id": current_user.id,
         "email": current_user.email,
         "role": current_user.role.value,
-        "profile": current_user.profile,
+        "username": current_user.username,
+        "profile": {
+            "name": current_user.full_name or current_user.username,
+            "email": current_user.email,
+            "avatar_url": current_user.avatar_url,
+            "preferences": {
+                "default_style": "Profissional",
+                "default_tone": "Formal"
+            }
+        },
         "is_active": current_user.is_active,
         "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
         "last_login": current_user.last_login.isoformat() if current_user.last_login else None

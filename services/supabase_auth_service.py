@@ -193,7 +193,7 @@ class SupabaseAuthService(SupabaseService):
             token_payload = {
                 "user_id": user_data['id'],
                 "email": email,
-                "role": user_data.get('plan_type', 'free'),
+                "role": user_data.get('role', 'free'),
                 "exp": datetime.utcnow() + timedelta(hours=self.jwt_expiration_hours)
             }
             

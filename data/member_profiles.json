@@ -72,5 +72,42 @@
       "api_calls": 0,
       "tokens_used": 0
     }
+  },
+  {
+    "user_id": "34a26484-f48f-4a1c-a1a6-0eaeca401d5e",
+    "username": "Administrator",
+    "email": "admin@costar.com",
+    "subscription_plan": "SubscriptionPlan.FREE",
+    "created_at": "2025-09-26 18:31:15.360631",
+    "last_login": "2025-09-26 18:31:15.360633",
+    "preferences": {
+      "default_style": "professional",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini"
+      ],
+      "auto_save_prompts": true,
+      "email_notifications": true,
+      "theme": "light"
+    },
+    "usage_stats": {
+      "total_prompts": 0,
+      "templates_created": 0,
+      "templates_shared": 0
+    },
+    "custom_templates": [],
+    "api_quota": {
+      "monthly_prompts": 50,
+      "saved_templates": 5,
+      "api_providers": [
+        "gemini"
+      ],
+      "advanced_features": false
+    },
+    "usage_current_month": {
+      "prompts_generated": 0,
+      "api_calls": 0,
+      "tokens_used": 0
+    }
   }
 ]

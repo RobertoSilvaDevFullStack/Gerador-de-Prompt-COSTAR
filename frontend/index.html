@@ -1391,7 +1391,7 @@ ${data.response}`;
                 <button onclick="goToMemberArea()" class="nav-btn" style="background: rgba(6,214,160,0.8); color: white; border: none; padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
                     <i class="fas fa-user-circle"></i> Área de Membros
                 </button>
-                ${user.role === 'ADMIN' ? `
+                ${(user.role === 'admin' || user.role === 'ADMIN') ? `
                 <button onclick="goToAdminDashboard()" class="nav-btn" style="background: rgba(239,68,68,0.8); color: white; border: none; padding: 8px 16px; border-radius: 20px; margin: 0 5px; cursor: pointer; transition: all 0.3s ease;">
                     <i class="fas fa-cog"></i> Admin
                 </button>
@@ -1481,14 +1481,17 @@ ${data.response}`;
 
         // Handle authentication
         async function handleAuth(event, type) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
             try {
+                event.preventDefault();
+                console.log('handleAuth chamado', { type, event });
+
+                const form = event.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                console.log('Dados do formulário:', data);
+
                 const endpoint = type === 'login' ? '/api/members/auth/login' : '/api/members/auth/register';
+                console.log('Endpoint:', endpoint);
 
                 showNotification('Fazendo login...', 'info');
 
@@ -1500,31 +1503,51 @@ ${data.response}`;
                     body: JSON.stringify(data)
                 });
 
+                console.log('Resposta do servidor:', response.status);
                 const result = await response.json();
+                console.log('Resultado:', result);
 
                 if (response.ok) {
                     // Store authentication info
                     localStorage.setItem('authToken', result.access_token);
                     localStorage.setItem('userInfo', JSON.stringify(result.user));
+                    console.log('Dados salvos no localStorage');
 
-                    // Update navigation
-                    updateNavForAuthenticatedUser(result.user);
+                    // Update navigation (com tratamento de erro)
+                    try {
+                        updateNavForAuthenticatedUser(result.user);
+                        console.log('Navegação atualizada');
+                    } catch (navError) {
+                        console.error('Erro ao atualizar navegação:', navError);
+                    }
 
                     // Close modal
-                    const modal = document.getElementById(`${type}Modal`);
-                    if (modal) {
-                        modal.remove();
+                    try {
+                        const modal = document.getElementById(`${type}Modal`);
+                        if (modal) {
+                            modal.remove();
+                            console.log('Modal fechado');
+                        }
+                    } catch (modalError) {
+                        console.error('Erro ao fechar modal:', modalError);
                     }
 
                     // Show success message
                     showNotification(type === 'login' ? 'Login realizado com sucesso!' : 'Conta criada com sucesso!', 'success');
 
-                    // Redirect based on role
+                    // Redirect based on role (com tratamento de erro)
                     setTimeout(() => {
-                        if (result.user.role === 'admin') {
-                            goToAdminDashboard();
-                        } else {
-                            goToMemberArea();
+                        try {
+                            console.log('Redirecionando usuário, role:', result.user.role);
+                            if (result.user.role === 'admin' || result.user.role === 'ADMIN') {
+                                goToAdminDashboard();
+                            } else {
+                                goToMemberArea();
+                            }
+                        } catch (redirectError) {
+                            console.error('Erro no redirecionamento:', redirectError);
+                            // Fallback: redirecionar manualmente
+                            window.location.href = result.user.role === 'admin' ? '/admin-dashboard' : '/member-area';
                         }
                     }, 1500);
 
@@ -1532,7 +1555,7 @@ ${data.response}`;
                     showNotification(result.detail || result.message || 'Erro na autenticação', 'error');
                 }
             } catch (error) {
-                console.error('Erro de conexão:', error);
+                console.error('Erro completo no handleAuth:', error);
                 showNotification('Erro de conexão. Verifique se o servidor está ativo.', 'error');
             }
 

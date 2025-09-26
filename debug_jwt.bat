@@ -1,0 +1,9 @@
+@echo off
+echo Iniciando servidor...
+start /B python main.py > server.log 2>&1
+timeout /T 5 /NOBREAK
+echo Debug do JWT...
+python scripts/debug_jwt.py
+echo.
+echo Parando servidor...
+taskkill /F /IM python.exe /FI "WINDOWTITLE eq main.py*" 2>nul
