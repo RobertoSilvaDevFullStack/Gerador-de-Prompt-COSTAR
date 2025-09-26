@@ -9,7 +9,8 @@ from datetime import datetime
 import jwt
 import os
 
-from services.auth_service import AuthService, UserRole
+from services.auth_service import UserRole
+from services.supabase_auth_service import SupabaseAuthService
 from services.member_area_service import MemberAreaService, SubscriptionPlan
 from services.admin_analytics_service import AdminAnalyticsService
 
@@ -18,7 +19,7 @@ JWT_SECRET = os.getenv("JWT_SECRET_KEY", "fallback-secret-key")
 JWT_ALGORITHM = "HS256"
 
 # Serviços
-auth_service = AuthService()
+auth_service = SupabaseAuthService()
 member_service = MemberAreaService()
 analytics_service = AdminAnalyticsService()
 

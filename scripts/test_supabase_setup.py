@@ -6,6 +6,10 @@ import asyncio
 import os
 import sys
 from typing import Dict, Any
+from dotenv import load_dotenv
+
+# Carrega as variáveis de ambiente
+load_dotenv()
 
 # Adiciona o diretório raiz ao path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -66,7 +70,7 @@ class SupabaseSetupTester:
         
         return ready
     
-    async def test_connection(self) -> bool:
+    def test_connection(self) -> bool:
         """Testa conexão com Supabase"""
         self.print_header("TESTE DE CONEXÃO")
         
@@ -76,14 +80,16 @@ class SupabaseSetupTester:
             
             # Testa conexão pública
             print("🔍 Testando conexão pública (com RLS)...")
-            public_ok = await self.service.test_connection(use_admin=False)
-            self.print_status("Conexão Pública", "Sucesso" if public_ok else "Falhou", public_ok)
+            public_result = self.service.test_connection(use_admin=False)
+            public_ok = public_result.get('status') == 'connected'
+            self.print_status("Conexão Pública", "Sucesso" if public_ok else f"Falhou: {public_result.get('message', 'erro desconhecido')}", public_ok)
             
             # Testa conexão admin se disponível
             if self.config.has_admin_access():
                 print("\n🔍 Testando conexão administrativa (sem RLS)...")
-                admin_ok = await self.service.test_connection(use_admin=True)
-                self.print_status("Conexão Admin", "Sucesso" if admin_ok else "Falhou", admin_ok)
+                admin_result = self.service.test_connection(use_admin=True)
+                admin_ok = admin_result.get('status') == 'connected'
+                self.print_status("Conexão Admin", "Sucesso" if admin_ok else f"Falhou: {admin_result.get('message', 'erro desconhecido')}", admin_ok)
             else:
                 print("\n⚠️  Conexão admin não testada (SERVICE_ROLE_KEY não configurada)")
                 admin_ok = False
@@ -94,7 +100,7 @@ class SupabaseSetupTester:
             self.print_status("Erro de Conexão", f"Exceção: {e}", False)
             return False
     
-    async def check_database_schema(self) -> bool:
+    def check_database_schema(self) -> bool:
         """Verifica se o schema do banco existe"""
         self.print_header("VERIFICAÇÃO DO SCHEMA DO BANCO")
         
@@ -114,7 +120,7 @@ class SupabaseSetupTester:
             ORDER BY table_name;
             """
             
-            result = await self.service.execute_query(query, use_admin=True)
+            result = self.service.execute_query(query, use_admin=True)
             
             if result['success']:
                 tables = result['data']
@@ -149,7 +155,7 @@ class SupabaseSetupTester:
             self.print_status("Erro", f"Exceção ao verificar schema: {e}", False)
             return False
     
-    async def run_full_test(self) -> Dict[str, bool]:
+    def run_full_test(self) -> Dict[str, bool]:
         """Executa todos os testes"""
         print("🚀 INICIANDO TESTES COMPLETOS DO SUPABASE")
         
@@ -163,14 +169,14 @@ class SupabaseSetupTester:
             return results
         
         # 2. Testa conexão
-        results['connection'] = await self.test_connection()
+        results['connection'] = self.test_connection()
         
         if not results['connection']:
             print("\n🛑 Teste interrompido - problemas de conexão")
             return results
         
         # 3. Verifica schema
-        results['schema'] = await self.check_database_schema()
+        results['schema'] = self.check_database_schema()
         
         # Resultado final
         self.print_header("RESULTADO FINAL")
@@ -188,10 +194,10 @@ class SupabaseSetupTester:
         
         return results
 
-async def main():
+def main():
     """Função principal"""
     tester = SupabaseSetupTester()
-    results = await tester.run_full_test()
+    results = tester.run_full_test()
     
     # Código de saída
     exit_code = 0 if all(results.values()) else 1
@@ -199,4 +205,4 @@ async def main():
 
 if __name__ == "__main__":
     # Executa testes
-    asyncio.run(main())
+    main()

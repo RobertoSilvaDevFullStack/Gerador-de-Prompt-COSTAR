@@ -139,7 +139,11 @@ class MemberAreaService:
         profiles = self._load_member_profiles()
         for profile_data in profiles:
             if profile_data['user_id'] == user_id:
-                profile_data['subscription_plan'] = SubscriptionPlan(profile_data['subscription_plan'])
+                # Corrige conversão do enum - remove SubscriptionPlan. se presente
+                plan_value = profile_data['subscription_plan']
+                if isinstance(plan_value, str) and plan_value.startswith('SubscriptionPlan.'):
+                    plan_value = plan_value.replace('SubscriptionPlan.', '').lower()
+                profile_data['subscription_plan'] = SubscriptionPlan(plan_value)
                 profile_data['created_at'] = datetime.fromisoformat(profile_data['created_at'])
                 profile_data['last_login'] = datetime.fromisoformat(profile_data['last_login'])
                 return UserProfile(**profile_data)

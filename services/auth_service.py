@@ -27,10 +27,18 @@ class User:
     is_active: bool = True
     profile: Optional[Dict] = None
     
+    @property
+    def username(self) -> str:
+        """Retorna username baseado no email ou nome do perfil"""
+        if self.profile and self.profile.get('name'):
+            return self.profile['name']
+        return self.email.split('@')[0]  # Usa a parte antes do @ como username
+    
     def to_dict(self):
         return {
             'id': self.id,
             'email': self.email,
+            'username': self.username,
             'password_hash': self.password_hash,
             'role': self.role.value,
             'created_at': self.created_at.isoformat(),

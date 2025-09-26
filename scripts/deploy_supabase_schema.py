@@ -6,6 +6,10 @@ import asyncio
 import os
 import sys
 from typing import Dict, Any
+from dotenv import load_dotenv
+
+# Carrega as variáveis de ambiente
+load_dotenv()
 
 # Adiciona o diretório raiz ao path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -36,7 +40,7 @@ class SupabaseSchemaManager:
         icon = "✅" if success else "❌"
         print(f"{icon} {status}: {message}")    
     
-    async def initialize_service(self) -> bool:
+    def initialize_service(self) -> bool:
         """Inicializa o serviço Supabase"""
         self.print_header("INICIALIZAÇÃO DO SERVIÇO")
         
@@ -49,7 +53,8 @@ class SupabaseSchemaManager:
         
         try:
             self.service = SupabaseService()
-            connection_ok = await self.service.test_connection(use_admin=True)
+            connection_result = self.service.test_connection(use_admin=True)
+            connection_ok = connection_result.get('status') == 'connected'
             
             if connection_ok:
                 self.print_status("Serviço", "Inicializado com sucesso", True)
@@ -82,7 +87,7 @@ class SupabaseSchemaManager:
             self.print_status("Erro", f"Falha ao carregar schema: {e}", False)
             return None
     
-    async def apply_schema(self, schema_sql: str) -> bool:
+    def apply_schema(self, schema_sql: str) -> bool:
         """Aplica o schema no banco de dados"""
         self.print_header("APLICAÇÃO DO SCHEMA")
         
@@ -106,7 +111,7 @@ class SupabaseSchemaManager:
                 print(f"   SQL: {preview}")
                 
                 try:
-                    result = await self.service.execute_query(command, use_admin=True)
+                    result = self.service.execute_query(command, use_admin=True)
                     
                     if result['success']:
                         print(f"   ✅ Sucesso")
@@ -143,7 +148,7 @@ class SupabaseSchemaManager:
             self.print_status("Erro", f"Falha na aplicação do schema: {e}", False)
             return False
     
-    async def verify_schema(self) -> bool:
+    def verify_schema(self) -> bool:
         """Verifica se todas as tabelas foram criadas"""
         self.print_header("VERIFICAÇÃO DO SCHEMA")
         
@@ -161,7 +166,7 @@ class SupabaseSchemaManager:
             ORDER BY table_name;
             """
             
-            result = await self.service.execute_query(query, use_admin=True)
+            result = self.service.execute_query(query, use_admin=True)
             
             if result['success']:
                 tables = result['data']
@@ -198,7 +203,7 @@ class SupabaseSchemaManager:
                 ORDER BY tablename, indexname;
                 """
                 
-                index_result = await self.service.execute_query(index_query, use_admin=True)
+                index_result = self.service.execute_query(index_query, use_admin=True)
                 if index_result['success']:
                     indexes = index_result['data']
                     print(f"\n📇 ÍNDICES CRIADOS: {len(indexes)}")
@@ -221,14 +226,14 @@ class SupabaseSchemaManager:
             self.print_status("Erro", f"Exceção na verificação: {e}", False)
             return False
     
-    async def run_full_deployment(self) -> Dict[str, bool]:
+    def run_full_deployment(self) -> Dict[str, bool]:
         """Executa o deployment completo do schema"""
         print("🚀 INICIANDO DEPLOYMENT DO SCHEMA SUPABASE")
         
         results = {}
         
         # 1. Inicializa serviço
-        results['initialization'] = await self.initialize_service()
+        results['initialization'] = self.initialize_service()
         if not results['initialization']:
             return results
         
@@ -239,10 +244,10 @@ class SupabaseSchemaManager:
             return results
         
         # 3. Aplica schema
-        results['schema_apply'] = await self.apply_schema(schema_sql)
+        results['schema_apply'] = self.apply_schema(schema_sql)
         
         # 4. Verifica resultado
-        results['verification'] = await self.verify_schema()
+        results['verification'] = self.verify_schema()
         
         # Resultado final
         self.print_header("RESULTADO FINAL DO DEPLOYMENT")
@@ -261,10 +266,10 @@ class SupabaseSchemaManager:
         
         return results
 
-async def main():
+def main():
     """Função principal"""
     manager = SupabaseSchemaManager()
-    results = await manager.run_full_deployment()
+    results = manager.run_full_deployment()
     
     # Código de saída
     exit_code = 0 if all(results.values()) else 1
@@ -272,4 +277,4 @@ async def main():
 
 if __name__ == "__main__":
     # Executa deployment
-    asyncio.run(main())
+    main()

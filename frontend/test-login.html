@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login - COSTAR AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #3730a3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .loading {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>🔐 Teste de Login - COSTAR AI</h1>
+        <p>Use as credenciais: <strong>admin@costar.com</strong> / <strong>admin123</strong></p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="admin@costar.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" value="admin123" required>
+            </div>
+
+            <button type="submit">🚀 Fazer Login</button>
+        </form>
+
+        <div id="result" class="result" style="display:none;"></div>
+
+        <div style="margin-top: 20px;">
+            <button onclick="testAdminDashboard()" id="dashboardBtn" style="display:none; background: #10b981;">
+                📊 Acessar Dashboard Admin
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '⏳ Fazendo login...';
+
+            try {
+                const response = await fetch('/api/members/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    authToken = result.access_token;
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('userInfo', JSON.stringify(result.user));
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ LOGIN BEM-SUCEDIDO!
+                    
+🎫 Token: ${authToken.substring(0, 50)}...
+👤 Email: ${result.user.email}
+👑 Role: ${result.user.role}
+📛 ID: ${result.user.id}
+
+Token salvo no localStorage!`;
+
+                    document.getElementById('dashboardBtn').style.display = 'block';
+
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ ERRO NO LOGIN:
+                    
+Status: ${response.status}
+Erro: ${result.detail || result.message || 'Erro desconhecido'}`;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `💥 ERRO DE CONEXÃO:
+                
+${error.message}
+
+Verifique se o servidor está rodando em http://localhost:8000`;
+            }
+        });
+
+        async function testAdminDashboard() {
+            const resultDiv = document.getElementById('result');
+
+            if (!authToken) {
+                alert('❌ Primeiro faça o login!');
+                return;
+            }
+
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '⏳ Testando acesso ao dashboard admin...';
+
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ DASHBOARD ADMIN ACESSÍVEL!
+                    
+📊 Dados obtidos:
+${JSON.stringify(result, null, 2)}
+
+🎉 Agora você pode ir para: /admin-dashboard.html`;
+
+                    setTimeout(() => {
+                        if (confirm('🚀 Ir para o dashboard admin agora?')) {
+                            window.location.href = '/admin-dashboard.html';
+                        }
+                    }, 2000);
+
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ ERRO NO DASHBOARD:
+                    
+Status: ${response.status}
+Erro: ${result.detail || result.message || 'Erro desconhecido'}`;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `💥 ERRO DE CONEXÃO:
+                
+${error.message}`;
+            }
+        }
+
+        // Verificar se já há token salvo
+        window.addEventListener('load', function () {
+            const savedToken = localStorage.getItem('authToken');
+            const savedUser = localStorage.getItem('userInfo');
+
+            if (savedToken && savedUser) {
+                authToken = savedToken;
+                document.getElementById('dashboardBtn').style.display = 'block';
+
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ TOKEN ENCONTRADO NO LOCALSTORAGE!
+                
+🎫 Token: ${savedToken.substring(0, 50)}...
+👤 User: ${JSON.parse(savedUser).email}
+
+Você pode acessar o dashboard admin diretamente.`;
+            }
+        });
+    </script>
+</body>
+
+</html>

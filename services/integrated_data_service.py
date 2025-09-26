@@ -37,9 +37,6 @@ class DataService:
     
     def _initialize_supabase(self):
         """Inicializa conexão Supabase se disponível"""
-        # TEMPORÁRIO: Forçar modo demo até que Supabase esteja 100% funcional
-        print("ℹ️  Usando modo demo (Supabase será habilitado posteriormente)")
-        return
         
         if not SUPABASE_AVAILABLE:
             print("ℹ️  Supabase não disponível - usando modo demo")

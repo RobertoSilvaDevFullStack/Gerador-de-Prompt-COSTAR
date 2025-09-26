@@ -1,1 +1,76 @@
-[]
+[
+  {
+    "user_id": "20ba0c39-a1c9-41be-890b-0744488b8277",
+    "username": "admin",
+    "email": "admin@costar.com",
+    "subscription_plan": "SubscriptionPlan.FREE",
+    "created_at": "2025-09-26 14:22:42.302849",
+    "last_login": "2025-09-26 14:22:42.302851",
+    "preferences": {
+      "default_style": "professional",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini"
+      ],
+      "auto_save_prompts": true,
+      "email_notifications": true,
+      "theme": "light"
+    },
+    "usage_stats": {
+      "total_prompts": 0,
+      "templates_created": 0,
+      "templates_shared": 0
+    },
+    "custom_templates": [],
+    "api_quota": {
+      "monthly_prompts": 50,
+      "saved_templates": 5,
+      "api_providers": [
+        "gemini"
+      ],
+      "advanced_features": false
+    },
+    "usage_current_month": {
+      "prompts_generated": 0,
+      "api_calls": 0,
+      "tokens_used": 0
+    }
+  },
+  {
+    "user_id": "1614c279-3469-4c6e-b248-c42fcd3afd97",
+    "username": "Test User",
+    "email": "test.user@gmail.com",
+    "subscription_plan": "SubscriptionPlan.FREE",
+    "created_at": "2025-09-26 16:25:21.793711",
+    "last_login": "2025-09-26 16:25:21.793714",
+    "preferences": {
+      "default_style": "professional",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini"
+      ],
+      "auto_save_prompts": true,
+      "email_notifications": true,
+      "theme": "light"
+    },
+    "usage_stats": {
+      "total_prompts": 0,
+      "templates_created": 0,
+      "templates_shared": 0
+    },
+    "custom_templates": [],
+    "api_quota": {
+      "monthly_prompts": 50,
+      "saved_templates": 5,
+      "api_providers": [
+        "gemini"
+      ],
+      "advanced_features": false
+    },
+    "usage_current_month": {
+      "prompts_generated": 0,
+      "api_calls": 0,
+      "tokens_used": 0
+    }
+  }
+]

@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-Script para criar usuário administrador padrão
+Script para criar usuário administrador no Supabase
 """
-
-import os
 import sys
-import json
-import hashlib
-import uuid
-from datetime import datetime
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+from services.supabase_auth_service import SupabaseAuthService
+import getpass
 
 def create_admin_user():
     """Criar usuário administrador padrão"""
