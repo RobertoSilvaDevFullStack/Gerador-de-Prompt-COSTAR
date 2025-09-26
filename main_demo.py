@@ -1343,6 +1343,37 @@ async def catch_all(path: str):
     # Se não encontrar o arquivo, retornar 404
     raise HTTPException(status_code=404, detail=f"Arquivo {path} não encontrado")
 
+# Rotas específicas para páginas HTML
+@app.get("/admin-dashboard.html")
+async def admin_dashboard():
+    """Servir página do dashboard administrativo"""
+    try:
+        with open("frontend/admin-dashboard.html", "r", encoding="utf-8") as f:
+            content = f.read()
+        return Response(content=content, media_type="text/html")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Dashboard admin não encontrado")
+
+@app.get("/member-area.html") 
+async def member_area():
+    """Servir página da área de membros"""
+    try:
+        with open("frontend/member-area.html", "r", encoding="utf-8") as f:
+            content = f.read()
+        return Response(content=content, media_type="text/html")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Área de membros não encontrada")
+
+@app.get("/admin")
+async def admin_redirect():
+    """Redirecionar /admin para dashboard"""
+    return HTMLResponse("""<script>window.location.href='/admin-dashboard.html';</script>""")
+
+@app.get("/member")
+async def member_redirect():
+    """Redirecionar /member para área de membros"""
+    return HTMLResponse("""<script>window.location.href='/member-area.html';</script>""")
+
 # Executar aplicação
 if __name__ == "__main__":
     import uvicorn

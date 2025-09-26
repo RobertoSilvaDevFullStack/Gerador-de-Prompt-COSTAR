@@ -1,20 +1,17 @@
 {
-    "folders": [
-        {
-            "name": "COSTAR Generator",
-            "path": "."
-        }
-    ],
-    "settings": {
-        "python.defaultInterpreterPath": "./.venv/Scripts/python.exe",
-        "python.analysis.typeCheckingMode": "off",
-        "python.analysis.autoSearchPaths": true,
-        "python.analysis.diagnosticMode": "openFilesOnly"
-    },
-    "extensions": {
-        "recommendations": [
-            "ms-python.python",
-            "ms-python.vscode-pylance"
-        ]
+  "folders": [
+    {
+      "name": "COSTAR Generator",
+      "path": "."
     }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "./.venv/Scripts/python.exe",
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.diagnosticMode": "openFilesOnly"
+  },
+  "extensions": {
+    "recommendations": ["ms-python.python", "ms-python.vscode-pylance"]
+  }
 }
