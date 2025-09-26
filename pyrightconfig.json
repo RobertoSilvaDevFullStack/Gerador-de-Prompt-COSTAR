@@ -4,16 +4,31 @@
     ],
     "exclude": [
         "**/__pycache__",
-        "**/*.pyc"
+        "**/*.pyc",
+        "**/node_modules",
+        "**/.venv",
+        "**/venv"
     ],
     "extraPaths": [
         ".",
         "./services",
-        "./scripts"
+        "./routes",
+        "./scripts",
+        "./debug",
+        "./tests"
     ],
     "pythonVersion": "3.13",
+    "pythonPlatform": "Windows",
     "typeCheckingMode": "basic",
     "useLibraryCodeForTypes": true,
-    "reportMissingImports": false,
-    "reportMissingTypeStubs": false
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": "none",
+    "reportPrivateImportUsage": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownArgumentType": "none",
+    "reportGeneralTypeIssues": "warning",
+    "strictListInference": false,
+    "strictDictionaryInference": false,
+    "strictSetInference": false
 }

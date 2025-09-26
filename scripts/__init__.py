@@ -1,0 +1,1 @@
+# Scripts package for COSTAR Prompt Generator
