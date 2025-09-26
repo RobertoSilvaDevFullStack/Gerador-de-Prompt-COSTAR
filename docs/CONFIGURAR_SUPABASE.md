@@ -54,6 +54,7 @@ GROQ_API_KEY=sua_chave_groq
 ### 4️⃣ **Testar Conexão**
 
 Execute o teste:
+
 ```bash
 python tests/test_supabase_connection.py
 ```
@@ -63,6 +64,7 @@ Deve exibir: ✅ **Conexão estabelecida com sucesso!**
 ### 5️⃣ **Próximos Passos Automáticos**
 
 Após configurar, executaremos automaticamente:
+
 - ✅ Criação das tabelas do banco
 - ✅ Configuração de autenticação
 - ✅ Políticas de segurança (Row Level Security)
@@ -82,6 +84,7 @@ Após configurar, executaremos automaticamente:
 ## 📞 **Suporte**
 
 Se encontrar problemas:
+
 1. Verifique se o projeto Supabase está "Active"
 2. Confirme se copiou as chaves corretamente
 3. Teste a conexão com o script fornecido

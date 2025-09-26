@@ -108,10 +108,51 @@ class SupabaseService:
                 }
             }
     
-    def execute_query(self, table: str, operation: str, data: Dict[str, Any] = None, 
-                     filters: Dict[str, Any] = None, admin: bool = False) -> Dict[str, Any]:
+    def execute_query(self, query: str, params: List[Any] = None, use_admin: bool = False) -> Dict[str, Any]:
         """
-        Executar query genérica no Supabase
+        Executa query SQL bruta no Supabase
+        
+        Args:
+            query: Query SQL para executar
+            params: Parâmetros para a query (opcional)
+            use_admin: Usar cliente admin (sem RLS)
+        """
+        if not self.is_enabled():
+            return {"success": False, "error": "Supabase não habilitado"}
+
+        try:
+            client = self.get_client(admin=use_admin)
+            
+            # Para queries SQL brutas, usamos rpc ou postgrest
+            # Como o supabase-py não suporta SQL bruto diretamente,
+            # vamos usar uma abordagem alternativa com table operations
+            
+            # Se é uma query SELECT simples de metadados
+            if "information_schema" in query.lower():
+                # Infelizmente, o cliente Python do Supabase não suporta
+                # queries SQL brutas diretamente. Vamos retornar erro
+                return {
+                    "success": False,
+                    "error": "Queries SQL brutas não suportadas pelo cliente Python. Use table operations."
+                }
+            
+            # Para outras queries, também não é suportado
+            return {
+                "success": False,
+                "error": "Query SQL bruta não suportada. Use métodos específicos de tabela."
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Erro na execução da query: {e}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    def table_operation(self, table: str, operation: str, data: Dict[str, Any] = None, 
+                       filters: Dict[str, Any] = None, admin: bool = False) -> Dict[str, Any]:
+        """
+        Executar operação de tabela no Supabase
         
         Args:
             table: Nome da tabela
@@ -121,8 +162,8 @@ class SupabaseService:
             admin: Usar cliente admin (sem RLS)
         """
         if not self.is_enabled():
-            return {"error": "Supabase não habilitado"}
-        
+            return {"success": False, "error": "Supabase não habilitado"}
+
         try:
             client = self.get_client(admin=admin)
             query = client.table(table)
@@ -149,7 +190,7 @@ class SupabaseService:
                 result = query.delete().execute()
             
             else:
-                return {"error": f"Operação '{operation}' não suportada"}
+                return {"success": False, "error": f"Operação '{operation}' não suportada"}
             
             return {
                 "success": True,
@@ -158,12 +199,11 @@ class SupabaseService:
             }
             
         except Exception as e:
-            logger.error(f"❌ Erro na query {operation} em {table}: {e}")
+            logger.error(f"❌ Erro na operação {operation} em {table}: {e}")
             return {
+                "success": False,
                 "error": str(e),
                 "operation": operation,
                 "table": table
-            }
-
-# Instância global do serviço
+            }# Instância global do serviço
 supabase_service = SupabaseService()

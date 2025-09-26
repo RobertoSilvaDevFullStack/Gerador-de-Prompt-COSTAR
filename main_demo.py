@@ -47,6 +47,16 @@ except ImportError as e:
 except Exception as e:
     logger.error(f"❌ Erro ao carregar rotas de membros/admin: {e}")
 
+# Tentar importar e incluir as rotas de status
+try:
+    from routes.status_routes import router as status_router
+    app.include_router(status_router)
+    logger.info("✅ Rotas de status carregadas com sucesso")
+except ImportError as e:
+    logger.warning(f"⚠️ Não foi possível carregar rotas de status: {e}")
+except Exception as e:
+    logger.error(f"❌ Erro ao carregar rotas de status: {e}")
+
 # Verificar serviços disponíveis
 supabase_enabled = bool(os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_ANON_KEY") and 
                        os.getenv("SUPABASE_URL") != "your_supabase_url_here" and
