@@ -780,8 +780,8 @@ async def get_system_logs(
     
     logs = []
     log_files = [
-        "server.log",
-        "server_output.log"
+        "logs/server.log",
+        "logs/server_output.log"
     ]
     
     # Adicionar logs da pasta logs/ se existir

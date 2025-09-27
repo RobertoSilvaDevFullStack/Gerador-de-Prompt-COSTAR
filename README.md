@@ -36,29 +36,56 @@ cd scripts
 ## 📁 Estrutura do Projeto
 
 ```
-├── 📁 docs/                    # Documentação completa
-│   ├── README.md              # Documentação detalhada
-│   ├── ANALISE_PROJETO.md     # Análise técnica
-│   ├── CONFIGURAR_GEMINI.md   # Setup da API Gemini
-│   └── MELHORIAS_IA.md        # Histórico de melhorias
-├── 📁 frontend/               # Interface web
-│   ├── index.html            # Aplicação principal
-│   └── sw.js                 # Service Worker
-├── 📁 docker/                 # Containerização
-│   ├── docker-compose.yml    # Orquestração
-│   ├── Dockerfile.demo       # Imagem da aplicação
-│   └── nginx.conf            # Configuração proxy
-├── 📁 scripts/               # Scripts de automação
-│   ├── start.bat            # Inicialização Windows
-│   └── start.sh             # Inicialização Linux/Mac
-├── 📁 services/              # Serviços backend
-│   ├── multi_ai_service.py   # Sistema Multi-IA
-│   ├── gemini_service.py     # Serviço Gemini
-│   └── outros serviços...    # Cache, backup, etc.
-├── 📁 database/              # Migrações DB
-├── 📁 backups/               # Backups automáticos
-├── main_demo.py              # Aplicação principal
-└── requirements.txt          # Dependências Python
+├── 📁 config/                 # Configurações centralizadas
+│   ├── __init__.py           # Módulo Python
+│   ├── supabase_config.py    # Config Supabase
+│   └── paths.py              # Caminhos do projeto
+├── 📁 data/                   # Dados da aplicação
+│   ├── users.json            # Dados de usuários
+│   ├── saved_templates.json  # Templates salvos
+│   └── system_metrics.json   # Métricas do sistema
+├── 📁 docs/                   # Documentação completa
+│   ├── README.md             # Documentação detalhada
+│   ├── ANALISE_PROJETO.md    # Análise técnica
+│   ├── CONFIGURAR_GEMINI.md  # Setup da API Gemini
+│   ├── IMPLEMENTACAO_CONCLUIDA.md  # Status da implementação
+│   └── STRUCTURE.md          # Estrutura do projeto
+├── 📁 frontend/              # Interface web
+│   ├── index.html           # Aplicação principal
+│   ├── member-area.html     # Painel de membros
+│   ├── admin-dashboard.html # Dashboard admin
+│   └── sw.js                # Service Worker
+├── 📁 logs/                  # Logs do sistema
+│   ├── server.log           # Log do servidor
+│   └── server_output.log    # Output do servidor
+├── 📁 routes/               # Rotas da API
+│   ├── member_admin_routes.py  # Rotas de membros e admin
+│   └── status_routes.py     # Status da aplicação
+├── 📁 scripts/              # Scripts de automação
+│   ├── start.bat           # Inicialização Windows
+│   ├── start.sh            # Inicialização Linux/Mac
+│   └── setup_costar_users_table.py  # Setup DB
+├── 📁 services/             # Serviços backend
+│   ├── multi_ai_service.py  # Sistema Multi-IA
+│   ├── supabase_auth_service.py  # Autenticação
+│   ├── member_area_service.py     # Área de membros
+│   └── admin_analytics_service.py # Analytics admin
+├── 📁 tests/               # Testes automatizados
+│   └── test_*.py           # Arquivos de teste
+├── 📁 tools/               # Ferramentas e utilitários
+│   ├── batch/              # Scripts batch Windows
+│   │   ├── debug_jwt.bat   # Debug JWT
+│   │   └── test_complete.bat  # Teste completo
+│   └── testing/            # Scripts de teste Python
+│       ├── test_members.py # Teste de membros
+│       └── test_quick.py   # Teste rápido
+├── 📁 docker/              # Containerização
+│   ├── docker-compose.yml  # Orquestração
+│   └── Dockerfile.demo     # Imagem da aplicação
+├── main.py                 # Servidor principal
+├── main_demo.py            # Servidor de demonstração
+├── requirements.txt        # Dependências Python
+└── .env                    # Variáveis de ambiente
 ```
 
 ## ⚙️ Configuração Multi-IA

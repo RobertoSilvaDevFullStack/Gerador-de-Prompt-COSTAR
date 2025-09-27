@@ -1,9 +1,9 @@
 @echo off
 echo Iniciando servidor em background...
-start /B python main.py > server.log 2>&1
+start /B python ../../main.py > ../../logs/server.log 2>&1
 timeout /T 5 /NOBREAK
 echo Debug da role do usuário...
-python scripts/debug_user_role.py
+python ../../scripts/debug_user_role.py
 echo.
 echo Parando servidor...
 taskkill /F /IM python.exe /FI "WINDOWTITLE eq main.py*" 2>nul

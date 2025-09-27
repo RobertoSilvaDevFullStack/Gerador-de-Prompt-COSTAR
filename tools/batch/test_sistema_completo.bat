@@ -2,7 +2,7 @@
 REM Script para testar o sistema com servidor em background
 
 echo 🚀 Iniciando servidor em background...
-start /B cmd /c "python main_demo.py > server_output.log 2>&1"
+start /B cmd /c "python ../../main_demo.py > ../../logs/server_output.log 2>&1"
 
 echo ⏱️ Aguardando servidor inicializar...
 timeout /T 3 /NOBREAK > nul
