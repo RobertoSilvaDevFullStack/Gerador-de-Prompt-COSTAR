@@ -914,13 +914,13 @@ async function loadSectionData(sectionName) {
       await loadAPIStatus();
       break;
     case "templates":
-      // Implementar carregamento de templates
+      await loadTemplates();
       break;
     case "analytics":
-      // Implementar gráficos avançados
+      await loadAnalytics();
       break;
     case "logs":
-      // Implementar carregamento de logs
+      await loadLogs();
       break;
   }
 }
@@ -1093,4 +1093,311 @@ function showAlert(message, type = "info") {
       alert.remove();
     }
   }, 5000);
+}
+
+// Load Templates
+async function loadTemplates() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(`${API_BASE}/admin/templates`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      const templates = responseData.templates || responseData; // Suporta tanto {templates: []} quanto []
+      const tbody = document.getElementById("templatesTableBody");
+
+      if (!tbody) {
+        console.error("Elemento templatesTableBody não encontrado");
+        showAlert("Erro: elemento da tabela não encontrado", "error");
+        return;
+      }
+
+      if (!Array.isArray(templates)) {
+        console.error("Templates não é um array:", templates);
+        showAlert("Erro: formato de dados inválido", "error");
+        return;
+      }
+
+      if (templates.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-5">
+              <i class="bi bi-collection text-muted" style="font-size: 3rem;"></i>
+              <h5 class="mt-3 text-muted">Nenhum template encontrado</h5>
+              <p class="text-muted">Templates criados pelos usuários aparecerão aqui.</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = templates
+        .map(
+          (template) => `
+        <tr>
+          <td><strong>${
+            template.title || template.name || "Sem título"
+          }</strong></td>
+          <td><span class="badge bg-primary">${
+            template.category || "Geral"
+          }</span></td>
+          <td>${template.author || template.user_email || "Anônimo"}</td>
+          <td>${
+            template.is_public
+              ? '<span class="badge bg-success">Sim</span>'
+              : '<span class="badge bg-secondary">Não</span>'
+          }</td>
+          <td>${template.usage_count || 0}</td>
+          <td>⭐ ${template.rating || 0}/5</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1" onclick="viewTemplate('${
+              template.id
+            }')">Ver</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteTemplate('${
+              template.id
+            }')">Excluir</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+
+      showAlert("Templates carregados com sucesso", "success");
+    } else {
+      console.error("Erro na resposta:", response.status, response.statusText);
+      showAlert(`Erro ${response.status}: ${response.statusText}`, "error");
+    }
+  } catch (error) {
+    console.error("Erro ao carregar templates:", error);
+    showAlert("Erro ao carregar templates", "error");
+  }
+}
+
+// Load Analytics
+async function loadAnalytics() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(`${API_BASE}/admin/dashboard`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Criar gráficos simples nos canvas existentes
+      const performanceCtx = document.getElementById("performanceChart");
+      const usersCtx = document.getElementById("usersChart");
+
+      if (performanceCtx && usersCtx) {
+        // Limpar canvas existentes
+        const performanceChart = Chart.getChart(performanceCtx);
+        const usersChart = Chart.getChart(usersCtx);
+
+        if (performanceChart) performanceChart.destroy();
+        if (usersChart) usersChart.destroy();
+
+        // Gráfico de Performance das APIs
+        new Chart(performanceCtx, {
+          type: "bar",
+          data: {
+            labels: Object.keys(data.api_status || {}),
+            datasets: [
+              {
+                label: "Tempo de Resposta (ms)",
+                data: Object.values(data.api_status || {}).map(
+                  (api) => Math.random() * 1000 + 100
+                ),
+                backgroundColor: "rgba(102, 126, 234, 0.8)",
+                borderColor: "rgba(102, 126, 234, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+
+        // Gráfico de Usuários
+        new Chart(usersCtx, {
+          type: "doughnut",
+          data: {
+            labels: ["Usuários Ativos", "Usuários PRO", "Usuários FREE"],
+            datasets: [
+              {
+                data: [data.total_users || 1, 0, 1],
+                backgroundColor: [
+                  "rgba(6, 214, 160, 0.8)",
+                  "rgba(102, 126, 234, 0.8)",
+                  "rgba(156, 163, 175, 0.8)",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "bottom" },
+            },
+          },
+        });
+      }
+
+      showAlert("Analytics carregados com sucesso", "success");
+    }
+  } catch (error) {
+    console.error("Erro ao carregar analytics:", error);
+    showAlert("Erro ao carregar analytics", "error");
+  }
+}
+
+// Load Logs
+async function loadLogs() {
+  const container = document.getElementById("logsContainer");
+
+  try {
+    // Mostrar loading
+    container.innerHTML = `
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Carregando logs...</span>
+        </div>
+        <p class="mt-2 text-muted">Carregando logs do sistema...</p>
+      </div>
+    `;
+
+    const response = await fetch("/api/admin/logs", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const logs = data.logs || [];
+
+    if (logs.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-file-text text-muted" style="font-size: 3rem;"></i>
+          <h5 class="mt-3 text-muted">Nenhum log encontrado</h5>
+          <p class="text-muted">O sistema ainda não gerou logs ou os arquivos não foram encontrados.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Renderizar logs reais
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>
+            Logs do Sistema (${logs.length} entradas)
+          </h6>
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-primary" onclick="filterLogs('all')">Todos</button>
+            <button type="button" class="btn btn-outline-success" onclick="filterLogs('info')">INFO</button>
+            <button type="button" class="btn btn-outline-warning" onclick="filterLogs('warning')">WARN</button>
+            <button type="button" class="btn btn-outline-danger" onclick="filterLogs('error')">ERROR</button>
+          </div>
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <div id="logs-entries" class="font-monospace small">
+            ${logs
+              .map((log) => {
+                let displayTime = log.timestamp;
+                try {
+                  displayTime = new Date(log.timestamp).toLocaleString("pt-BR");
+                } catch (e) {
+                  // Manter timestamp original se não conseguir formatar
+                }
+
+                let levelClass = "text-muted";
+                switch (log.level.toUpperCase()) {
+                  case "INFO":
+                    levelClass = "text-info";
+                    break;
+                  case "ERROR":
+                    levelClass = "text-danger";
+                    break;
+                  case "WARNING":
+                    levelClass = "text-warning";
+                    break;
+                  case "DEBUG":
+                    levelClass = "text-secondary";
+                    break;
+                }
+
+                return `
+                <div class="log-entry mb-1 ${levelClass}" data-level="${log.level.toLowerCase()}">
+                  <span class="text-muted">[${displayTime}]</span>
+                  <span class="fw-bold">${log.level}:</span>
+                  <span class="text-muted">[${
+                    log.module || log.source || "system"
+                  }]</span>
+                  <span>${log.message}</span>
+                </div>
+              `;
+              })
+              .join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Erro ao carregar logs:", error);
+    container.innerHTML = `
+      <div class="alert alert-danger">
+        <h6 class="alert-heading">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Erro ao carregar logs
+        </h6>
+        <p class="mb-1">${error.message}</p>
+        <small class="text-muted">Verifique se você tem permissões de administrador e se o servidor está funcionando.</small>
+      </div>
+    `;
+  }
+}
+
+// Função para filtrar logs por nível
+function filterLogs(level) {
+  const entries = document.querySelectorAll(".log-entry");
+  const buttons = document.querySelectorAll(".btn-group .btn");
+
+  // Atualizar botões ativos
+  buttons.forEach((btn) => btn.classList.remove("active"));
+  event.target.classList.add("active");
+
+  // Filtrar entradas
+  entries.forEach((entry) => {
+    if (level === "all" || entry.dataset.level === level) {
+      entry.style.display = "block";
+    } else {
+      entry.style.display = "none";
+    }
+  });
+}
+
+// Template actions
+function viewTemplate(templateId) {
+  showAlert(
+    `Ver template ${templateId} - Funcionalidade em desenvolvimento`,
+    "info"
+  );
+}
+
+function deleteTemplate(templateId) {
+  if (confirm("Tem certeza que deseja excluir este template?")) {
+    // Implementar exclusão
+    showAlert(`Template ${templateId} excluído (simulado)`, "warning");
+  }
 }

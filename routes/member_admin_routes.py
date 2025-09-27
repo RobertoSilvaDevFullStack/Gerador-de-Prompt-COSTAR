@@ -517,6 +517,119 @@ async def export_analytics(admin_user = Depends(get_admin_user)):
     
     return export_data
 
+@admin_router.get("/logs")
+async def get_system_logs(
+    admin_user = Depends(get_admin_user),
+    level: Optional[str] = "all",
+    limit: Optional[int] = 100
+):
+    """Obter logs do sistema"""
+    import os
+    import re
+    from datetime import datetime
+    
+    logs = []
+    log_files = [
+        "server.log",
+        "server_output.log"
+    ]
+    
+    # Adicionar logs da pasta logs/ se existir
+    logs_dir = "logs"
+    if os.path.exists(logs_dir):
+        for file in os.listdir(logs_dir):
+            if file.endswith('.log'):
+                log_files.append(os.path.join(logs_dir, file))
+    
+    # Ler logs de todos os arquivos
+    for log_file in log_files:
+        if os.path.exists(log_file):
+            try:
+                with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
+                    lines = f.readlines()
+                    
+                for line in lines:
+                    line = line.strip()
+                    if not line:
+                        continue
+                        
+                    # Parse do log line
+                    log_entry = parse_log_line(line, log_file)
+                    if log_entry and (level == "all" or log_entry["level"].lower() == level.lower()):
+                        logs.append(log_entry)
+                        
+            except Exception as e:
+                # Se houver erro ao ler o arquivo, adiciona como log de erro
+                logs.append({
+                    "timestamp": datetime.now().isoformat(),
+                    "level": "ERROR",
+                    "message": f"Erro ao ler {log_file}: {str(e)}",
+                    "source": "admin_logs_reader"
+                })
+    
+    # Ordenar por timestamp (mais recentes primeiro)
+    logs.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+    
+    # Limitar resultados
+    logs = logs[:limit]
+    
+    return {
+        "logs": logs,
+        "total": len(logs),
+        "level_filter": level,
+        "limit": limit
+    }
+
+def parse_log_line(line: str, source_file: str) -> dict:
+    """Parse de uma linha de log"""
+    # Patterns para diferentes formatos de log
+    patterns = [
+        # Formato: INFO:module:message
+        r'(?P<level>INFO|ERROR|WARNING|DEBUG):(?P<module>[^:]+):(?P<message>.*)',
+        # Formato: [timestamp] LEVEL: message  
+        r'\[(?P<timestamp>[^\]]+)\]\s+(?P<level>INFO|ERROR|WARNING|DEBUG):\s*(?P<message>.*)',
+        # Formato uvicorn: INFO:     message
+        r'(?P<level>INFO|ERROR|WARNING|DEBUG):\s+(?P<message>.*)',
+        # Formato genérico
+        r'(?P<message>.*)'
+    ]
+    
+    for pattern in patterns:
+        match = re.match(pattern, line)
+        if match:
+            groups = match.groupdict()
+            
+            # Determinar nível se não foi capturado
+            level = groups.get('level', 'INFO')
+            if not level:
+                if 'error' in line.lower() or 'exception' in line.lower():
+                    level = 'ERROR'
+                elif 'warning' in line.lower() or 'warn' in line.lower():
+                    level = 'WARNING' 
+                else:
+                    level = 'INFO'
+            
+            # Timestamp
+            timestamp = groups.get('timestamp')
+            if not timestamp:
+                # Usar timestamp do arquivo se disponível
+                try:
+                    import os
+                    mtime = os.path.getmtime(source_file)
+                    timestamp = datetime.fromtimestamp(mtime).isoformat()
+                except:
+                    timestamp = datetime.now().isoformat()
+            
+            return {
+                "timestamp": timestamp,
+                "level": level,
+                "message": groups.get('message', line),
+                "module": groups.get('module', 'system'),
+                "source": source_file
+            }
+    
+    return None
+
 # Log de atividade para analytics
 def log_api_usage(provider: str, user_id: str, prompt_type: str, response_time: float, 
                  success: bool, error_message: Optional[str] = None):
