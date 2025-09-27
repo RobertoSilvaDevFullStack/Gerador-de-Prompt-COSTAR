@@ -376,3 +376,31 @@ class SupabaseAuthService(SupabaseService):
             
         except Exception:
             return False
+    
+    def update_user_password(self, user_id: str, new_password: str) -> bool:
+        """Atualizar senha do usuário"""
+        if not self.enabled:
+            return False
+        
+        try:
+            # Hash da nova senha
+            password_hash = self._hash_password(new_password)
+            
+            # Atualizar no Supabase
+            result = self.admin_client.table("costar_users").update({
+                "password_hash": password_hash,
+                "updated_at": datetime.now().isoformat()
+            }).eq("id", user_id).execute()
+            
+            success = len(result.data) > 0
+            
+            if success:
+                logger.info(f"✅ Senha atualizada para usuário {user_id}")
+            else:
+                logger.error(f"❌ Falha ao atualizar senha para usuário {user_id}")
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao atualizar senha: {e}")
+            return False

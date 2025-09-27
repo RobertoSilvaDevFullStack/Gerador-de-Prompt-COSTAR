@@ -433,3 +433,154 @@ class MemberAreaService:
         """Salvar templates"""
         with open(self.templates_file, 'w') as f:
             json.dump(templates, f, indent=2, default=str)
+    
+    def create_subscription(self, user_id: str, subscription_data: Dict[str, Any]) -> bool:
+        """Criar nova assinatura"""
+        try:
+            # Carregar dados existentes
+            subscriptions_file = os.path.join("data", "subscriptions.json")
+            subscriptions = []
+            
+            if os.path.exists(subscriptions_file):
+                try:
+                    with open(subscriptions_file, 'r') as f:
+                        subscriptions = json.load(f)
+                except json.JSONDecodeError:
+                    subscriptions = []
+            
+            # Adicionar nova assinatura
+            subscription_data['id'] = str(uuid.uuid4())
+            subscriptions.append(subscription_data)
+            
+            # Salvar
+            with open(subscriptions_file, 'w') as f:
+                json.dump(subscriptions, f, indent=2, default=str)
+            
+            # Atualizar perfil do usuário
+            plan_map = {
+                "premium": SubscriptionPlan.PREMIUM,
+                "enterprise": SubscriptionPlan.ENTERPRISE
+            }
+            
+            new_plan = plan_map.get(subscription_data.get("plan"), SubscriptionPlan.FREE)
+            self.upgrade_subscription(user_id, new_plan)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao criar assinatura: {e}")
+            return False
+    
+    def cancel_subscription(self, user_id: str) -> bool:
+        """Cancelar assinatura"""
+        try:
+            # Carregar assinaturas
+            subscriptions_file = os.path.join("data", "subscriptions.json")
+            subscriptions = []
+            
+            if os.path.exists(subscriptions_file):
+                try:
+                    with open(subscriptions_file, 'r') as f:
+                        subscriptions = json.load(f)
+                except json.JSONDecodeError:
+                    subscriptions = []
+            
+            # Encontrar e cancelar assinatura do usuário
+            for subscription in subscriptions:
+                if subscription.get("user_id") == user_id:
+                    subscription["status"] = "cancelled"
+                    subscription["cancelled_at"] = datetime.now().isoformat()
+                    break
+            
+            # Salvar alterações
+            with open(subscriptions_file, 'w') as f:
+                json.dump(subscriptions, f, indent=2, default=str)
+            
+            # Rebaixar para plano gratuito
+            self.upgrade_subscription(user_id, SubscriptionPlan.FREE)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao cancelar assinatura: {e}")
+            return False
+    
+    def get_subscription_details(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Obter detalhes da assinatura"""
+        try:
+            subscriptions_file = os.path.join("data", "subscriptions.json")
+            
+            if not os.path.exists(subscriptions_file):
+                return None
+            
+            with open(subscriptions_file, 'r') as f:
+                subscriptions = json.load(f)
+            
+            # Encontrar assinatura ativa do usuário
+            for subscription in subscriptions:
+                if (subscription.get("user_id") == user_id and 
+                    subscription.get("status") == "active"):
+                    return subscription
+            
+            return None
+            
+        except Exception as e:
+            print(f"Erro ao obter detalhes da assinatura: {e}")
+            return None
+    
+    def get_payment_history(self, user_id: str) -> List[Dict[str, Any]]:
+        """Obter histórico de pagamentos"""
+        try:
+            payments_file = os.path.join("data", "payments.json")
+            
+            if not os.path.exists(payments_file):
+                return []
+            
+            with open(payments_file, 'r') as f:
+                payments = json.load(f)
+            
+            # Filtrar pagamentos do usuário
+            user_payments = [
+                payment for payment in payments 
+                if payment.get("user_id") == user_id
+            ]
+            
+            # Ordenar por data (mais recentes primeiro)
+            user_payments.sort(
+                key=lambda x: x.get("created_at", ""),
+                reverse=True
+            )
+            
+            return user_payments
+            
+        except Exception as e:
+            print(f"Erro ao obter histórico de pagamentos: {e}")
+            return []
+    
+    def update_user_profile(self, user_id: str, profile_data: Dict[str, Any]) -> bool:
+        """Atualizar perfil do usuário com dados customizados"""
+        try:
+            profiles = self._load_member_profiles()
+            
+            for profile in profiles:
+                if profile.get("user_id") == user_id:
+                    # Fazer merge dos dados
+                    profile.update(profile_data)
+                    profile["updated_at"] = datetime.now().isoformat()
+                    break
+            else:
+                # Se não encontrar, criar novo perfil
+                new_profile = {
+                    "user_id": user_id,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat()
+                }
+                new_profile.update(profile_data)
+                profiles.append(new_profile)
+            
+            self._save_member_profiles(profiles)
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao atualizar perfil: {e}")
+            return False

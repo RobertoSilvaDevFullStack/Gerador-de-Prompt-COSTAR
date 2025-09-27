@@ -631,3 +631,491 @@ function showAlert(message, type = "info") {
     }
   }, 5000);
 }
+
+// ===== FUNÇÕES DE SECURITY (ALTERAÇÃO DE SENHA) =====
+
+// Toggle visibility de senha
+function togglePasswordVisibility(fieldId) {
+  const field = document.getElementById(fieldId);
+  const icon = document.getElementById(fieldId + "Icon");
+
+  if (field.type === "password") {
+    field.type = "text";
+    icon.className = "bi bi-eye-slash";
+  } else {
+    field.type = "password";
+    icon.className = "bi bi-eye";
+  }
+}
+
+// Verificar força da senha
+function checkPasswordStrength(password) {
+  let strength = 0;
+  let feedback = [];
+
+  if (password.length >= 8) strength += 1;
+  else feedback.push("Pelo menos 8 caracteres");
+
+  if (/[a-z]/.test(password)) strength += 1;
+  else feedback.push("Letras minúsculas");
+
+  if (/[A-Z]/.test(password)) strength += 1;
+  else feedback.push("Letras maiúsculas");
+
+  if (/\d/.test(password)) strength += 1;
+  else feedback.push("Números");
+
+  if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+  else feedback.push("Símbolos especiais");
+
+  return { strength, feedback };
+}
+
+// Atualizar indicador de força da senha
+function updatePasswordStrength() {
+  const password = document.getElementById("newPassword").value;
+  const strengthBar = document.getElementById("passwordStrength");
+  const strengthText = document.getElementById("passwordStrengthText");
+
+  if (!password) {
+    strengthBar.style.width = "0%";
+    strengthBar.className = "progress-bar";
+    strengthText.textContent = "Digite uma nova senha para verificar a força";
+    return;
+  }
+
+  const { strength, feedback } = checkPasswordStrength(password);
+  const percentage = (strength / 5) * 100;
+
+  strengthBar.style.width = percentage + "%";
+
+  if (strength <= 2) {
+    strengthBar.className = "progress-bar bg-danger";
+    strengthText.textContent = "Fraca - Adicione: " + feedback.join(", ");
+  } else if (strength <= 3) {
+    strengthBar.className = "progress-bar bg-warning";
+    strengthText.textContent = "Média - Melhore: " + feedback.join(", ");
+  } else if (strength <= 4) {
+    strengthBar.className = "progress-bar bg-info";
+    strengthText.textContent = "Boa - Quase perfeita!";
+  } else {
+    strengthBar.className = "progress-bar bg-success";
+    strengthText.textContent = "Excelente - Senha muito segura!";
+  }
+}
+
+// Event listener para alteração de senha
+document.addEventListener("DOMContentLoaded", function () {
+  const newPasswordField = document.getElementById("newPassword");
+  if (newPasswordField) {
+    newPasswordField.addEventListener("input", updatePasswordStrength);
+  }
+
+  // Form de alteração de senha
+  const changePasswordForm = document.getElementById("changePasswordForm");
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      await handleChangePassword();
+    });
+  }
+});
+
+// Alterar senha
+async function handleChangePassword() {
+  const currentPassword = document.getElementById("currentPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  if (newPassword !== confirmPassword) {
+    showAlert("As senhas não coincidem", "danger");
+    return;
+  }
+
+  const { strength } = checkPasswordStrength(newPassword);
+  if (strength < 3) {
+    showAlert("A senha deve ser mais forte", "warning");
+    return;
+  }
+
+  try {
+    showLoading(true);
+
+    const response = await fetch(`${API_BASE}/members/change-password`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showAlert("Senha alterada com sucesso!", "success");
+      document.getElementById("changePasswordForm").reset();
+      updatePasswordStrength();
+    } else {
+      showAlert(data.message || "Erro ao alterar senha", "danger");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro de conexão", "danger");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Salvar configurações de segurança
+async function saveSecuritySettings() {
+  const twoFactorAuth = document.getElementById("twoFactorAuth").checked;
+  const loginNotifications =
+    document.getElementById("loginNotifications").checked;
+
+  try {
+    showLoading(true);
+
+    const response = await fetch(`${API_BASE}/members/security-settings`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        two_factor_auth: twoFactorAuth,
+        login_notifications: loginNotifications,
+      }),
+    });
+
+    if (response.ok) {
+      showAlert("Configurações de segurança salvas!", "success");
+    } else {
+      showAlert("Erro ao salvar configurações", "danger");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro de conexão", "danger");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// ===== FUNÇÕES DE SUBSCRIPTION (ASSINATURA) =====
+
+// Selecionar plano
+function selectPlan(planType) {
+  document.getElementById("selectedPlan").value = planType;
+
+  // Atualizar resumo do pedido
+  const planNames = {
+    premium: "Premium",
+    enterprise: "Enterprise",
+  };
+
+  const planPrices = {
+    premium: 29.0,
+    enterprise: 99.0,
+  };
+
+  const planPrice = planPrices[planType];
+  const total = planPrice + 2.5; // Taxa de processamento
+
+  document.getElementById("orderPlanName").textContent = planNames[planType];
+  document.getElementById(
+    "orderPlanPrice"
+  ).textContent = `R$ ${planPrice.toFixed(2)}/mês`;
+  document.getElementById("orderTotal").textContent = `R$ ${total.toFixed(2)}`;
+
+  // Mostrar formulário de pagamento
+  document.getElementById("paymentForm").style.display = "block";
+
+  // Scroll para o formulário
+  document.getElementById("paymentForm").scrollIntoView({ behavior: "smooth" });
+}
+
+// Preencher endereço por CEP
+async function fillAddressByCEP() {
+  const cep = document
+    .getElementById("billingZipCode")
+    .value.replace(/\D/g, "");
+
+  if (cep.length !== 8) return;
+
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await response.json();
+
+    if (!data.erro) {
+      document.getElementById("billingStreet").value = data.logradouro || "";
+      document.getElementById("billingNeighborhood").value = data.bairro || "";
+      document.getElementById("billingCity").value = data.localidade || "";
+      document.getElementById("billingState").value = data.uf || "";
+    }
+  } catch (error) {
+    console.error("Erro ao buscar CEP:", error);
+  }
+}
+
+// Detectar bandeira do cartão
+function detectCardBrand(number) {
+  const brands = {
+    visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+    mastercard: /^5[1-5][0-9]{14}$/,
+    amex: /^3[47][0-9]{13}$/,
+    discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
+    elo: /^4011(78|79)|^43(1274|8935)|^45(1416|7393|763(1|2))|^50(4175|6699|67[0-6][0-9]|677[0-8]|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9])|^627780|^63(6297|6368|6369)|^65(0(0(3([1-3]|[5-9])|4([0-9])|5[0-1])|4(0[5-9]|[1-3][0-9]|8[5-9]|9[0-9])|5([0-2][0-9]|3[0-8]|4[1-9]|[5-8][0-9]|9[0-8])|7(0[0-9]|1[0-8]|2[0-7])|9(0[1-9]|[1-6][0-9]|7[0-8]))|16(5[2-9]|[6-7][0-9])|50(0[0-9]|1[0-9]|2[1-9]|[3-4][0-9]|5[0-8]))$/,
+  };
+
+  const cleanNumber = number.replace(/\D/g, "");
+
+  for (const [brand, regex] of Object.entries(brands)) {
+    if (regex.test(cleanNumber)) {
+      return brand;
+    }
+  }
+
+  return "unknown";
+}
+
+// Formatar campos de entrada
+document.addEventListener("DOMContentLoaded", function () {
+  // Formatação de telefone
+  const phoneField = document.getElementById("billingPhone");
+  if (phoneField) {
+    phoneField.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      value = value.replace(/(\d{2})(\d)/, "($1) $2");
+      value = value.replace(/(\d{5})(\d{4})$/, "$1-$2");
+      e.target.value = value;
+    });
+  }
+
+  // Formatação de CPF/CNPJ
+  const documentField = document.getElementById("billingDocument");
+  if (documentField) {
+    documentField.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length <= 11) {
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      } else {
+        value = value.replace(/(\d{2})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1.$2");
+        value = value.replace(/(\d{3})(\d)/, "$1/$2");
+        value = value.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+      }
+      e.target.value = value;
+    });
+  }
+
+  // Formatação de CEP
+  const cepField = document.getElementById("billingZipCode");
+  if (cepField) {
+    cepField.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      value = value.replace(/(\d{5})(\d{3})$/, "$1-$2");
+      e.target.value = value;
+    });
+  }
+
+  // Formatação de número do cartão
+  const cardNumberField = document.getElementById("cardNumber");
+  if (cardNumberField) {
+    cardNumberField.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+      e.target.value = value;
+
+      // Detectar bandeira
+      const brand = detectCardBrand(value);
+      const icon = document.getElementById("cardBrandIcon");
+
+      const brandIcons = {
+        visa: "bi-credit-card",
+        mastercard: "bi-credit-card-fill",
+        amex: "bi-credit-card-2-front",
+        elo: "bi-credit-card-2-back",
+        unknown: "bi-credit-card",
+      };
+
+      icon.className = brandIcons[brand] || "bi-credit-card";
+    });
+  }
+
+  // Formatação de validade do cartão
+  const cardExpiryField = document.getElementById("cardExpiry");
+  if (cardExpiryField) {
+    cardExpiryField.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      value = value.replace(/(\d{2})(\d{2})$/, "$1/$2");
+      e.target.value = value;
+    });
+  }
+
+  // Form de assinatura
+  const subscriptionForm = document.getElementById("subscriptionForm");
+  if (subscriptionForm) {
+    subscriptionForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      await handleSubscription();
+    });
+  }
+});
+
+// Processar assinatura
+async function handleSubscription() {
+  const formData = new FormData(document.getElementById("subscriptionForm"));
+  const subscriptionData = Object.fromEntries(formData.entries());
+
+  // Validações básicas
+  if (!document.getElementById("agreeTerms").checked) {
+    showAlert("Você deve aceitar os termos de uso", "warning");
+    return;
+  }
+
+  if (!document.getElementById("agreeRecurring").checked) {
+    showAlert("Você deve concordar com a cobrança recorrente", "warning");
+    return;
+  }
+
+  try {
+    showLoading(true);
+
+    const response = await fetch(`${API_BASE}/members/subscribe`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        plan: document.getElementById("selectedPlan").value,
+        billing_info: {
+          name: document.getElementById("billingName").value,
+          email: document.getElementById("billingEmail").value,
+          phone: document.getElementById("billingPhone").value,
+          document: document.getElementById("billingDocument").value,
+          address: {
+            zip_code: document.getElementById("billingZipCode").value,
+            street: document.getElementById("billingStreet").value,
+            number: document.getElementById("billingNumber").value,
+            complement: document.getElementById("billingComplement").value,
+            neighborhood: document.getElementById("billingNeighborhood").value,
+            city: document.getElementById("billingCity").value,
+            state: document.getElementById("billingState").value,
+          },
+        },
+        payment_info: {
+          card_number: document.getElementById("cardNumber").value,
+          card_name: document.getElementById("cardName").value,
+          card_expiry: document.getElementById("cardExpiry").value,
+          card_cvv: document.getElementById("cardCVV").value,
+          installments: document.getElementById("cardInstallments").value,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showSuccessModal(
+        "Assinatura Ativada!",
+        "Sua assinatura foi processada com sucesso. Bem-vindo ao plano premium!"
+      );
+      // Recarregar dados do usuário
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      showAlert(data.message || "Erro ao processar assinatura", "danger");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro de conexão", "danger");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Cancelar formulário de assinatura
+function cancelSubscription() {
+  document.getElementById("paymentForm").style.display = "none";
+  document.getElementById("subscriptionForm").reset();
+}
+
+// Mostrar modal de cancelamento
+function showCancelModal() {
+  const modal = new bootstrap.Modal(
+    document.getElementById("cancelSubscriptionModal")
+  );
+  modal.show();
+}
+
+// Confirmar cancelamento de assinatura
+async function confirmCancelSubscription() {
+  const reason = document.getElementById("cancelReason").value;
+  const feedback = document.getElementById("cancelFeedback").value;
+
+  try {
+    showLoading(true);
+
+    const response = await fetch(`${API_BASE}/members/cancel-subscription`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        reason,
+        feedback,
+      }),
+    });
+
+    if (response.ok) {
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById("cancelSubscriptionModal")
+      );
+      modal.hide();
+
+      showSuccessModal(
+        "Assinatura Cancelada",
+        "Sua assinatura foi cancelada e será efetiva no final do período atual."
+      );
+
+      // Recarregar dados
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      showAlert("Erro ao cancelar assinatura", "danger");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro de conexão", "danger");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Atualizar método de pagamento
+function updatePaymentMethod() {
+  showAlert("Funcionalidade em desenvolvimento", "info");
+}
+
+// Pausar assinatura
+function pauseSubscription() {
+  showAlert("Funcionalidade em desenvolvimento", "info");
+}
+
+// Mostrar modal de sucesso personalizado
+function showSuccessModal(title, message) {
+  document.getElementById("successTitle").textContent = title;
+  document.getElementById("successMessage").textContent = message;
+
+  const modal = new bootstrap.Modal(document.getElementById("successModal"));
+  modal.show();
+}

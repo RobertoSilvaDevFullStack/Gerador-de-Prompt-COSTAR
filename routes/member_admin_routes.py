@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 import jwt
 import os
 
@@ -394,6 +394,256 @@ async def upgrade_subscription(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Plano de assinatura inválido"
+        )
+
+@member_router.post("/change-password")
+async def change_password(
+    request: dict,
+    current_user = Depends(get_current_user)
+):
+    """Alterar senha do usuário"""
+    try:
+        current_password = request.get("current_password")
+        new_password = request.get("new_password")
+        
+        if not current_password or not new_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Senha atual e nova senha são obrigatórias"
+            )
+        
+        if len(new_password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A nova senha deve ter pelo menos 8 caracteres"
+            )
+        
+        # Verificar senha atual usando o auth service
+        auth_result = auth_service.authenticate_user(current_user.email, current_password)
+        if not auth_result or not auth_result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Senha atual incorreta"
+            )
+        
+        # Atualizar senha no Supabase
+        from services.supabase_auth_service import SupabaseAuthService
+        supabase_auth = SupabaseAuthService()
+        
+        success = supabase_auth.update_user_password(current_user.id, new_password)
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Erro ao atualizar senha"
+            )
+        
+        # Log da atividade
+        log_user_activity(
+            current_user.id,
+            "password_changed",
+            {"timestamp": datetime.now().isoformat()}
+        )
+        
+        return {"message": "Senha alterada com sucesso"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro ao alterar senha: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor"
+        )
+
+@member_router.post("/security-settings")
+async def update_security_settings(
+    request: dict,
+    current_user = Depends(get_current_user)
+):
+    """Atualizar configurações de segurança"""
+    try:
+        two_factor_auth = request.get("two_factor_auth", False)
+        login_notifications = request.get("login_notifications", True)
+        
+        # Atualizar no perfil do usuário
+        profile_data = {
+            "security_settings": {
+                "two_factor_auth": two_factor_auth,
+                "login_notifications": login_notifications,
+                "updated_at": datetime.now().isoformat()
+            }
+        }
+        
+        # Atualizar usando o member service
+        success = member_service.update_user_profile(current_user.id, profile_data)
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Erro ao atualizar configurações"
+            )
+        
+        # Log da atividade
+        log_user_activity(
+            current_user.id,
+            "security_settings_updated",
+            {
+                "two_factor_auth": two_factor_auth,
+                "login_notifications": login_notifications,
+                "timestamp": datetime.now().isoformat()
+            }
+        )
+        
+        return {"message": "Configurações de segurança atualizadas"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro ao atualizar configurações de segurança: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor"
+        )
+
+@member_router.post("/subscribe")
+async def create_subscription(
+    request: dict,
+    current_user = Depends(get_current_user)
+):
+    """Criar nova assinatura com dados completos"""
+    try:
+        plan = request.get("plan")
+        billing_info = request.get("billing_info", {})
+        payment_info = request.get("payment_info", {})
+        
+        if not plan or plan not in ["premium", "enterprise"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Plano inválido"
+            )
+        
+        # Validar dados obrigatórios
+        required_billing = ["name", "email", "phone", "document"]
+        for field in required_billing:
+            if not billing_info.get(field):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Campo obrigatório: {field}"
+                )
+        
+        # Validar endereço
+        address = billing_info.get("address", {})
+        required_address = ["zip_code", "street", "number", "neighborhood", "city", "state"]
+        for field in required_address:
+            if not address.get(field):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Campo de endereço obrigatório: {field}"
+                )
+        
+        # Validar dados do cartão
+        required_payment = ["card_number", "card_name", "card_expiry", "card_cvv"]
+        for field in required_payment:
+            if not payment_info.get(field):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Campo de pagamento obrigatório: {field}"
+                )
+        
+        # Simular processamento de pagamento
+        # Em produção, aqui seria integrado com um gateway real
+        subscription_data = {
+            "user_id": current_user.id,
+            "plan": plan,
+            "status": "active",
+            "billing_info": billing_info,
+            "payment_method": {
+                "type": "credit_card",
+                "last_four": payment_info["card_number"][-4:],
+                "brand": "visa",  # Detectar na prática
+                "expiry": payment_info["card_expiry"]
+            },
+            "created_at": datetime.now().isoformat(),
+            "next_billing": (datetime.now() + timedelta(days=30)).isoformat()
+        }
+        
+        # Salvar assinatura (simulado)
+        # Aqui você salvaria no banco de dados real
+        success = member_service.create_subscription(current_user.id, subscription_data)
+        
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Erro ao processar assinatura"
+            )
+        
+        # Log da atividade
+        log_user_activity(
+            current_user.id,
+            "subscription_created",
+            {
+                "plan": plan,
+                "amount": 29.00 if plan == "premium" else 99.00,
+                "timestamp": datetime.now().isoformat()
+            }
+        )
+        
+        return {
+            "message": "Assinatura criada com sucesso",
+            "subscription": {
+                "plan": plan,
+                "status": "active",
+                "next_billing": subscription_data["next_billing"]
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro ao criar assinatura: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor"
+        )
+
+@member_router.post("/cancel-subscription")
+async def cancel_subscription(
+    request: dict,
+    current_user = Depends(get_current_user)
+):
+    """Cancelar assinatura"""
+    try:
+        reason = request.get("reason", "")
+        feedback = request.get("feedback", "")
+        
+        # Cancelar assinatura (simulado)
+        success = member_service.cancel_subscription(current_user.id)
+        
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Erro ao cancelar assinatura"
+            )
+        
+        # Log da atividade
+        log_user_activity(
+            current_user.id,
+            "subscription_cancelled",
+            {
+                "reason": reason,
+                "feedback": feedback,
+                "timestamp": datetime.now().isoformat()
+            }
+        )
+        
+        return {"message": "Assinatura cancelada com sucesso"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro ao cancelar assinatura: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro interno do servidor"
         )
 
 # ==================== ROTAS ADMINISTRATIVAS ====================
