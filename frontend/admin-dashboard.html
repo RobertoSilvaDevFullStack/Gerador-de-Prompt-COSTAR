@@ -92,6 +92,17 @@
             width: 20px;
         }
 
+        .sidebar-nav-link.home-button {
+            background: rgba(6, 214, 160, 0.15) !important;
+            border-left-color: #06d6a0 !important;
+            color: #06d6a0 !important;
+        }
+
+        .sidebar-nav-link.home-button:hover {
+            background: rgba(6, 214, 160, 0.25) !important;
+            color: #06d6a0 !important;
+        }
+
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
@@ -415,6 +426,12 @@
                     <a href="#dashboard" class="sidebar-nav-link active" data-section="dashboard">
                         <i class="bi bi-speedometer2"></i>
                         Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/" class="sidebar-nav-link home-button">
+                        <i class="bi bi-house-door"></i>
+                        Página Principal
                     </a>
                 </li>
                 <li class="sidebar-nav-item">

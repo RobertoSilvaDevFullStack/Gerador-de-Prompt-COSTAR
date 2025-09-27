@@ -1020,9 +1020,13 @@ function initializeEventListeners() {
   // Navegação da sidebar
   document.querySelectorAll(".sidebar-nav-link").forEach((link) => {
     link.addEventListener("click", function (e) {
-      e.preventDefault();
       const section = this.getAttribute("data-section");
-      showSection(section);
+      // Só intercepta cliques de links que têm data-section (navegação interna)
+      if (section) {
+        e.preventDefault();
+        showSection(section);
+      }
+      // Links sem data-section (como "Página Principal") seguem navegação normal
     });
   });
 

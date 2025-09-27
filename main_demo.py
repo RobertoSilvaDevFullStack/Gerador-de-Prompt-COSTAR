@@ -1276,7 +1276,13 @@ async def home_page():
     """Servir página principal"""
     try:
         with open("frontend/index.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
+            content = f.read()
+            response = HTMLResponse(content=content)
+            # Headers anti-cache para evitar problemas de cache
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return response
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Página principal não encontrada")
 
