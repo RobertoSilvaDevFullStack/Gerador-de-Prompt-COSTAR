@@ -64,6 +64,37 @@ async def debug_files():
     
     return files_info
 
+# Endpoint de debug para testar IAs
+@app.get("/debug/ai")
+async def debug_ai():
+    """Debug: testar provedores de IA"""
+    try:
+        from services.production_multi_ai import multi_ai_service
+        
+        # Testar com prompt simples
+        test_prompt = "Olá, você está funcionando?"
+        result = await multi_ai_service.generate_content(test_prompt, max_tokens=100)
+        
+        return {
+            "providers_loaded": len(multi_ai_service.providers),
+            "available_providers": list(multi_ai_service.providers.keys()),
+            "test_result": result,
+            "environment_vars": {
+                "GROQ_API_KEY": "✅" if os.getenv("GROQ_API_KEY") else "❌",
+                "GEMINI_API_KEY": "✅" if os.getenv("GEMINI_API_KEY") else "❌",
+                "TOGETHER_API_KEY": "✅" if os.getenv("TOGETHER_API_KEY") else "❌"
+            }
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "environment_vars": {
+                "GROQ_API_KEY": "✅" if os.getenv("GROQ_API_KEY") else "❌",
+                "GEMINI_API_KEY": "✅" if os.getenv("GEMINI_API_KEY") else "❌",
+                "TOGETHER_API_KEY": "✅" if os.getenv("TOGETHER_API_KEY") else "❌"
+            }
+        }
+
 # Endpoint root
 @app.get("/", response_class=HTMLResponse)
 async def root():
