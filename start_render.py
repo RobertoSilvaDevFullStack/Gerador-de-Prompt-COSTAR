@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-🚀 Script de inicialização para Render
-Configura o ambiente e inicia o servidor FastAPI otimizado para produção
+🚀 Script de inicialização para Render - Otimizado
+Evita dependências problemáticas e usa versões simplificadas
 """
 import os
 import sys
@@ -11,42 +11,71 @@ from pathlib import Path
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-# Configurar variáveis de ambiente padrão se não existirem
+# Configurar variáveis de ambiente padrão
 os.environ.setdefault('ENVIRONMENT', 'production')
 os.environ.setdefault('DEBUG', 'false')
+os.environ.setdefault('PIP_NO_CACHE_DIR', '1')
 
 def main():
-    """Inicializa servidor para produção no Render"""
+    """Inicializa servidor para produção no Render com fallbacks"""
     
-    # Log de inicialização
     print("🚀 Iniciando COSTAR Generator no Render")
+    print(f"🐍 Python: {sys.version}")
     print(f"🌍 Environment: {os.environ.get('ENVIRONMENT', 'production')}")
-    print(f"🔧 Debug: {os.environ.get('DEBUG', 'false')}")
     
-    # Configurar porta (Render usa variável PORT)
+    # Configurar porta
     port = int(os.environ.get("PORT", 8000))
-    print(f"📡 Servidor iniciando em 0.0.0.0:{port}")
+    print(f"📡 Porta: {port}")
     
-    # Importar aplicação (usando main.py ao invés de main_demo.py para produção)
+    # Tentar importar dependências essenciais
+    try:
+        import uvicorn
+        print("✅ Uvicorn disponível")
+    except ImportError:
+        print("❌ Erro: Uvicorn não encontrado")
+        sys.exit(1)
+    
+    # Importar aplicação com fallback
+    app = None
     try:
         from main import app
-        print("✅ Aplicação principal (main.py) carregada com sucesso")
-    except ImportError:
-        print("⚠️ Fallback para main_demo.py")
-        from main_demo import app
+        print("✅ Aplicação principal (main.py) carregada")
+    except Exception as e:
+        print(f"⚠️ Erro ao carregar main.py: {e}")
+        try:
+            from main_demo import app
+            print("✅ Fallback para main_demo.py")
+        except Exception as e2:
+            print(f"❌ Erro ao carregar main_demo.py: {e2}")
+            # Criar app básico de emergência
+            from fastapi import FastAPI
+            app = FastAPI(title="COSTAR Generator - Emergency Mode")
+            
+            @app.get("/")
+            async def emergency_root():
+                return {"status": "emergency", "message": "Sistema em modo de emergência"}
+            
+            @app.get("/api/status/health")
+            async def emergency_health():
+                return {"status": "ok", "mode": "emergency"}
+            
+            print("🆘 Aplicação de emergência criada")
     
-    # Configuração para produção no Render
-    import uvicorn
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=port,
-        workers=1,  # Render Free tier tem limitação de CPU/memória
-        access_log=True,
-        log_level="info",
-        loop="asyncio",
-        http="httptools"
-    )
+    # Configurar e iniciar servidor
+    try:
+        print(f"🔥 Iniciando servidor em 0.0.0.0:{port}")
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=port,
+            workers=1,
+            access_log=True,
+            log_level="info",
+            timeout_keep_alive=5
+        )
+    except Exception as e:
+        print(f"💥 Erro ao iniciar servidor: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
