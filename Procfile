@@ -1,1 +1,1 @@
-web: python start_render.py
+web: uvicorn main_demo:app --host 0.0.0.0 --port $PORT
