@@ -131,10 +131,15 @@ async def preview_prompt(prompt_data: PromptData):
     try:
         # Gerar prompt COSTAR com múltiplas IAs
         if ai_enabled:
-            # Usar sistema de múltiplas IAs
-            from services.multi_ai_service import MultiAIService
-            multi_ai_service = MultiAIService()
-            prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+            # Usar sistema de múltiplas IAs (versão produção)
+            try:
+                from services.production_multi_ai import multi_ai_service
+                prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+            except ImportError:
+                # Fallback para versão original
+                from services.multi_ai_service import MultiAIService
+                multi_ai_service = MultiAIService()
+                prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
         else:
             # Usar geração básica sem IA
             prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
@@ -201,8 +206,12 @@ async def preview_prompt(prompt_data: PromptData):
 async def analyze_prompt_quality(prompt_data: PromptData):
     """Analisar qualidade do prompt COSTAR usando Multi-AI"""
     try:
-        # Usar Multi-AI Service em vez de apenas Gemini
-        from services.multi_ai_service import MultiAIService
+        # Usar Multi-AI Service (versão produção)
+        try:
+            from services.production_multi_ai import multi_ai_service
+        except ImportError:
+            from services.multi_ai_service import MultiAIService
+            multi_ai_service = MultiAIService()
         
         multi_ai = MultiAIService()
         await multi_ai.initialize()

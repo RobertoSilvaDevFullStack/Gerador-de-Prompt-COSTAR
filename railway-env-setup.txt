@@ -1,0 +1,42 @@
+# ===== VARIÁVEIS OBRIGATÓRIAS PARA RAILWAY =====
+# Copie e cole estas variáveis no Railway Dashboard > Variables
+
+# Supabase (Database)
+SUPABASE_URL=https://nnqlivdpxqgxuqcawiva.supabase.co
+SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY_HERE
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE
+
+# APIs de IA (Multi-AI)
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+HUGGINGFACE_API_KEY=YOUR_HUGGINGFACE_API_KEY_HERE
+COHERE_API_KEY=YOUR_COHERE_API_KEY_HERE
+TOGETHER_API_KEY=YOUR_TOGETHER_API_KEY_HERE
+
+# JWT Security
+JWT_SECRET_KEY=YOUR_JWT_SECRET_KEY_HERE
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=30
+
+# Environment
+ENVIRONMENT=production
+DEBUG=false
+
+# ===== COMO ADICIONAR NO RAILWAY =====
+# 1. Vá para o seu projeto no Railway
+# 2. Clique na aba "Variables" 
+# 3. Clique em "New Variable"
+# 4. Adicione cada variável (nome = valor)
+# 5. Use as chaves do seu arquivo .env local
+# 6. Clique em "Deploy" após adicionar todas
+
+# ===== VALORES REAIS =====
+# Use os valores do seu arquivo .env para:
+# - SUPABASE_ANON_KEY (do .env)
+# - SUPABASE_SERVICE_ROLE_KEY (do .env)
+# - GEMINI_API_KEY (do .env)
+# - GROQ_API_KEY (do .env)
+# - HUGGINGFACE_API_KEY (do .env)
+# - COHERE_API_KEY (do .env)
+# - TOGETHER_API_KEY (do .env)
+# - JWT_SECRET_KEY (do .env)

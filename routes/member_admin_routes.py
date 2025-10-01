@@ -6,8 +6,16 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-import jwt
 import os
+
+# Import JWT with fallback
+try:
+    import jwt
+except ImportError:
+    try:
+        from jose import jwt
+    except ImportError:
+        jwt = None
 
 from services.supabase_auth_service import SupabaseAuthService, UserRole
 from services.member_area_service import MemberAreaService, SubscriptionPlan
@@ -162,6 +170,12 @@ async def register(request: RegisterRequest):
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Verificar token JWT e retornar usuário atual"""
     try:
+        if jwt is None:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="JWT library não disponível"
+            )
+            
         token = credentials.credentials
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("user_id")
