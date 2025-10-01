@@ -33,6 +33,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Endpoint de healthcheck para Railway
+@app.get("/status")
+async def health_check():
+    """Endpoint de healthcheck para Railway e outros serviços"""
+    return {
+        "status": "healthy",
+        "service": "COSTAR Prompt Generator",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.0.0-demo"
+    }
+
+# Endpoint root
+@app.get("/")
+async def root():
+    """Endpoint raiz da API"""
+    return {
+        "message": "COSTAR Prompt Generator API está funcionando!",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/status"
+    }
+
 # Servir arquivos estáticos
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
