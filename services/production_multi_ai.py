@@ -63,29 +63,35 @@ class ProductionMultiAIService:
     async def generate_content(self, prompt: str, **kwargs) -> Dict[str, Any]:
         """Gera conteúdo usando o melhor provedor disponível"""
         
-        logger.info(f"🎯 Iniciando geração de conteúdo. Provedores disponíveis: {len(self.providers)}")
+        logger.info(f"🎯 [PROD_AI] Iniciando geração de conteúdo")
+        logger.info(f"📋 [PROD_AI] Provedores disponíveis: {len(self.providers)}")
+        logger.info(f"🔑 [PROD_AI] Lista de provedores: {list(self.providers.keys())}")
         
         if not self.providers:
-            logger.warning("⚠️ Nenhum provedor disponível, usando fallback")
+            logger.warning("⚠️ [PROD_AI] Nenhum provedor disponível, usando fallback")
             return self._fallback_response(prompt)
             
         # Tentar provedores em ordem de prioridade
         for provider_name in sorted(self.providers.keys(), 
                                    key=lambda x: self.providers[x]["priority"]):
             try:
-                logger.info(f"🚀 Tentando provedor: {provider_name}")
+                logger.info(f"🚀 [PROD_AI] Tentando provedor: {provider_name}")
+                logger.info(f"🔑 [PROD_AI] API Key presente: {'✅' if self.providers[provider_name]['api_key'] else '❌'}")
+                
                 result = await self._try_provider(provider_name, prompt, **kwargs)
                 if result:
-                    logger.info(f"✅ Sucesso com {provider_name}")
+                    logger.info(f"✅ [PROD_AI] SUCESSO com {provider_name}")
+                    logger.info(f"📏 [PROD_AI] Tamanho da resposta: {len(result.get('content', ''))} chars")
                     return result
                 else:
-                    logger.warning(f"⚠️ {provider_name} retornou resultado vazio")
+                    logger.warning(f"⚠️ [PROD_AI] {provider_name} retornou resultado vazio")
             except Exception as e:
-                logger.error(f"❌ {provider_name} falhou: {str(e)}")
+                logger.error(f"❌ [PROD_AI] {provider_name} FALHOU: {str(e)}")
+                logger.error(f"🔧 [PROD_AI] Tipo do erro: {type(e).__name__}")
                 continue
         
         # Se todos falharam, usar fallback
-        logger.warning("⚠️ Todos os provedores falharam, usando fallback")
+        logger.warning("⚠️ [PROD_AI] TODOS os provedores falharam, usando fallback")
         return self._fallback_response(prompt)
         return self._fallback_response(prompt)
     
@@ -105,6 +111,10 @@ class ProductionMultiAIService:
     async def _call_groq(self, provider: Dict, prompt: str, **kwargs) -> Dict[str, Any]:
         """Chama API do Groq"""
         try:
+            logger.info(f"🌐 [GROQ] Iniciando chamada para Groq API")
+            logger.info(f"🔗 [GROQ] Endpoint: {provider['endpoint']}")
+            logger.info(f"🤖 [GROQ] Model: {provider['model']}")
+            
             headers = {
                 "Authorization": f"Bearer {provider['api_key']}",
                 "Content-Type": "application/json"
@@ -117,24 +127,29 @@ class ProductionMultiAIService:
                 "temperature": kwargs.get("temperature", 0.7)
             }
             
-            logger.info(f"🌐 Chamando Groq API: {provider['endpoint']}")
+            logger.info(f"📊 [GROQ] Payload: model={data['model']}, max_tokens={data['max_tokens']}, temp={data['temperature']}")
             
             async with httpx.AsyncClient(timeout=60.0) as client:
+                logger.info(f"📡 [GROQ] Enviando requisição...")
                 response = await client.post(provider["endpoint"], headers=headers, json=data)
                 
+                logger.info(f"📨 [GROQ] Status Code: {response.status_code}")
+                
                 if response.status_code != 200:
-                    logger.error(f"❌ Groq API erro {response.status_code}: {response.text}")
+                    logger.error(f"❌ [GROQ] API erro {response.status_code}: {response.text}")
                     raise Exception(f"HTTP {response.status_code}")
                 
                 result = response.json()
+                logger.info(f"📋 [GROQ] Estrutura da resposta: {list(result.keys()) if isinstance(result, dict) else 'não é dict'}")
                 
                 if "choices" not in result or not result["choices"]:
-                    logger.error(f"❌ Groq resposta inválida: {result}")
+                    logger.error(f"❌ [GROQ] Resposta inválida: {result}")
                     raise Exception("Resposta inválida da API")
                 
                 content = result["choices"][0]["message"]["content"]
                 
-                logger.info(f"✅ Groq sucesso - {len(content)} caracteres")
+                logger.info(f"✅ [GROQ] Sucesso - {len(content)} caracteres gerados")
+                logger.info(f"🎨 [GROQ] Preview: {content[:100]}...")
                 
                 return {
                     "content": content,
@@ -144,7 +159,8 @@ class ProductionMultiAIService:
                 }
                 
         except Exception as e:
-            logger.error(f"❌ Erro na chamada Groq: {str(e)}")
+            logger.error(f"❌ [GROQ] Erro na chamada: {str(e)}")
+            logger.error(f"🔧 [GROQ] Tipo do erro: {type(e).__name__}")
             raise
     
     async def _call_gemini(self, provider: Dict, prompt: str, **kwargs) -> Dict[str, Any]:

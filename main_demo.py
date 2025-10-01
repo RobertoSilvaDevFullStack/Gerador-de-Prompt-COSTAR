@@ -202,6 +202,16 @@ ai_enabled = any(
     for name, key in ai_keys.items()
 )
 
+# Log detalhado da verificação de AIs
+logger.info("🔍 [STARTUP] Verificando configuração das IAs:")
+for name, key in ai_keys.items():
+    if key and len(key) > 10:
+        logger.info(f"✅ [STARTUP] {name.upper()}: configurada ({len(key)} chars)")
+    else:
+        logger.info(f"❌ [STARTUP] {name.upper()}: não configurada")
+
+logger.info(f"🎯 [STARTUP] AI_ENABLED = {ai_enabled}")
+
 # Manter compatibilidade com código legado
 gemini_enabled = ai_enabled
 
@@ -254,43 +264,57 @@ async def health_check():
 async def preview_prompt(prompt_data: PromptData):
     """Gerar preview do prompt COSTAR (modo demo)"""
     try:
-        logger.info(f"🎯 Recebendo requisição de preview: {prompt_data.contexto[:50]}...")
+        logger.info(f"🎯 [PREVIEW] Recebendo requisição de preview")
+        logger.info(f"📋 [PREVIEW] Dados: contexto={prompt_data.contexto[:30]}..., objetivo={prompt_data.objetivo[:30]}...")
+        logger.info(f"🔍 [PREVIEW] AI_ENABLED = {ai_enabled}")
         
         # Gerar prompt COSTAR com múltiplas IAs
         if ai_enabled:
-            logger.info("🤖 AI habilitada, tentando usar production multi-AI")
+            logger.info("🤖 [PREVIEW] AI habilitada, iniciando processo de IA")
             # Usar sistema de múltiplas IAs (versão produção)
             try:
+                logger.info("📦 [PREVIEW] Importando get_multi_ai_service...")
                 from services.production_multi_ai import get_multi_ai_service
+                
+                logger.info("🚀 [PREVIEW] Obtendo instância do serviço...")
                 service = get_multi_ai_service()
-                logger.info("✅ ProductionMultiAI importado com sucesso")
+                
+                logger.info(f"✅ [PREVIEW] Serviço obtido. Provedores: {len(service.providers)}")
+                logger.info(f"📋 [PREVIEW] Provedores disponíveis: {list(service.providers.keys())}")
                 
                 # Usar timeout para evitar travamento
                 import asyncio
+                logger.info("⏰ [PREVIEW] Iniciando geração com timeout de 30s...")
+                
                 prompt_aprimorado = await asyncio.wait_for(
                     generate_costar_prompt_with_multi_ai(prompt_data, service),
                     timeout=30.0  # 30 segundos de timeout
                 )
-                logger.info(f"✅ Prompt gerado com AI: {len(prompt_aprimorado)} caracteres")
+                logger.info(f"✅ [PREVIEW] Prompt gerado com IA: {len(prompt_aprimorado)} caracteres")
+                logger.info(f"🎨 [PREVIEW] Preview do resultado: {prompt_aprimorado[:100]}...")
+                
             except asyncio.TimeoutError:
-                logger.warning("⏰ Timeout na geração com AI, usando fallback")
+                logger.warning("⏰ [PREVIEW] TIMEOUT na geração com AI (30s), usando fallback")
                 prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
             except ImportError as e:
-                logger.warning(f"⚠️ Erro importando ProductionMultiAI: {e}")
+                logger.warning(f"⚠️ [PREVIEW] ERRO importando ProductionMultiAI: {e}")
                 # Fallback para versão original
                 try:
+                    logger.info("🔄 [PREVIEW] Tentando MultiAIService original...")
                     from services.multi_ai_service import MultiAIService
                     multi_ai_service = MultiAIService()
                     prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
-                except:
+                except Exception as fallback_error:
+                    logger.error(f"❌ [PREVIEW] Fallback MultiAIService falhou: {fallback_error}")
                     prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
             except Exception as e:
-                logger.error(f"❌ Erro na geração com AI: {str(e)}")
+                logger.error(f"❌ [PREVIEW] ERRO na geração com AI: {str(e)}")
+                logger.error(f"🔧 [PREVIEW] Tipo do erro: {type(e).__name__}")
                 # Fallback para modo básico
                 prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
-                logger.info("🔄 Usando modo básico como fallback")
+                logger.info("🔄 [PREVIEW] Usando modo básico como fallback")
         else:
-            logger.info("🔧 AI desabilitada, usando geração básica")
+            logger.info("🔧 [PREVIEW] AI DESABILITADA, usando geração básica")
             # Usar geração básica sem IA
             prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
         
@@ -860,7 +884,9 @@ async def generate_costar_prompt_with_multi_ai(prompt_data: PromptData, multi_ai
     """Gerar prompt COSTAR aprimorado com sistema de múltiplas IAs"""
     
     try:
-        logger.info("🚀 Iniciando geração com Multi-AI")
+        logger.info("🚀 [MULTI_AI] Iniciando geração com Multi-AI")
+        logger.info(f"🔍 [MULTI_AI] Tipo do serviço: {type(multi_ai_service).__name__}")
+        logger.info(f"📋 [MULTI_AI] Serviço tem {len(getattr(multi_ai_service, 'providers', {}))} provedores")
         
         enhancement_prompt = f"""Você é um especialista em prompt engineering. Crie um prompt COSTAR aprimorado e detalhado baseado nos dados fornecidos.
 
@@ -912,7 +938,9 @@ FORMATO DE SAÍDA OBRIGATÓRIO:
 
 Gere o prompt aprimorado seguindo EXATAMENTE esta estrutura:"""
         
-        logger.info("📝 Chamando multi_ai_service.generate_content")
+        logger.info("📝 [MULTI_AI] Prompt de enhancement criado")
+        logger.info(f"📏 [MULTI_AI] Tamanho do prompt: {len(enhancement_prompt)} caracteres")
+        logger.info("📞 [MULTI_AI] Chamando multi_ai_service.generate_content...")
         
         result = await multi_ai_service.generate_content(
             prompt=enhancement_prompt,
@@ -920,19 +948,25 @@ Gere o prompt aprimorado seguindo EXATAMENTE esta estrutura:"""
             max_tokens=2048
         )
         
-        logger.info(f"✅ Multi-AI gerou {len(result.get('content', ''))} caracteres")
+        logger.info(f"📨 [MULTI_AI] Resultado recebido: tipo={type(result)}")
+        logger.info(f"🔍 [MULTI_AI] Estrutura do resultado: {result if isinstance(result, dict) else 'não é dict'}")
         
         # Extrair conteúdo do resultado
         if isinstance(result, dict) and 'content' in result:
             enhanced_prompt = result['content']
+            logger.info(f"✅ [MULTI_AI] Conteúdo extraído do campo 'content': {len(enhanced_prompt)} chars")
         else:
             enhanced_prompt = str(result)
+            logger.info(f"⚠️ [MULTI_AI] Resultado convertido para string: {len(enhanced_prompt)} chars")
             
+        logger.info(f"🎨 [MULTI_AI] Preview do resultado: {enhanced_prompt[:150]}...")
         return enhanced_prompt
         
     except Exception as e:
-        logger.error(f"❌ Erro ao gerar prompt aprimorado com múltiplas IAs: {str(e)}")
-        logger.info("🔄 Fallback para geração básica")
+        logger.error(f"❌ [MULTI_AI] ERRO ao gerar prompt aprimorado: {str(e)}")
+        logger.error(f"🔧 [MULTI_AI] Tipo do erro: {type(e).__name__}")
+        logger.error(f"📍 [MULTI_AI] Detalhes do erro: {repr(e)}")
+        logger.info("🔄 [MULTI_AI] Fallback para geração básica")
         return generate_costar_prompt_basic(prompt_data)
 
 async def generate_costar_prompt_with_ai(prompt_data: PromptData, gemini_service) -> str:
