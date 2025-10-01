@@ -1,11 +1,13 @@
-# Render Blueprint para COSTAR Generator
+# Render Blueprint - Ultra otimizado (ZERO Rust)
 services:
   - type: web
     name: costar-generator
     env: python
     region: oregon
     plan: free
-    buildCommand: pip install --no-cache-dir -r requirements-render.txt
+    buildCommand: |
+      pip install --no-cache-dir --upgrade pip &&
+      pip install --no-cache-dir --no-build-isolation -r requirements-render.txt
     startCommand: python start_render.py
     healthCheckPath: /api/status/health
     envVars:
@@ -19,6 +21,8 @@ services:
         value: "1"
       - key: PIP_DISABLE_PIP_VERSION_CHECK
         value: "1"
-      # Variáveis de ambiente serão configuradas no dashboard do Render
-      # Não adicione valores sensíveis aqui
+      - key: PIP_NO_BUILD_ISOLATION
+        value: "1"
+      - key: CARGO_NET_OFFLINE
+        value: "true"
     autoDeploy: true

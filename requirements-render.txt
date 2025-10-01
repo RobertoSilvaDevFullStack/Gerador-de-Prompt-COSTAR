@@ -1,22 +1,16 @@
-# Render-Optimized Requirements - No Rust Dependencies
+# Ultra-Minimal Requirements - Zero Rust Dependencies
 fastapi==0.104.1
 uvicorn==0.24.0
 
-# Authentication (simplified)
-pydantic==2.4.2
-python-jose==3.3.0
-passlib==1.7.4
-bcrypt==4.0.1
-
-# Core utilities
-python-dotenv==1.0.0
-python-multipart==0.0.6
-httpx==0.25.2
-email-validator==2.1.0
-
-# AI Providers (minimal versions)
-google-generativeai==0.3.1
+# Basic HTTP
 requests==2.31.0
+httpx==0.25.2
+
+# Environment
+python-dotenv==1.0.0
+
+# Only Google AI (others cause Rust compilation issues)
+google-generativeai==0.3.1
 
 # Production
 gunicorn==21.2.0
