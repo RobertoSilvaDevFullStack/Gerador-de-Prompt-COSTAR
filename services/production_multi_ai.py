@@ -33,27 +33,29 @@ class ProductionMultiAIService:
                 "name": "Groq",
                 "api_key": groq_key,
                 "endpoint": "https://api.groq.com/openai/v1/chat/completions",
-                "model": "llama3-8b-8192",
+                "model": "llama-3.1-8b-instant",  # Modelo atual válido
                 "priority": 1
             }
             
         # GEMINI (Backup)
-        if os.getenv("GEMINI_API_KEY"):
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        if gemini_key:
             providers["gemini"] = {
                 "name": "Gemini",
-                "api_key": os.getenv("GEMINI_API_KEY"),
-                "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-                "model": "gemini-pro",
+                "api_key": gemini_key,
+                "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",  # Endpoint atualizado
+                "model": "gemini-1.5-flash",  # Modelo atual válido
                 "priority": 2
             }
             
         # TOGETHER (Backup 2)
-        if os.getenv("TOGETHER_API_KEY"):
+        together_key = os.getenv("TOGETHER_API_KEY")
+        if together_key:
             providers["together"] = {
                 "name": "Together",
-                "api_key": os.getenv("TOGETHER_API_KEY"),
+                "api_key": together_key,
                 "endpoint": "https://api.together.xyz/v1/chat/completions",
-                "model": "meta-llama/Llama-2-7b-chat-hf",
+                "model": "meta-llama/Llama-3.2-3B-Instruct-Turbo",  # Modelo atual válido
                 "priority": 3
             }
             
@@ -166,36 +168,64 @@ class ProductionMultiAIService:
     async def _call_gemini(self, provider: Dict, prompt: str, **kwargs) -> Dict[str, Any]:
         """Chama API do Gemini"""
         try:
-            url = f"{provider['endpoint']}?key={provider['api_key']}"
+            logger.info(f"💎 [GEMINI] Iniciando chamada para Gemini API")
+            logger.info(f"🔗 [GEMINI] Endpoint: {provider['endpoint']}")
+            logger.info(f"🤖 [GEMINI] Model: {provider['model']}")
             
+            # Estrutura correta para Gemini v1beta
             data = {
-                "contents": [{
-                    "parts": [{"text": prompt}]
-                }]
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": prompt}
+                        ]
+                    }
+                ],
+                "generationConfig": {
+                    "maxOutputTokens": kwargs.get("max_tokens", 1000),
+                    "temperature": kwargs.get("temperature", 0.7)
+                }
             }
             
-            logger.info(f"🌐 Chamando Gemini API: {url}")
+            # URL com key como parâmetro
+            url = f"{provider['endpoint']}?key={provider['api_key']}"
+            
+            logger.info(f"📊 [GEMINI] Config: maxTokens={data['generationConfig']['maxOutputTokens']}, temp={data['generationConfig']['temperature']}")
+            logger.info(f"🔗 [GEMINI] URL: {url}")
             
             async with httpx.AsyncClient(timeout=60.0) as client:
+                logger.info(f"📡 [GEMINI] Enviando requisição...")
                 response = await client.post(url, json=data)
                 
+                logger.info(f"📨 [GEMINI] Status Code: {response.status_code}")
+                
                 if response.status_code != 200:
-                    logger.error(f"❌ Gemini API erro {response.status_code}: {response.text}")
+                    logger.error(f"❌ [GEMINI] API erro {response.status_code}: {response.text}")
                     raise Exception(f"HTTP {response.status_code}")
                 
                 result = response.json()
+                logger.info(f"📋 [GEMINI] Estrutura da resposta: {list(result.keys()) if isinstance(result, dict) else 'não é dict'}")
                 
                 if "candidates" not in result or not result["candidates"]:
-                    logger.error(f"❌ Gemini resposta inválida: {result}")
+                    logger.error(f"❌ [GEMINI] Resposta inválida: {result}")
                     raise Exception("Resposta inválida da API")
                 
                 content = result["candidates"][0]["content"]["parts"][0]["text"]
                 
-                logger.info(f"✅ Gemini sucesso - {len(content)} caracteres")
+                logger.info(f"✅ [GEMINI] Sucesso - {len(content)} caracteres gerados")
+                logger.info(f"🎨 [GEMINI] Preview: {content[:100]}...")
                 
                 return {
                     "content": content,
                     "provider": "gemini",
+                    "model": provider["model"],
+                    "success": True
+                }
+                
+        except Exception as e:
+            logger.error(f"❌ [GEMINI] Erro na chamada: {str(e)}")
+            logger.error(f"🔧 [GEMINI] Tipo do erro: {type(e).__name__}")
+            raise
                     "model": provider["model"],
                     "success": True
                 }
@@ -206,10 +236,58 @@ class ProductionMultiAIService:
     
     async def _call_together(self, provider: Dict, prompt: str, **kwargs) -> Dict[str, Any]:
         """Chama API do Together"""
-        headers = {
-            "Authorization": f"Bearer {provider['api_key']}",
-            "Content-Type": "application/json"
-        }
+        try:
+            logger.info(f"🌐 [TOGETHER] Iniciando chamada para Together API")
+            logger.info(f"🔗 [TOGETHER] Endpoint: {provider['endpoint']}")
+            logger.info(f"🤖 [TOGETHER] Model: {provider['model']}")
+            
+            headers = {
+                "Authorization": f"Bearer {provider['api_key']}",
+                "Content-Type": "application/json"
+            }
+            
+            data = {
+                "messages": [{"role": "user", "content": prompt}],
+                "model": provider["model"],
+                "max_tokens": kwargs.get("max_tokens", 1000),
+                "temperature": kwargs.get("temperature", 0.7)
+            }
+            
+            logger.info(f"📊 [TOGETHER] Payload: model={data['model']}, max_tokens={data['max_tokens']}, temp={data['temperature']}")
+            
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                logger.info(f"📡 [TOGETHER] Enviando requisição...")
+                response = await client.post(provider["endpoint"], headers=headers, json=data)
+                
+                logger.info(f"📨 [TOGETHER] Status Code: {response.status_code}")
+                
+                if response.status_code != 200:
+                    logger.error(f"❌ [TOGETHER] API erro {response.status_code}: {response.text}")
+                    raise Exception(f"HTTP {response.status_code}")
+                
+                result = response.json()
+                logger.info(f"📋 [TOGETHER] Estrutura da resposta: {list(result.keys()) if isinstance(result, dict) else 'não é dict'}")
+                
+                if "choices" not in result or not result["choices"]:
+                    logger.error(f"❌ [TOGETHER] Resposta inválida: {result}")
+                    raise Exception("Resposta inválida da API")
+                
+                content = result["choices"][0]["message"]["content"]
+                
+                logger.info(f"✅ [TOGETHER] Sucesso - {len(content)} caracteres gerados")
+                logger.info(f"🎨 [TOGETHER] Preview: {content[:100]}...")
+                
+                return {
+                    "content": content,
+                    "provider": "together",
+                    "model": provider["model"],
+                    "success": True
+                }
+                
+        except Exception as e:
+            logger.error(f"❌ [TOGETHER] Erro na chamada: {str(e)}")
+            logger.error(f"🔧 [TOGETHER] Tipo do erro: {type(e).__name__}")
+            raise
         
         data = {
             "messages": [{"role": "user", "content": prompt}],
