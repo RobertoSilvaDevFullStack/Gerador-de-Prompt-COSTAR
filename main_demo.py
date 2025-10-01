@@ -9,6 +9,7 @@ import json
 from datetime import datetime, timedelta
 import logging
 from dotenv import load_dotenv
+import time
 
 # Caregar variáveis de ambiente
 load_dotenv()
@@ -186,6 +187,18 @@ except ImportError as e:
     logger.warning(f"⚠️ Não foi possível carregar rotas de membros/admin: {e}")
 except Exception as e:
     logger.error(f"❌ Erro ao carregar rotas de membros/admin: {e}")
+
+# Importar serviço de analytics para logging
+try:
+    from services.admin_analytics_service import AdminAnalyticsService
+    analytics_service = AdminAnalyticsService()
+    logger.info("✅ Serviço de analytics carregado com sucesso")
+except ImportError as e:
+    logger.warning(f"⚠️ Não foi possível carregar serviço de analytics: {e}")
+    analytics_service = None
+except Exception as e:
+    logger.error(f"❌ Erro ao carregar serviço de analytics: {e}")
+    analytics_service = None
 
 # Tentar importar e incluir as rotas de status
 try:
@@ -898,6 +911,11 @@ CHECKLIST FINAL:
 async def generate_costar_prompt_with_multi_ai(prompt_data: PromptData, multi_ai_service) -> str:
     """Gerar prompt COSTAR aprimorado com sistema de múltiplas IAs"""
     
+    start_time = time.time()
+    provider_used = "unknown"
+    success = False
+    error_message = None
+    
     try:
         logger.info("🚀 [MULTI_AI] Iniciando geração com Multi-AI")
         logger.info(f"🔍 [MULTI_AI] Tipo do serviço: {type(multi_ai_service).__name__}")
@@ -966,21 +984,60 @@ Gere o prompt aprimorado seguindo EXATAMENTE esta estrutura:"""
         logger.info(f"📨 [MULTI_AI] Resultado recebido: tipo={type(result)}")
         logger.info(f"🔍 [MULTI_AI] Estrutura do resultado: {result if isinstance(result, dict) else 'não é dict'}")
         
-        # Extrair conteúdo do resultado
-        if isinstance(result, dict) and 'content' in result:
-            enhanced_prompt = result['content']
+        # Extrair conteúdo do resultado e provider usado
+        if isinstance(result, dict):
+            enhanced_prompt = result.get('content', str(result))
+            provider_used = result.get('provider', 'unknown')
             logger.info(f"✅ [MULTI_AI] Conteúdo extraído do campo 'content': {len(enhanced_prompt)} chars")
+            logger.info(f"🤖 [MULTI_AI] Provider usado: {provider_used}")
         else:
             enhanced_prompt = str(result)
             logger.info(f"⚠️ [MULTI_AI] Resultado convertido para string: {len(enhanced_prompt)} chars")
+            
+        success = True
+        response_time = time.time() - start_time
+        
+        # Registrar métricas de analytics
+        if analytics_service:
+            try:
+                analytics_service.log_api_usage(
+                    provider=provider_used,
+                    user_id=None,  # Preview não requer login
+                    prompt_type="costar",
+                    response_time=response_time,
+                    success=True,
+                    tokens_used=len(enhanced_prompt)
+                )
+                logger.info(f"📊 [ANALYTICS] Registrado: {provider_used}, {response_time:.2f}s, {len(enhanced_prompt)} chars")
+            except Exception as analytics_error:
+                logger.warning(f"⚠️ [ANALYTICS] Erro ao registrar métricas: {analytics_error}")
             
         logger.info(f"🎨 [MULTI_AI] Preview do resultado: {enhanced_prompt[:150]}...")
         return enhanced_prompt
         
     except Exception as e:
+        error_message = str(e)
+        response_time = time.time() - start_time
+        
         logger.error(f"❌ [MULTI_AI] ERRO ao gerar prompt aprimorado: {str(e)}")
         logger.error(f"🔧 [MULTI_AI] Tipo do erro: {type(e).__name__}")
         logger.error(f"📍 [MULTI_AI] Detalhes do erro: {repr(e)}")
+        
+        # Registrar erro nas métricas
+        if analytics_service:
+            try:
+                analytics_service.log_api_usage(
+                    provider=provider_used,
+                    user_id=None,
+                    prompt_type="costar",
+                    response_time=response_time,
+                    success=False,
+                    error_message=error_message
+                )
+                logger.info(f"📊 [ANALYTICS] Erro registrado: {provider_used}, {response_time:.2f}s, erro: {error_message[:50]}")
+            except Exception as analytics_error:
+                logger.warning(f"⚠️ [ANALYTICS] Erro ao registrar erro: {analytics_error}")
+        
         logger.info("🔄 [MULTI_AI] Fallback para geração básica")
         return generate_costar_prompt_basic(prompt_data)
 
