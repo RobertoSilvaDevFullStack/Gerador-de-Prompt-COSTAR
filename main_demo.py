@@ -33,6 +33,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Endpoint raiz
+@app.get("/")
+async def root():
+    """Endpoint raiz - redireciona para debug login"""
+    return HTMLResponse("""
+    <html>
+        <head><title>COSTAR Prompt Generator</title></head>
+        <body>
+            <h1>🎯 COSTAR Prompt Generator</h1>
+            <p>Sistema de geração de prompts COSTAR com múltiplas IAs</p>
+            <a href="/frontend/debug-login-main.html">🚀 Acessar Sistema</a>
+        </body>
+    </html>
+    """)
+
 # Endpoint de healthcheck para Railway
 @app.get("/status")
 async def health_check():
