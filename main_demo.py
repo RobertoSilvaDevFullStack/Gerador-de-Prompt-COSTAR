@@ -69,24 +69,49 @@ async def debug_files():
 async def debug_ai():
     """Debug: testar provedores de IA"""
     try:
-        from services.production_multi_ai import multi_ai_service
+        logger.info("🔍 Debug AI endpoint chamado")
         
-        # Testar com prompt simples
-        test_prompt = "Olá, você está funcionando?"
-        result = await multi_ai_service.generate_content(test_prompt, max_tokens=100)
-        
-        return {
-            "providers_loaded": len(multi_ai_service.providers),
-            "available_providers": list(multi_ai_service.providers.keys()),
-            "test_result": result,
-            "environment_vars": {
-                "GROQ_API_KEY": "✅" if os.getenv("GROQ_API_KEY") else "❌",
-                "GEMINI_API_KEY": "✅" if os.getenv("GEMINI_API_KEY") else "❌",
-                "TOGETHER_API_KEY": "✅" if os.getenv("TOGETHER_API_KEY") else "❌"
-            }
+        # Verificar variáveis de ambiente primeiro
+        env_check = {
+            "GROQ_API_KEY": "✅" if os.getenv("GROQ_API_KEY") else "❌",
+            "GEMINI_API_KEY": "✅" if os.getenv("GEMINI_API_KEY") else "❌",
+            "TOGETHER_API_KEY": "✅" if os.getenv("TOGETHER_API_KEY") else "❌"
         }
+        
+        logger.info(f"📋 Environment check: {env_check}")
+        
+        # Tentar importar o serviço
+        try:
+            from services.production_multi_ai import get_multi_ai_service
+            service = get_multi_ai_service()
+            
+            providers_info = {
+                "providers_loaded": len(service.providers),
+                "available_providers": list(service.providers.keys()),
+            }
+            
+            logger.info(f"🤖 Providers info: {providers_info}")
+            
+            # Teste simples sem chamar APIs externas
+            return {
+                "status": "debug_success",
+                "environment_vars": env_check,
+                **providers_info,
+                "note": "Teste básico sem chamadas de API"
+            }
+            
+        except Exception as import_error:
+            logger.error(f"❌ Erro ao importar service: {str(import_error)}")
+            return {
+                "status": "import_error",
+                "error": str(import_error),
+                "environment_vars": env_check
+            }
+            
     except Exception as e:
+        logger.error(f"❌ Erro geral no debug: {str(e)}")
         return {
+            "status": "general_error",
             "error": str(e),
             "environment_vars": {
                 "GROQ_API_KEY": "✅" if os.getenv("GROQ_API_KEY") else "❌",
@@ -236,16 +261,29 @@ async def preview_prompt(prompt_data: PromptData):
             logger.info("🤖 AI habilitada, tentando usar production multi-AI")
             # Usar sistema de múltiplas IAs (versão produção)
             try:
-                from services.production_multi_ai import multi_ai_service
+                from services.production_multi_ai import get_multi_ai_service
+                service = get_multi_ai_service()
                 logger.info("✅ ProductionMultiAI importado com sucesso")
-                prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+                
+                # Usar timeout para evitar travamento
+                import asyncio
+                prompt_aprimorado = await asyncio.wait_for(
+                    generate_costar_prompt_with_multi_ai(prompt_data, service),
+                    timeout=30.0  # 30 segundos de timeout
+                )
                 logger.info(f"✅ Prompt gerado com AI: {len(prompt_aprimorado)} caracteres")
+            except asyncio.TimeoutError:
+                logger.warning("⏰ Timeout na geração com AI, usando fallback")
+                prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
             except ImportError as e:
                 logger.warning(f"⚠️ Erro importando ProductionMultiAI: {e}")
                 # Fallback para versão original
-                from services.multi_ai_service import MultiAIService
-                multi_ai_service = MultiAIService()
-                prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+                try:
+                    from services.multi_ai_service import MultiAIService
+                    multi_ai_service = MultiAIService()
+                    prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+                except:
+                    prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
             except Exception as e:
                 logger.error(f"❌ Erro na geração com AI: {str(e)}")
                 # Fallback para modo básico

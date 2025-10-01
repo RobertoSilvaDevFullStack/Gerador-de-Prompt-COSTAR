@@ -236,5 +236,20 @@ class ProductionMultiAIService:
             "message": "APIs de IA indisponíveis, usando modo básico"
         }
 
-# Instância global para uso no projeto
-multi_ai_service = ProductionMultiAIService()
+# Instância global para uso no projeto (lazy loading)
+_multi_ai_service = None
+
+def get_multi_ai_service():
+    """Obter instância do multi_ai_service com lazy loading"""
+    global _multi_ai_service
+    if _multi_ai_service is None:
+        _multi_ai_service = ProductionMultiAIService()
+        logger.info("🚀 ProductionMultiAIService inicializado (lazy loading)")
+    return _multi_ai_service
+
+# Compatibilidade com código existente - inicialização no import
+try:
+    multi_ai_service = get_multi_ai_service()
+except Exception as e:
+    logger.error(f"❌ Erro na inicialização do multi_ai_service: {e}")
+    multi_ai_service = None
