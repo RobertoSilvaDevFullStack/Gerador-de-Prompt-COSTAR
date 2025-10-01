@@ -44,10 +44,57 @@ async def health_check():
         "version": "1.0.0-demo"
     }
 
+# Endpoint de debug para verificar arquivos (remover em produção)
+@app.get("/debug/files")
+async def debug_files():
+    """Debug: verificar estrutura de arquivos"""
+    import os
+    files_info = {
+        "current_dir": os.getcwd(),
+        "frontend_exists": os.path.exists("frontend"),
+        "index_exists": os.path.exists("frontend/index.html"),
+        "frontend_files": []
+    }
+    
+    if os.path.exists("frontend"):
+        try:
+            files_info["frontend_files"] = os.listdir("frontend")[:10]  # Apenas primeiros 10
+        except:
+            files_info["frontend_files"] = ["erro ao listar"]
+    
+    return files_info
+
 # Endpoint root
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """Endpoint raiz da API"""
+    """Servir a página principal do frontend"""
+    try:
+        with open("frontend/index.html", "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except FileNotFoundError:
+        return HTMLResponse(content="""
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>COSTAR Prompt Generator</title>
+        </head>
+        <body>
+            <h1>🚀 COSTAR Prompt Generator</h1>
+            <p>✅ API está funcionando!</p>
+            <p>📁 Frontend não encontrado. Servindo página básica.</p>
+            <p><a href="/docs">📚 Documentação da API</a></p>
+            <p><a href="/status">❤️ Status da Aplicação</a></p>
+        </body>
+        </html>
+        """)
+
+# Endpoint de API info (para manter compatibilidade)
+@app.get("/api")
+async def api_info():
+    """Informações da API"""
     return {
         "message": "COSTAR Prompt Generator API está funcionando!",
         "status": "online",
