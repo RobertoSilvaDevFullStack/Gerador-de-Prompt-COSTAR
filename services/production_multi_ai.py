@@ -226,13 +226,6 @@ class ProductionMultiAIService:
             logger.error(f"❌ [GEMINI] Erro na chamada: {str(e)}")
             logger.error(f"🔧 [GEMINI] Tipo do erro: {type(e).__name__}")
             raise
-                    "model": provider["model"],
-                    "success": True
-                }
-                
-        except Exception as e:
-            logger.error(f"❌ Erro na chamada Gemini: {str(e)}")
-            raise
     
     async def _call_together(self, provider: Dict, prompt: str, **kwargs) -> Dict[str, Any]:
         """Chama API do Together"""
