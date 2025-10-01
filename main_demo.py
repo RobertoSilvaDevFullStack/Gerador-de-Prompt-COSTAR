@@ -229,18 +229,30 @@ async def health_check():
 async def preview_prompt(prompt_data: PromptData):
     """Gerar preview do prompt COSTAR (modo demo)"""
     try:
+        logger.info(f"🎯 Recebendo requisição de preview: {prompt_data.contexto[:50]}...")
+        
         # Gerar prompt COSTAR com múltiplas IAs
         if ai_enabled:
+            logger.info("🤖 AI habilitada, tentando usar production multi-AI")
             # Usar sistema de múltiplas IAs (versão produção)
             try:
                 from services.production_multi_ai import multi_ai_service
+                logger.info("✅ ProductionMultiAI importado com sucesso")
                 prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
-            except ImportError:
+                logger.info(f"✅ Prompt gerado com AI: {len(prompt_aprimorado)} caracteres")
+            except ImportError as e:
+                logger.warning(f"⚠️ Erro importando ProductionMultiAI: {e}")
                 # Fallback para versão original
                 from services.multi_ai_service import MultiAIService
                 multi_ai_service = MultiAIService()
                 prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
+            except Exception as e:
+                logger.error(f"❌ Erro na geração com AI: {str(e)}")
+                # Fallback para modo básico
+                prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
+                logger.info("🔄 Usando modo básico como fallback")
         else:
+            logger.info("🔧 AI desabilitada, usando geração básica")
             # Usar geração básica sem IA
             prompt_aprimorado = generate_costar_prompt_basic(prompt_data)
         
@@ -809,7 +821,10 @@ CHECKLIST FINAL:
 async def generate_costar_prompt_with_multi_ai(prompt_data: PromptData, multi_ai_service) -> str:
     """Gerar prompt COSTAR aprimorado com sistema de múltiplas IAs"""
     
-    enhancement_prompt = f"""Você é um especialista em prompt engineering. Crie um prompt COSTAR aprimorado e detalhado baseado nos dados fornecidos.
+    try:
+        logger.info("🚀 Iniciando geração com Multi-AI")
+        
+        enhancement_prompt = f"""Você é um especialista em prompt engineering. Crie um prompt COSTAR aprimorado e detalhado baseado nos dados fornecidos.
 
 DADOS FORNECIDOS:
 - Contexto: {prompt_data.contexto}
@@ -858,16 +873,28 @@ FORMATO DE SAÍDA OBRIGATÓRIO:
 [Expanda: {prompt_data.resposta} - especifique estrutura, elementos obrigatórios, e formato final]
 
 Gere o prompt aprimorado seguindo EXATAMENTE esta estrutura:"""
-    
-    try:
-        enhanced_prompt = await multi_ai_service.generate_content(
+        
+        logger.info("📝 Chamando multi_ai_service.generate_content")
+        
+        result = await multi_ai_service.generate_content(
             prompt=enhancement_prompt,
             temperatura=0.7,
             max_tokens=2048
         )
+        
+        logger.info(f"✅ Multi-AI gerou {len(result.get('content', ''))} caracteres")
+        
+        # Extrair conteúdo do resultado
+        if isinstance(result, dict) and 'content' in result:
+            enhanced_prompt = result['content']
+        else:
+            enhanced_prompt = str(result)
+            
         return enhanced_prompt
+        
     except Exception as e:
-        logger.error(f"Erro ao gerar prompt aprimorado com múltiplas IAs: {e}")
+        logger.error(f"❌ Erro ao gerar prompt aprimorado com múltiplas IAs: {str(e)}")
+        logger.info("🔄 Fallback para geração básica")
         return generate_costar_prompt_basic(prompt_data)
 
 async def generate_costar_prompt_with_ai(prompt_data: PromptData, gemini_service) -> str:
