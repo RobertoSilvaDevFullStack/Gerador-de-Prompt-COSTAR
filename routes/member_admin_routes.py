@@ -332,10 +332,9 @@ async def get_user_templates(current_user = Depends(get_current_user)):
 @member_router.get("/templates/public")
 async def get_public_templates(
     category: Optional[str] = None,
-    search: Optional[str] = None,
-    current_user = Depends(get_current_user)
+    search: Optional[str] = None
 ):
-    """Obter templates públicos"""
+    """Obter templates públicos - sem autenticação necessária"""
     templates = member_service.get_public_templates(category, search)
     return {"templates": templates}
 
