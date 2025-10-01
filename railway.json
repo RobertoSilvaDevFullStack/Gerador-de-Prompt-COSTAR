@@ -1,13 +1,11 @@
 {
     "build": {
-        "builder": "NIXPACKS"
+        "builder": "NIXPACKS",
+        "buildCommand": "pip install --no-cache-dir -r requirements-deploy.txt"
     },
     "deploy": {
         "startCommand": "uvicorn main_demo:app --host 0.0.0.0 --port $PORT",
         "healthcheckPath": "/status",
         "healthcheckTimeout": 300
-    },
-    "build": {
-        "buildCommand": "pip install -r requirements-deploy.txt"
     }
 }

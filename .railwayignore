@@ -1,0 +1,56 @@
+# Railway Ignore File
+# Arquivos que não devem ser incluídos no build
+
+# Environment files
+.env
+.env.local
+.env.example
+
+# Cache and temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Local development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Testing
+tests/
+test_*
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Git
+.git/
+.gitignore
+
+# Local requirements (use requirements-deploy.txt)
+requirements.txt
+
+# Docker files (not needed in Railway)
+docker/
+Dockerfile*
+docker-compose*
+
+# Other platforms config
+vercel.json
+netlify.toml
+fly.toml
+Procfile
+
+# Backups
+backups/
+*.bak
