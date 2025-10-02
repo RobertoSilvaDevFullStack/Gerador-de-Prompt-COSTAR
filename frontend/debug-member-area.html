@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Área de Membros</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border-left: 4px solid #ff0000; }
+        .success { background: #e6ffe6; border-left: 4px solid #00aa00; }
+        .info { background: #e6f3ff; border-left: 4px solid #0066cc; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug - Área de Membros</h1>
+    
+    <div>
+        <button onclick="testAuthentication()">Testar Autenticação</button>
+        <button onclick="testProfile()">Testar Perfil</button>
+        <button onclick="testAnalytics()">Testar Analytics</button>
+        <button onclick="testQuota()">Testar Quota</button>
+        <button onclick="testSavedPrompts()">Testar Prompts Salvos</button>
+        <button onclick="clearLogs()">Limpar Logs</button>
+    </div>
+    
+    <div id="logs"></div>
+
+    <script>
+        const API_BASE = "/api";
+        
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logElement = document.createElement('div');
+            logElement.className = `log ${type}`;
+            logElement.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(logElement);
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        async function testAuthentication() {
+            log("🔐 Testando sistema de autenticação...", 'info');
+            
+            // Verificar token no localStorage
+            const token = localStorage.getItem("authToken");
+            if (token) {
+                log(`✅ Token encontrado: ${token.substring(0, 20)}...`, 'success');
+            } else {
+                log("❌ Nenhum token encontrado no localStorage", 'error');
+                
+                // Tentar fazer login de teste
+                log("🔄 Tentando login automático de teste...", 'info');
+                
+                try {
+                    const loginResponse = await fetch(`${API_BASE}/members/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: 'admin@costar.com',
+                            password: 'admin123'
+                        })
+                    });
+                    
+                    if (loginResponse.ok) {
+                        const loginData = await loginResponse.json();
+                        localStorage.setItem("authToken", loginData.access_token);
+                        log(`✅ Login realizado com sucesso! Token: ${loginData.access_token.substring(0, 20)}...`, 'success');
+                    } else {
+                        const errorText = await loginResponse.text();
+                        log(`❌ Erro no login: ${loginResponse.status} - ${errorText}`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ Erro na requisição de login: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        async function testProfile() {
+            log("👤 Testando endpoint de perfil...", 'info');
+            
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                log("❌ Token não encontrado. Execute o teste de autenticação primeiro.", 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/members/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`📡 Status da resposta: ${response.status}`, 'info');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Perfil carregado com sucesso:`, 'success');
+                    log(`📋 Dados: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Erro ao carregar perfil: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAnalytics() {
+            log("📊 Testando endpoint de analytics...", 'info');
+            
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                log("❌ Token não encontrado. Execute o teste de autenticação primeiro.", 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/members/analytics`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`📡 Status da resposta: ${response.status}`, 'info');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Analytics carregados com sucesso:`, 'success');
+                    log(`📋 Dados: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Erro ao carregar analytics: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testQuota() {
+            log("🎯 Testando endpoint de quota...", 'info');
+            
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                log("❌ Token não encontrado. Execute o teste de autenticação primeiro.", 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/members/quota`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`📡 Status da resposta: ${response.status}`, 'info');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Quota carregada com sucesso:`, 'success');
+                    log(`📋 Dados: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Erro ao carregar quota: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSavedPrompts() {
+            log("💾 Testando endpoint de prompts salvos...", 'info');
+            
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                log("❌ Token não encontrado. Execute o teste de autenticação primeiro.", 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/members/saved-prompts`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`📡 Status da resposta: ${response.status}`, 'info');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Prompts salvos carregados com sucesso:`, 'success');
+                    log(`📋 Dados: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Erro ao carregar prompts salvos: ${response.status} - ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro na requisição: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-executar teste de autenticação ao carregar
+        window.onload = function() {
+            log("🚀 Debug da Área de Membros iniciado", 'info');
+            testAuthentication();
+        };
+    </script>
+</body>
+</html>

@@ -224,6 +224,47 @@ async def get_admin_user(current_user = Depends(get_current_user)):
         )
     return current_user
 
+@member_router.get("/debug/token-info") 
+async def debug_token_info(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Debug: informações sobre o token atual"""
+    try:
+        token = credentials.credentials
+        logger.info(f"🔍 Token recebido: {token[:20]}...")
+        
+        if jwt is None:
+            return {"error": "JWT library não disponível"}
+        
+        # Tentar decodificar o token
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            logger.info(f"🔍 Payload decodificado: {payload}")
+        except Exception as decode_error:
+            logger.error(f"❌ Erro ao decodificar token: {decode_error}")
+            return {"error": f"Erro ao decodificar: {str(decode_error)}", "token_start": token[:20]}
+        
+        user_id = payload.get("user_id")
+        logger.info(f"🔍 User ID extraído: {user_id}")
+        
+        # Tentar buscar usuário
+        try:
+            user = auth_service.get_user_by_id(user_id)
+            logger.info(f"🔍 Usuário encontrado: {user.email if user else 'None'}")
+        except Exception as user_error:
+            logger.error(f"❌ Erro ao buscar usuário: {user_error}")
+            return {"error": f"Erro ao buscar usuário: {str(user_error)}", "user_id": user_id}
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "user_email": user.email if user else None,
+            "user_role": str(user.role) if user else None,
+            "payload": payload
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erro geral no debug: {e}")
+        return {"error": f"Erro geral: {str(e)}"}
+
 @member_router.get("/auth/me")
 async def get_current_user_info(current_user = Depends(get_current_user)):
     """Obter informações do usuário atual"""

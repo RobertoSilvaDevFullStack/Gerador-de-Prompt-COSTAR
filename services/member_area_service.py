@@ -664,10 +664,11 @@ class MemberAreaService:
             if not profile:
                 return {"allowed": False, "reason": "Perfil não encontrado"}
             
-            # Obter quota do plano
-            monthly_limit = self.plan_quotas[profile.subscription_plan]
+            # Obter quota do plano (corrigindo acesso ao dicionário)
+            plan_limits = self.plan_quotas[profile.subscription_plan]
+            monthly_limit = plan_limits['monthly_prompts']
             
-            if monthly_limit == "unlimited":
+            if monthly_limit == -1:  # Enterprise ilimitado
                 return {
                     "allowed": True, 
                     "used": profile.usage_current_month.get("prompts_generated", 0),
