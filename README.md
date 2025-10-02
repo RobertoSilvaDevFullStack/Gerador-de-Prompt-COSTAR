@@ -1,8 +1,8 @@
 # 🎯 COSTAR Generator - Sistema Completo de Geração de Prompts
 
-**Plataforma profissional** para criação e gerenciamento de prompts COSTAR com **autenticação Supabase**, **dashboard administrativo** e **sistema multi-IA** integrado.
+**Plataforma profissional** para criação e gerenciamento de prompts COSTAR com **autenticação Supabase**, **dashboard administrativo**, **sistema multi-IA** integrado e **sincronização completa entre páginas**.
 
-## ✨ Sistema Completo v3.0
+## ✨ Sistema Completo v3.1
 
 ### 🔐 **Autenticação & Usuários**
 
@@ -11,6 +11,14 @@
 - ✅ **Dashboard Admin** com métricas em tempo real
 - ✅ **Alteração de senhas** e gerenciamento de perfil
 - ✅ **Row Level Security** (RLS) no banco de dados
+
+### 🔄 **Sincronização Inteligente de Prompts** 🆕
+
+- ✅ **Salvamento Dual**: localStorage + backend API para usuários logados
+- ✅ **Integração Completa**: Prompts salvos na página principal aparecem na área de membros
+- ✅ **Sincronização Automática**: Dados mesclados sem duplicatas
+- ✅ **Feedbacks Inteligentes**: Baseado no status de autenticação
+- ✅ **Compatibilidade de Dados**: Suporte a diferentes estruturas (local vs backend)
 
 ### 🤖 **Sistema Multi-IA Avançado**
 
@@ -24,9 +32,35 @@
 
 - ✅ **Banco Supabase** com 6 tabelas estruturadas
 - ✅ **Sistema de Templates** pré-configurados
-- ✅ **Histórico de Prompts** por usuário
+- ✅ **Histórico de Prompts** por usuário com sincronização
 - ✅ **Analytics e Métricas** em tempo real
 - ✅ **Modo Demo** como fallback automático
+
+## 🚀 Principais Funcionalidades
+
+### 🎯 **Geração de Prompts COSTAR**
+- Interface intuitiva para criar prompts estruturados
+- Sistema Multi-IA com failover automático
+- Templates pré-configurados para diferentes use cases
+- Salvamento automático local e no backend (para usuários logados)
+
+### 👤 **Sistema de Usuários**
+- Autenticação segura com Supabase + JWT
+- Área de membros personalizada
+- Sincronização de dados entre dispositivos
+- Analytics pessoais de uso
+
+### 📊 **Dashboard Administrativo**
+- Métricas em tempo real do sistema
+- Gerenciamento de usuários
+- Monitoramento das APIs de IA
+- Logs de atividades detalhados
+
+### 🔄 **Sincronização Inteligente** 🆕
+- Prompts salvos na página principal aparecem automaticamente na área de membros
+- Sistema dual: funciona offline (localStorage) e online (backend)
+- Mesclagem automática de dados sem duplicatas
+- Feedbacks contextuais baseados no status de login
 
 ## 🚀 Início Rápido
 
@@ -176,10 +210,12 @@ TOGETHER_API_KEY=xxxxxx          # Opcional
 
 ### **Área de Membros**
 
-- `GET /api/members/prompts` - Prompts do usuário
-- `POST /api/members/prompts` - Salvar prompt
-- `GET /api/members/templates` - Templates disponíveis
+- `GET /api/members/saved-prompts` - Prompts salvos do usuário (sincronizados)
+- `POST /api/members/save-prompt` - Salvar prompt no backend
+- `GET /api/members/templates/public` - Templates públicos disponíveis
+- `GET /api/members/analytics` - Analytics pessoais do usuário
 - `PUT /api/members/profile` - Atualizar perfil
+- `GET /api/members/quota` - Verificar quota de geração
 
 ### **Dashboard Admin**
 
@@ -308,20 +344,25 @@ gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bin
 - 🛡️ Sistema de failover automático
 - 📈 Monitoramento e health checks
 - 🌐 Interface web responsiva
+- 🔄 **Sincronização completa de prompts entre páginas** 🆕
+- 💾 **Sistema de salvamento dual (local + backend)** 🆕
+- 🎯 **Modal de visualização de prompts salvos** 🆕
+- 🔗 **Redirecionamentos corrigidos entre páginas** 🆕
 
 ### 🚧 **Em Desenvolvimento**
 
 - 📧 Sistema de notificações por email
 - 💳 Integração com sistemas de pagamento
-- 🔄 Sincronização automática entre dispositivos
+- 🔄 Funcionalidade de delete para prompts do backend
 - 📱 Aplicativo mobile (PWA avançado)
 
 ### 🎯 **Roadmap Futuro**
 
 - 🌍 Internacionalização (i18n)
-- 🎨 Temas personalizáveis
+- 🎨 Temas personalizáveis (Dark/Light mode)
 - 🔌 Plugin system para extensões
 - 📊 Analytics avançados com BigQuery
+- 🤖 IA personalizada para cada usuário
 
 ## 🤝 Contribuição
 
@@ -352,6 +393,15 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🎉 Status: **SISTEMA COMPLETO E FUNCIONAL** ✅
 
-O COSTAR Generator está em pleno funcionamento com todas as funcionalidades principais implementadas e testadas. Sistema pronto para produção!
+O COSTAR Generator está em pleno funcionamento com todas as funcionalidades principais implementadas e testadas. **Nova funcionalidade de sincronização de prompts** entre página principal e área de membros implementada com sucesso!
 
-**Última atualização:** Setembro 2025 | **Versão:** 3.0.0
+### 🔄 **Últimas Atualizações (v3.1):**
+- ✅ **Integração completa de prompts** entre main page e member area
+- ✅ **Salvamento dual inteligente** (localStorage + backend)
+- ✅ **Sincronização automática** para usuários logados
+- ✅ **Modal aprimorado** para visualização de prompts
+- ✅ **Feedbacks contextuais** baseados no status de autenticação
+
+**Sistema pronto para produção com experiência do usuário aprimorada!**
+
+**Última atualização:** Outubro 2025 | **Versão:** 3.1.0
