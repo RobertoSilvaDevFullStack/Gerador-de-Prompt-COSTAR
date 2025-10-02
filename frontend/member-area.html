@@ -397,7 +397,7 @@
                         <button class="btn btn-outline-primary me-2" onclick="loadSavedPrompts()">
                             <i class="bi bi-arrow-clockwise me-2"></i>Atualizar
                         </button>
-                        <a href="/frontend/debug-login-main.html" class="btn btn-primary">
+                        <a href="/frontend/index.html" class="btn btn-primary">
                             <i class="bi bi-plus-circle me-2"></i>Gerar Novo Prompt
                         </a>
                     </div>
@@ -1175,6 +1175,43 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar prompt salvo -->
+    <div class="modal fade" id="viewPromptModal" tabindex="-1" aria-labelledby="viewPromptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPromptModalLabel">Visualizar Prompt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong id="promptModalTitle"></strong>
+                        <small class="text-muted ms-2" id="promptModalDate"></small>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Contexto:</h6>
+                        <p id="promptModalContext" class="text-muted"></p>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Conteúdo do Prompt:</h6>
+                        <div id="promptModalContent" class="p-3 bg-light rounded" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <span id="promptModalStyle" class="badge bg-secondary me-1"></span>
+                        <span id="promptModalTone" class="badge bg-info me-1"></span>
+                        <span id="promptModalCategory" class="badge bg-success"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="copyPromptModalToClipboard()">
+                        <i class="bi bi-clipboard"></i> Copiar
+                    </button>
                 </div>
             </div>
         </div>

@@ -495,7 +495,7 @@ async function useTemplate(templateId) {
       const data = await response.json();
       // Redirecionar para página principal com template carregado
       localStorage.setItem("selectedTemplate", JSON.stringify(data.template));
-      window.location.href = "index.html";
+      window.location.href = "/frontend/index.html";
     } else {
       showAlert("Erro ao usar template", "danger");
     }
@@ -1238,6 +1238,9 @@ async function loadSavedPrompts() {
 function displaySavedPrompts(prompts) {
   console.log("🎨 [MEMBER] Exibindo prompts salvos:", prompts);
 
+  // Armazenar prompts na variável global para acesso nos modais
+  currentSavedPrompts = prompts || [];
+
   const container = document.getElementById("savedPromptsContainer");
   if (!container) {
     console.error(
@@ -1277,13 +1280,21 @@ function displaySavedPrompts(prompts) {
       </div>
       <div class="card-body">
         <p class="text-muted mb-2">${prompt.context || "Sem contexto"}</p>
-        <div class="prompt-content" style="max-height: 150px; overflow-y: auto;">
-          ${prompt.content || "Conteúdo não disponível"}
+        <div class="prompt-content" style="max-height: 100px; overflow-y: auto;">
+          ${(prompt.content || "Conteúdo não disponível").substring(0, 200)}${(prompt.content || "").length > 200 ? "..." : ""}
         </div>
-        <div class="mt-2">
-          <span class="badge bg-secondary me-1">${prompt.style}</span>
-          <span class="badge bg-info me-1">${prompt.tone}</span>
-          <span class="badge bg-success">${prompt.category}</span>
+        <div class="mt-2 mb-3">
+          <span class="badge bg-secondary me-1">${prompt.style || "N/A"}</span>
+          <span class="badge bg-info me-1">${prompt.tone || "N/A"}</span>
+          <span class="badge bg-success">${prompt.category || "N/A"}</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary btn-sm" onclick="viewSavedPrompt(${index})">
+            <i class="bi bi-eye"></i> Visualizar
+          </button>
+          <button class="btn btn-outline-primary btn-sm" onclick="copySavedPrompt('${prompt.content?.replace(/'/g, "&apos;") || ""}')">
+            <i class="bi bi-clipboard"></i> Copiar
+          </button>
         </div>
       </div>
     </div>
@@ -1457,6 +1468,70 @@ async function saveGeneratedPrompt() {
     console.error("Erro:", error);
     showAlert("Erro de conexão", "danger");
   }
+}
+
+// ============= FUNÇÕES DO MODAL DE PROMPTS SALVOS =============
+
+// Variável global para armazenar os prompts carregados
+let currentSavedPrompts = [];
+
+// Função para visualizar prompt salvo em modal
+function viewSavedPrompt(promptIndex) {
+  if (!currentSavedPrompts || promptIndex >= currentSavedPrompts.length) {
+    showAlert("Prompt não encontrado", "error");
+    return;
+  }
+
+  const prompt = currentSavedPrompts[promptIndex];
+  
+  // Preencher dados do modal
+  document.getElementById("promptModalTitle").textContent = prompt.title || "Sem título";
+  document.getElementById("promptModalDate").textContent = prompt.created_at 
+    ? new Date(prompt.created_at).toLocaleDateString() 
+    : "Data não disponível";
+  document.getElementById("promptModalContext").textContent = prompt.context || "Sem contexto";
+  document.getElementById("promptModalContent").textContent = prompt.content || "Conteúdo não disponível";
+  document.getElementById("promptModalStyle").textContent = prompt.style || "N/A";
+  document.getElementById("promptModalTone").textContent = prompt.tone || "N/A";
+  document.getElementById("promptModalCategory").textContent = prompt.category || "N/A";
+
+  // Armazenar conteúdo para cópia
+  window.currentPromptContent = prompt.content || "";
+
+  // Mostrar modal
+  const modal = new bootstrap.Modal(document.getElementById("viewPromptModal"));
+  modal.show();
+}
+
+// Função para copiar prompt salvo
+function copySavedPrompt(content) {
+  if (!content) {
+    showAlert("Nenhum conteúdo para copiar", "warning");
+    return;
+  }
+
+  const decodedContent = content.replace(/&apos;/g, "'");
+  
+  navigator.clipboard.writeText(decodedContent).then(() => {
+    showAlert("Prompt copiado para clipboard!", "success");
+  }).catch(() => {
+    showAlert("Erro ao copiar prompt", "error");
+  });
+}
+
+// Função para copiar do modal
+function copyPromptModalToClipboard() {
+  const content = window.currentPromptContent || "";
+  if (!content) {
+    showAlert("Nenhum conteúdo para copiar", "warning");
+    return;
+  }
+
+  navigator.clipboard.writeText(content).then(() => {
+    showAlert("Prompt copiado para clipboard!", "success");
+  }).catch(() => {
+    showAlert("Erro ao copiar prompt", "error");
+  });
 }
 
 // Atualizar dados quando a aba mudar (se necessário)

@@ -1372,6 +1372,41 @@ ${data.response}`;
         // ==================== AUTHENTICATION FUNCTIONS ====================
 
         // Check if user is authenticated
+        // Load selected template from localStorage
+        function loadSelectedTemplate() {
+            const selectedTemplate = localStorage.getItem('selectedTemplate');
+            if (selectedTemplate) {
+                try {
+                    const template = JSON.parse(selectedTemplate);
+                    console.log('📋 Carregando template selecionado:', template);
+                    
+                    // Preencher os campos do formulário
+                    if (template.template_content) {
+                        const content = template.template_content;
+                        
+                        // Preencher campos básicos
+                        if (content.context) document.getElementById('context').value = content.context;
+                        if (content.task) document.getElementById('objective').value = content.task;
+                        if (content.style) document.getElementById('style').value = content.style;
+                        if (content.tone) document.getElementById('tone').value = content.tone;
+                        if (content.audience) document.getElementById('audience').value = content.audience;
+                        if (content.response) document.getElementById('response').value = content.response;
+                    }
+                    
+                    // Mostrar notificação de sucesso
+                    showNotification('Template carregado com sucesso!', 'success');
+                    
+                    // Limpar o template do localStorage após carregar
+                    localStorage.removeItem('selectedTemplate');
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar template:', error);
+                    showNotification('Erro ao carregar template', 'error');
+                    localStorage.removeItem('selectedTemplate');
+                }
+            }
+        }
+
         function checkAuthentication() {
             const token = localStorage.getItem('authToken');
             const userInfo = localStorage.getItem('userInfo');
@@ -1622,6 +1657,8 @@ ${data.response}`;
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function () {
             checkAuthentication();
+            // Load selected template if exists
+            loadSelectedTemplate();
             // Force check after a small delay to ensure all elements are loaded
             setTimeout(() => {
                 checkAuthentication();
