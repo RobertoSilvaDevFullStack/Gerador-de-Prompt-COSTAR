@@ -1379,11 +1379,11 @@ ${data.response}`;
                 try {
                     const template = JSON.parse(selectedTemplate);
                     console.log('📋 Carregando template selecionado:', template);
-                    
+
                     // Preencher os campos do formulário
                     if (template.template_content) {
                         const content = template.template_content;
-                        
+
                         // Preencher campos básicos
                         if (content.context) document.getElementById('context').value = content.context;
                         if (content.task) document.getElementById('objective').value = content.task;
@@ -1392,13 +1392,13 @@ ${data.response}`;
                         if (content.audience) document.getElementById('audience').value = content.audience;
                         if (content.response) document.getElementById('response').value = content.response;
                     }
-                    
+
                     // Mostrar notificação de sucesso
                     showNotification('Template carregado com sucesso!', 'success');
-                    
+
                     // Limpar o template do localStorage após carregar
                     localStorage.removeItem('selectedTemplate');
-                    
+
                 } catch (error) {
                     console.error('Erro ao carregar template:', error);
                     showNotification('Erro ao carregar template', 'error');

@@ -1281,7 +1281,9 @@ function displaySavedPrompts(prompts) {
       <div class="card-body">
         <p class="text-muted mb-2">${prompt.context || "Sem contexto"}</p>
         <div class="prompt-content" style="max-height: 100px; overflow-y: auto;">
-          ${(prompt.content || "Conteúdo não disponível").substring(0, 200)}${(prompt.content || "").length > 200 ? "..." : ""}
+          ${(prompt.content || "Conteúdo não disponível").substring(0, 200)}${
+        (prompt.content || "").length > 200 ? "..." : ""
+      }
         </div>
         <div class="mt-2 mb-3">
           <span class="badge bg-secondary me-1">${prompt.style || "N/A"}</span>
@@ -1292,7 +1294,9 @@ function displaySavedPrompts(prompts) {
           <button class="btn btn-primary btn-sm" onclick="viewSavedPrompt(${index})">
             <i class="bi bi-eye"></i> Visualizar
           </button>
-          <button class="btn btn-outline-primary btn-sm" onclick="copySavedPrompt('${prompt.content?.replace(/'/g, "&apos;") || ""}')">
+          <button class="btn btn-outline-primary btn-sm" onclick="copySavedPrompt('${
+            prompt.content?.replace(/'/g, "&apos;") || ""
+          }')">
             <i class="bi bi-clipboard"></i> Copiar
           </button>
         </div>
@@ -1483,17 +1487,22 @@ function viewSavedPrompt(promptIndex) {
   }
 
   const prompt = currentSavedPrompts[promptIndex];
-  
+
   // Preencher dados do modal
-  document.getElementById("promptModalTitle").textContent = prompt.title || "Sem título";
-  document.getElementById("promptModalDate").textContent = prompt.created_at 
-    ? new Date(prompt.created_at).toLocaleDateString() 
+  document.getElementById("promptModalTitle").textContent =
+    prompt.title || "Sem título";
+  document.getElementById("promptModalDate").textContent = prompt.created_at
+    ? new Date(prompt.created_at).toLocaleDateString()
     : "Data não disponível";
-  document.getElementById("promptModalContext").textContent = prompt.context || "Sem contexto";
-  document.getElementById("promptModalContent").textContent = prompt.content || "Conteúdo não disponível";
-  document.getElementById("promptModalStyle").textContent = prompt.style || "N/A";
+  document.getElementById("promptModalContext").textContent =
+    prompt.context || "Sem contexto";
+  document.getElementById("promptModalContent").textContent =
+    prompt.content || "Conteúdo não disponível";
+  document.getElementById("promptModalStyle").textContent =
+    prompt.style || "N/A";
   document.getElementById("promptModalTone").textContent = prompt.tone || "N/A";
-  document.getElementById("promptModalCategory").textContent = prompt.category || "N/A";
+  document.getElementById("promptModalCategory").textContent =
+    prompt.category || "N/A";
 
   // Armazenar conteúdo para cópia
   window.currentPromptContent = prompt.content || "";
@@ -1511,12 +1520,15 @@ function copySavedPrompt(content) {
   }
 
   const decodedContent = content.replace(/&apos;/g, "'");
-  
-  navigator.clipboard.writeText(decodedContent).then(() => {
-    showAlert("Prompt copiado para clipboard!", "success");
-  }).catch(() => {
-    showAlert("Erro ao copiar prompt", "error");
-  });
+
+  navigator.clipboard
+    .writeText(decodedContent)
+    .then(() => {
+      showAlert("Prompt copiado para clipboard!", "success");
+    })
+    .catch(() => {
+      showAlert("Erro ao copiar prompt", "error");
+    });
 }
 
 // Função para copiar do modal
@@ -1527,11 +1539,14 @@ function copyPromptModalToClipboard() {
     return;
   }
 
-  navigator.clipboard.writeText(content).then(() => {
-    showAlert("Prompt copiado para clipboard!", "success");
-  }).catch(() => {
-    showAlert("Erro ao copiar prompt", "error");
-  });
+  navigator.clipboard
+    .writeText(content)
+    .then(() => {
+      showAlert("Prompt copiado para clipboard!", "success");
+    })
+    .catch(() => {
+      showAlert("Erro ao copiar prompt", "error");
+    });
 }
 
 // Atualizar dados quando a aba mudar (se necessário)
