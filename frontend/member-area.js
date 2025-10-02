@@ -63,6 +63,7 @@ function updateUI() {
   loadUserTemplates();
   loadPublicTemplates();
   loadProfileForm();
+  loadSavedPrompts(); // Carregar prompts salvos também
 }
 
 // Atualizar badge de assinatura
@@ -105,12 +106,19 @@ async function loadDashboardData() {
 
 // Atualizar estatísticas do dashboard
 function updateDashboardStats(analytics) {
+  // Usar os nomes corretos dos campos da API
   document.getElementById("totalPrompts").textContent =
-    analytics.total_prompts_generated || 0;
+    analytics.prompts_generated_total || 0;
   document.getElementById("monthlyPrompts").textContent =
-    analytics.prompts_this_month || 0;
+    analytics.prompts_generated_this_month || 0;
   document.getElementById("savedTemplates").textContent =
-    analytics.saved_templates_count || 0;
+    analytics.saved_prompts_count || 0; // Corrigido para prompts salvos
+  
+  // Mostrar templates também se disponível
+  const templatesElement = document.getElementById("templatesCount");
+  if (templatesElement) {
+    templatesElement.textContent = analytics.templates_count || 0;
+  }
 
   // Formatar data de membro desde
   if (analytics.member_since) {
@@ -120,34 +128,72 @@ function updateDashboardStats(analytics) {
     );
     document.getElementById("memberSince").textContent = `${months}m`;
   }
+  
+  // Mostrar taxa de sucesso se disponível
+  const successRateElement = document.getElementById("successRate");
+  if (successRateElement && analytics.success_rate !== undefined) {
+    successRateElement.textContent = `${analytics.success_rate.toFixed(1)}%`;
+  }
 }
 
 // Atualizar display de quotas
 function updateQuotaDisplay(quotas) {
-  // Quota de prompts
-  const promptsQuota = quotas.prompts;
-  if (promptsQuota.limit !== -1) {
-    document.getElementById("promptsUsed").textContent = promptsQuota.used;
-    document.getElementById("promptsLimit").textContent = promptsQuota.limit;
+  // Nova estrutura de quota mensal
+  if (quotas.used !== undefined && quotas.limit !== undefined) {
+    document.getElementById("promptsUsed").textContent = quotas.used;
+    
+    if (quotas.limit === "unlimited") {
+      document.getElementById("promptsLimit").textContent = "∞";
+      document.getElementById("promptsProgress").style.width = "100%";
+      document.getElementById("promptsProgress").className = "quota-progress good";
+    } else {
+      document.getElementById("promptsLimit").textContent = quotas.limit;
+      
+      const percentage = quotas.limit > 0 ? (quotas.used / quotas.limit) * 100 : 0;
+      const progressBar = document.getElementById("promptsProgress");
+      progressBar.style.width = `${Math.min(percentage, 100)}%`;
 
-    const percentage = promptsQuota.percentage;
-    const progressBar = document.getElementById("promptsProgress");
-    progressBar.style.width = `${percentage}%`;
-
-    // Alterar cor baseada na porcentagem
-    progressBar.className =
-      "quota-progress " +
-      (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
-  } else {
-    document.getElementById("promptsUsed").textContent = promptsQuota.used;
-    document.getElementById("promptsLimit").textContent = "∞";
-    document.getElementById("promptsProgress").style.width = "100%";
+      // Alterar cor baseada na porcentagem
+      progressBar.className =
+        "quota-progress " +
+        (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
+    }
+    
+    // Mostrar aviso se quota excedida
+    if (!quotas.allowed && quotas.reason) {
+      showAlert(`Atenção: ${quotas.reason}`, "warning");
+    }
+    
+    return;
   }
 
-  // Quota de templates
+  // Fallback para estrutura antiga se existir
+  const promptsQuota = quotas.prompts;
+  if (promptsQuota && promptsQuota.limit !== undefined) {
+    if (promptsQuota.limit !== -1) {
+      document.getElementById("promptsUsed").textContent = promptsQuota.used;
+      document.getElementById("promptsLimit").textContent = promptsQuota.limit;
+
+      const percentage = promptsQuota.percentage || 0;
+      const progressBar = document.getElementById("promptsProgress");
+      progressBar.style.width = `${percentage}%`;
+
+      // Alterar cor baseada na porcentagem
+      progressBar.className =
+        "quota-progress " +
+        (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
+    } else {
+      document.getElementById("promptsUsed").textContent = promptsQuota.used;
+      document.getElementById("promptsLimit").textContent = "∞";
+      document.getElementById("promptsProgress").style.width = "100%";
+    }
+  }
+
+  // Quota de templates (se existir)
   const templatesQuota = quotas.templates;
-  if (templatesQuota.limit !== -1) {
-    document.getElementById("templatesUsed").textContent = templatesQuota.used;
+  if (templatesQuota && templatesQuota.limit !== undefined) {
+    if (templatesQuota.limit !== -1) {
+      document.getElementById("templatesUsed").textContent = templatesQuota.used;
     document.getElementById("templatesLimit").textContent =
       templatesQuota.limit;
 
@@ -1118,4 +1164,243 @@ function showSuccessModal(title, message) {
 
   const modal = new bootstrap.Modal(document.getElementById("successModal"));
   modal.show();
+}
+
+// ============= NOVAS FUNÇÕES - PROMPTS SALVOS E QUOTA =============
+
+// Carregar prompts salvos do usuário
+async function loadSavedPrompts() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(`${API_BASE}/members/saved-prompts`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      displaySavedPrompts(data.prompts);
+      
+      // Atualizar contador no dashboard
+      const savedPromptsCount = document.getElementById("savedTemplates");
+      if (savedPromptsCount) {
+        savedPromptsCount.textContent = data.total;
+      }
+    }
+  } catch (error) {
+    console.error("Erro ao carregar prompts salvos:", error);
+  }
+}
+
+// Exibir prompts salvos na interface
+function displaySavedPrompts(prompts) {
+  const container = document.getElementById("savedPromptsContainer");
+  if (!container) return;
+
+  if (prompts.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-save fa-3x mb-3"></i>
+        <p>Nenhum prompt salvo ainda.</p>
+        <p>Gere prompts e salve seus favoritos!</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = prompts.map(prompt => `
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">${prompt.title}</h6>
+        <small class="text-muted">${new Date(prompt.created_at).toLocaleDateString()}</small>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mb-2">${prompt.context}</p>
+        <div class="prompt-content" style="max-height: 150px; overflow-y: auto;">
+          ${prompt.content}
+        </div>
+        <div class="mt-2">
+          <span class="badge bg-secondary me-1">${prompt.style}</span>
+          <span class="badge bg-info me-1">${prompt.tone}</span>
+          <span class="badge bg-success">${prompt.category}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Gerar prompt COSTAR com verificação de quota
+async function generatePromptWithQuota(promptData) {
+  try {
+    showLoading(true);
+    
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(`${API_BASE}/members/generate-prompt`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Sucesso - mostrar resultado
+      displayGeneratedPrompt(data);
+      
+      // Atualizar quota no dashboard
+      if (data.metadata.quota_info) {
+        updateQuotaDisplay(data.metadata.quota_info);
+      }
+      
+      // Recarregar analytics
+      loadDashboardData();
+      
+      return data;
+    } else if (response.status === 429) {
+      // Quota excedida
+      showQuotaExceededModal(data.detail.quota_info);
+      return null;
+    } else {
+      throw new Error(data.detail || "Erro ao gerar prompt");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro ao gerar prompt: " + error.message, "danger");
+    return null;
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Exibir prompt gerado
+function displayGeneratedPrompt(data) {
+  const resultContainer = document.getElementById("promptResult");
+  if (resultContainer) {
+    resultContainer.innerHTML = `
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <h6>Prompt COSTAR Gerado</h6>
+          <div>
+            <button class="btn btn-sm btn-outline-primary" onclick="copyPromptToClipboard()">
+              <i class="fas fa-copy"></i> Copiar
+            </button>
+            <button class="btn btn-sm btn-outline-success" onclick="saveGeneratedPrompt()">
+              <i class="fas fa-save"></i> Salvar
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="generatedPromptText" style="white-space: pre-wrap;">${data.prompt_gerado}</div>
+          <div class="mt-3 text-muted">
+            <small>
+              Tokens estimados: ${data.metadata.tokens_estimated} | 
+              Tempo de resposta: ${data.metadata.response_time.toFixed(2)}s
+            </small>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Modal de quota excedida
+function showQuotaExceededModal(quotaInfo) {
+  const modalHtml = `
+    <div class="modal fade" id="quotaExceededModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title">
+              <i class="fas fa-exclamation-triangle"></i> Quota Mensal Excedida
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Você atingiu o limite de prompts para este mês:</p>
+            <ul>
+              <li><strong>Usado:</strong> ${quotaInfo.used} prompts</li>
+              <li><strong>Limite:</strong> ${quotaInfo.limit} prompts</li>
+              <li><strong>Restante:</strong> ${quotaInfo.remaining} prompts</li>
+            </ul>
+            <p>Para continuar gerando prompts, considere fazer upgrade do seu plano.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <button type="button" class="btn btn-primary" onclick="showUpgradeModal()">
+              <i class="fas fa-arrow-up"></i> Fazer Upgrade
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Adicionar modal ao DOM se não existir
+  if (!document.getElementById("quotaExceededModal")) {
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+  }
+  
+  const modal = new bootstrap.Modal(document.getElementById("quotaExceededModal"));
+  modal.show();
+}
+
+// Copiar prompt para clipboard
+function copyPromptToClipboard() {
+  const promptText = document.getElementById("generatedPromptText");
+  if (promptText) {
+    navigator.clipboard.writeText(promptText.textContent).then(() => {
+      showAlert("Prompt copiado para clipboard!", "success");
+    });
+  }
+}
+
+// Salvar prompt gerado
+async function saveGeneratedPrompt() {
+  const promptText = document.getElementById("generatedPromptText");
+  if (!promptText) return;
+
+  const title = prompt("Digite um título para este prompt:");
+  if (!title) return;
+
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(`${API_BASE}/members/save-prompt`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: title,
+        content: promptText.textContent,
+        category: "generated"
+      }),
+    });
+
+    if (response.ok) {
+      showAlert("Prompt salvo com sucesso!", "success");
+      loadSavedPrompts(); // Recarregar lista
+    } else {
+      showAlert("Erro ao salvar prompt", "danger");
+    }
+  } catch (error) {
+    console.error("Erro:", error);
+    showAlert("Erro de conexão", "danger");
+  }
+}
+
+// Atualizar dados quando a aba mudar (se necessário)
+function initializeEventListeners() {
+  // Event listener para mudança de abas
+  document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+    tab.addEventListener('shown.bs.tab', function (event) {
+      const targetId = event.target.getAttribute('data-bs-target');
+      
+      if (targetId === '#saved-prompts-tab') {
+        loadSavedPrompts();
+      }
+    });
+  });
 }

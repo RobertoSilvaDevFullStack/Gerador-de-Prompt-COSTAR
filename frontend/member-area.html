@@ -304,6 +304,12 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="saved-prompts-tab" data-bs-toggle="pill"
+                        data-bs-target="#saved-prompts" type="button" role="tab">
+                        <i class="bi bi-bookmark me-2"></i>Prompts Salvos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="explore-tab" data-bs-toggle="pill" data-bs-target="#explore"
                         type="button" role="tab">
                         <i class="bi bi-compass me-2"></i>Explorar Templates
@@ -400,6 +406,32 @@
 
                 <div id="userTemplates" class="row">
                     <!-- Templates serão carregados dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Prompts Salvos -->
+            <div class="tab-pane fade" id="saved-prompts" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Prompts Salvos</h3>
+                    <div>
+                        <button class="btn btn-outline-primary me-2" onclick="loadSavedPrompts()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Atualizar
+                        </button>
+                        <a href="/frontend/debug-login-main.html" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Gerar Novo Prompt
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Container para prompts salvos -->
+                <div id="savedPromptsContainer">
+                    <!-- Prompts salvos serão carregados dinamicamente -->
+                    <div class="text-center text-muted py-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando prompts salvos...</p>
+                    </div>
                 </div>
             </div>
 

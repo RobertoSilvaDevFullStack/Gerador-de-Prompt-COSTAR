@@ -584,3 +584,140 @@ class MemberAreaService:
         except Exception as e:
             print(f"Erro ao atualizar perfil: {e}")
             return False
+    
+    def get_user_saved_prompts(self, user_id: str) -> List[Dict]:
+        """Obter prompts salvos do usuário"""
+        try:
+            prompts_file = os.path.join("data", "saved_prompts.json")
+            if not os.path.exists(prompts_file):
+                return []
+            
+            with open(prompts_file, 'r', encoding='utf-8') as f:
+                all_prompts = json.load(f)
+            
+            # Filtrar prompts do usuário
+            user_prompts = [prompt for prompt in all_prompts if prompt.get('user_id') == user_id]
+            return user_prompts
+            
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Erro ao carregar prompts salvos: {e}")
+            return []
+    
+    def get_user_templates(self, user_id: str) -> List[Dict]:
+        """Obter templates do usuário"""
+        try:
+            templates = self._load_templates()
+            # Filtrar templates do usuário
+            user_templates = [template for template in templates if template.get('user_id') == user_id]
+            return user_templates
+            
+        except Exception as e:
+            print(f"Erro ao carregar templates do usuário: {e}")
+            return []
+    
+    def save_prompt(self, user_id: str, prompt_data: Dict) -> bool:
+        """Salvar novo prompt do usuário"""
+        try:
+            prompts_file = os.path.join("data", "saved_prompts.json")
+            
+            # Carregar prompts existentes
+            all_prompts = []
+            if os.path.exists(prompts_file):
+                try:
+                    with open(prompts_file, 'r', encoding='utf-8') as f:
+                        all_prompts = json.load(f)
+                except json.JSONDecodeError:
+                    all_prompts = []
+            
+            # Adicionar novo prompt
+            new_prompt = {
+                "id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "title": prompt_data.get("title", "Prompt sem título"),
+                "content": prompt_data.get("content", ""),
+                "context": prompt_data.get("context", ""),
+                "style": prompt_data.get("style", ""),
+                "tone": prompt_data.get("tone", ""),
+                "audience": prompt_data.get("audience", ""),
+                "response": prompt_data.get("response", ""),
+                "created_at": datetime.now().isoformat(),
+                "tags": prompt_data.get("tags", []),
+                "category": prompt_data.get("category", "general")
+            }
+            
+            all_prompts.append(new_prompt)
+            
+            # Salvar
+            with open(prompts_file, 'w', encoding='utf-8') as f:
+                json.dump(all_prompts, f, indent=2, ensure_ascii=False)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao salvar prompt: {e}")
+            return False
+    
+    def check_monthly_quota(self, user_id: str) -> Dict[str, Any]:
+        """Verificar quota mensal do usuário"""
+        try:
+            profile = self.get_member_profile(user_id)
+            if not profile:
+                return {"allowed": False, "reason": "Perfil não encontrado"}
+            
+            # Obter quota do plano
+            monthly_limit = self.plan_quotas[profile.subscription_plan]
+            
+            if monthly_limit == "unlimited":
+                return {
+                    "allowed": True, 
+                    "used": profile.usage_current_month.get("prompts_generated", 0),
+                    "limit": "unlimited",
+                    "remaining": "unlimited"
+                }
+            
+            used_this_month = profile.usage_current_month.get("prompts_generated", 0)
+            remaining = monthly_limit - used_this_month
+            
+            return {
+                "allowed": remaining > 0,
+                "used": used_this_month,
+                "limit": monthly_limit,
+                "remaining": max(0, remaining),
+                "reason": "Quota mensal excedida" if remaining <= 0 else None
+            }
+            
+        except Exception as e:
+            print(f"Erro ao verificar quota: {e}")
+            return {"allowed": False, "reason": "Erro interno"}
+    
+    def increment_usage(self, user_id: str, usage_type: str = "prompts_generated") -> bool:
+        """Incrementar uso mensal do usuário"""
+        try:
+            profiles = self._load_member_profiles()
+            
+            for profile_data in profiles:
+                if profile_data['user_id'] == user_id:
+                    # Incrementar contador
+                    if 'usage_current_month' not in profile_data:
+                        profile_data['usage_current_month'] = {}
+                    
+                    current_count = profile_data['usage_current_month'].get(usage_type, 0)
+                    profile_data['usage_current_month'][usage_type] = current_count + 1
+                    
+                    # Atualizar estatísticas totais também
+                    if 'usage_stats' not in profile_data:
+                        profile_data['usage_stats'] = {}
+                    
+                    if usage_type == "prompts_generated":
+                        total_prompts = profile_data['usage_stats'].get('total_prompts', 0)
+                        profile_data['usage_stats']['total_prompts'] = total_prompts + 1
+                    
+                    # Salvar
+                    self._save_member_profiles(profiles)
+                    return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Erro ao incrementar uso: {e}")
+            return False

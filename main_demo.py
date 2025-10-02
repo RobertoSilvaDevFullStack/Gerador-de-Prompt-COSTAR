@@ -37,17 +37,24 @@ app.add_middleware(
 # Endpoint raiz
 @app.get("/")
 async def root():
-    """Endpoint raiz - redireciona para debug login"""
-    return HTMLResponse("""
-    <html>
-        <head><title>COSTAR Prompt Generator</title></head>
-        <body>
-            <h1>🎯 COSTAR Prompt Generator</h1>
-            <p>Sistema de geração de prompts COSTAR com múltiplas IAs</p>
-            <a href="/frontend/debug-login-main.html">🚀 Acessar Sistema</a>
-        </body>
-    </html>
-    """)
+    """Servir a página principal do frontend"""
+    try:
+        with open("frontend/index.html", "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(html_content)
+    except FileNotFoundError:
+        logger.error("❌ Arquivo index.html não encontrado!")
+        return HTMLResponse("""
+        <html>
+            <head><title>COSTAR Prompt Generator</title></head>
+            <body>
+                <h1>🎯 COSTAR Prompt Generator</h1>
+                <p>📁 Frontend não encontrado. Servindo página básica.</p>
+                <p><a href="/frontend/debug-login-main.html">� Debug Login</a></p>
+                <p><a href="/docs">📚 API Docs</a></p>
+            </body>
+        </html>
+        """)
 
 # Endpoint de healthcheck para Railway
 @app.get("/status")
@@ -176,6 +183,7 @@ async def api_info():
 
 # Servir arquivos estáticos
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 # Tentar importar e incluir as rotas de membros e admin
 try:
