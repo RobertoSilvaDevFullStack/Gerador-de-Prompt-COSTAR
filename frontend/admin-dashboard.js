@@ -25,7 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
 async function checkAdminAuthentication() {
   const token = localStorage.getItem("authToken");
 
+  console.log("🔐 Verificando autenticação admin...");
+
   if (!token) {
+    console.log("❌ Token não encontrado, redirecionando para login");
     window.location.href = "index.html";
     return;
   }
@@ -35,8 +38,9 @@ async function checkAdminAuthentication() {
 
     // Verificar se é admin e carregar dashboard
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout de 10 segundos
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // Timeout de 15 segundos
 
+    console.log("📡 Fazendo requisição para /admin/dashboard...");
     const response = await fetch(`${API_BASE}/admin/dashboard`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -47,19 +51,25 @@ async function checkAdminAuthentication() {
 
     clearTimeout(timeoutId);
 
+    console.log(`📊 Resposta recebida: ${response.status} ${response.statusText}`);
+
     if (response.ok) {
       const data = await response.json();
       dashboardData = data;
-      console.log("Dashboard data loaded:", dashboardData);
+      console.log("✅ Dashboard data loaded:", dashboardData);
       updateDashboard();
     } else if (response.status === 401) {
+      console.log("❌ Token inválido, removendo e redirecionando");
       localStorage.removeItem("authToken");
       window.location.href = "index.html";
     } else if (response.status === 403) {
+      console.log("❌ Acesso negado - não é admin");
       alert("Acesso negado: você não tem permissões de administrador");
       window.location.href = "index.html";
     } else {
-      console.error("Erro HTTP:", response.status, response.statusText);
+      console.error("❌ Erro HTTP:", response.status, response.statusText);
+      const errorText = await response.text();
+      console.error("Erro detalhado:", errorText);
       showAlert(`Erro ao carregar dashboard: ${response.status}`, "error");
 
       // Carregar dados padrão em caso de erro
@@ -67,11 +77,13 @@ async function checkAdminAuthentication() {
       updateDashboard();
     }
   } catch (error) {
-    console.error("Erro de conexão:", error);
+    console.error("❌ Erro de conexão:", error);
 
     if (error.name === "AbortError") {
+      console.log("⏱️ Timeout na conexão");
       showAlert("Timeout na conexão com o servidor", "error");
     } else {
+      console.log("🔌 Erro de conexão geral");
       showAlert("Erro de conexão com o servidor", "error");
     }
 
@@ -610,20 +622,49 @@ function generateRecentActivities() {
 
 // Carregar usuários
 async function loadUsers() {
+  console.log("👥 Carregando usuários...");
+  
   try {
     const token = localStorage.getItem("authToken");
+    
+    if (!token) {
+      console.log("❌ Token não encontrado");
+      showAlert("Token de autenticação não encontrado", "error");
+      return;
+    }
+    
+    console.log("📡 Fazendo requisição para /admin/users...");
     const response = await fetch(`${API_BASE}/admin/users`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
     });
+
+    console.log(`📊 Resposta usuários: ${response.status} ${response.statusText}`);
 
     if (response.ok) {
       const data = await response.json();
-      displayUsers(data.users);
+      console.log("✅ Dados de usuários recebidos:", data);
+      
+      // Verificar se os dados estão na estrutura esperada
+      const users = data.users || data;
+      
+      if (Array.isArray(users)) {
+        console.log(`👥 Exibindo ${users.length} usuários`);
+        displayUsers(users);
+        showAlert(`${users.length} usuários carregados`, "success");
+      } else {
+        console.error("❌ Dados de usuários não são um array:", users);
+        showAlert("Formato de dados inválido", "error");
+      }
     } else {
-      showAlert("Erro ao carregar usuários", "error");
+      const errorText = await response.text();
+      console.error("❌ Erro ao carregar usuários:", response.status, errorText);
+      showAlert(`Erro ao carregar usuários: ${response.status}`, "error");
     }
   } catch (error) {
-    console.error("Erro:", error);
+    console.error("❌ Erro de conexão ao carregar usuários:", error);
     showAlert("Erro de conexão", "error");
   }
 }
@@ -632,10 +673,29 @@ async function loadUsers() {
 function displayUsers(users) {
   const tbody = document.getElementById("usersTableBody");
 
+  if (!tbody) {
+    console.error("Elemento usersTableBody não encontrado");
+    return;
+  }
+
+  if (!Array.isArray(users) || users.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center py-5">
+          <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+          <h5 class="mt-3 text-muted">Nenhum usuário encontrado</h5>
+          <p class="text-muted">Usuários registrados aparecerão aqui.</p>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   tbody.innerHTML = users
-    .map((userData) => {
-      const user = userData.user;
-      const profile = userData.member_profile;
+    .map((user) => {
+      // Os dados agora vêm diretamente no objeto user
+      const profile = user.member_profile;
+      const subscription_plan = user.subscription_plan || (profile ? profile.subscription_plan : "free");
 
       return `
             <tr>
@@ -655,10 +715,8 @@ function displayUsers(users) {
                 </td>
                 <td>${user.email}</td>
                 <td>
-                    <span class="subscription-badge subscription-${
-                      profile ? profile.subscription_plan : "free"
-                    }">
-                        ${profile ? profile.subscription_plan : "free"}
+                    <span class="subscription-badge subscription-${subscription_plan}">
+                        ${subscription_plan}
                     </span>
                 </td>
                 <td>
@@ -688,7 +746,7 @@ function displayUsers(users) {
                           user.id
                         }', ${user.is_active})">
                             <i class="bi bi-${
-                              user.is_active ? "pause" : "play"
+                            user.is_active ? "pause" : "play"
                             }"></i>
                         </button>
                     </div>
