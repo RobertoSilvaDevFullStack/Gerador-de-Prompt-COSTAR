@@ -894,7 +894,7 @@ ${data.response}`;
                 });
             }
 
-            saveCurrentPrompt() {
+            async saveCurrentPrompt() {
                 const promptContent = document.getElementById('promptContent').textContent;
                 const title = prompt('Digite um título para este prompt:') || `Prompt ${Date.now()}`;
 
@@ -914,9 +914,48 @@ ${data.response}`;
                         }
                     };
 
+                    // Salvar localmente (sempre)
                     this.savedPrompts.unshift(promptObj);
                     localStorage.setItem('costarPrompts', JSON.stringify(this.savedPrompts));
-                    this.showAlert('Prompt salvo com sucesso!', 'success');
+
+                    // Se usuário estiver logado, salvar também no backend
+                    const token = localStorage.getItem('authToken');
+                    if (token) {
+                        try {
+                            console.log('🔄 Salvando prompt no backend para usuário logado...');
+                            const response = await fetch('/api/members/save-prompt', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    title: title,
+                                    content: promptContent,
+                                    context: promptObj.formData.context,
+                                    objective: promptObj.formData.objective,
+                                    style: promptObj.formData.style,
+                                    tone: promptObj.formData.tone,
+                                    audience: promptObj.formData.audience,
+                                    response: promptObj.formData.response,
+                                    category: 'generated' // Categoria padrão para prompts gerados
+                                })
+                            });
+
+                            if (response.ok) {
+                                console.log('✅ Prompt salvo no backend com sucesso');
+                                this.showAlert('Prompt salvo com sucesso na sua conta!', 'success');
+                            } else {
+                                console.warn('⚠️ Erro ao salvar no backend, mantido apenas localmente');
+                                this.showAlert('Prompt salvo localmente (erro ao sincronizar com conta)', 'warning');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erro ao salvar prompt no backend:', error);
+                            this.showAlert('Prompt salvo localmente (sem conexão com servidor)', 'warning');
+                        }
+                    } else {
+                        this.showAlert('Prompt salvo localmente! Faça login para sincronizar com sua conta.', 'success');
+                    }
                 }
             }
 
@@ -935,7 +974,41 @@ ${data.response}`;
                 }
             }
 
-            loadSavedPrompts() {
+            async loadSavedPrompts() {
+                // Carregar prompts do backend se usuário estiver logado
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    try {
+                        console.log('🔄 Carregando prompts do backend...');
+                        const response = await fetch('/api/members/saved-prompts', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            const backendData = await response.json();
+                            const backendPrompts = backendData.prompts || [];
+                            console.log('✅ Prompts carregados do backend:', backendPrompts.length);
+
+                            // Mesclar prompts locais com do backend (evitar duplicatas)
+                            const localPrompts = JSON.parse(localStorage.getItem('costarPrompts')) || [];
+                            const allPrompts = [...backendPrompts, ...localPrompts];
+
+                            // Remover duplicatas baseado no título e conteúdo
+                            const uniquePrompts = allPrompts.filter((prompt, index, self) =>
+                                index === self.findIndex(p => p.title === prompt.title && p.content === prompt.content)
+                            );
+
+                            this.savedPrompts = uniquePrompts.sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+                        } else {
+                            console.warn('⚠️ Erro ao carregar prompts do backend, usando apenas locais');
+                        }
+                    } catch (error) {
+                        console.error('❌ Erro ao carregar prompts do backend:', error);
+                    }
+                }
+
                 const container = document.getElementById('savedPrompts');
 
                 if (this.savedPrompts.length === 0) {
@@ -951,15 +1024,15 @@ ${data.response}`;
                 container.innerHTML = this.savedPrompts.map(prompt => `
                     <div class="prompt-card">
                         <h4>${prompt.title}</h4>
-                        <p>Criado em: ${prompt.createdAt}</p>
+                        <p>Criado em: ${prompt.createdAt || prompt.created_at}</p>
                         <div class="prompt-card-actions">
-                            <button class="btn btn-secondary" onclick="app.loadPrompt(${prompt.id})">
+                            <button class="btn btn-secondary" onclick="app.loadPrompt('${prompt.id}')">
                                 <i class="fas fa-edit"></i> Editar
                             </button>
-                            <button class="btn btn-success" onclick="app.copyPromptById(${prompt.id})">
+                            <button class="btn btn-success" onclick="app.copyPromptById('${prompt.id}')">
                                 <i class="fas fa-copy"></i> Copiar
                             </button>
-                            <button class="btn btn-danger" onclick="app.deletePrompt(${prompt.id})">
+                            <button class="btn btn-danger" onclick="app.deletePrompt('${prompt.id}')">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </div>
@@ -968,9 +1041,18 @@ ${data.response}`;
             }
 
             loadPrompt(id) {
-                const prompt = this.savedPrompts.find(p => p.id === id);
+                const prompt = this.savedPrompts.find(p => p.id == id); // == para comparar string e number
                 if (prompt) {
-                    const formData = prompt.formData;
+                    // Verificar se os dados estão em formData (local) ou diretamente nas propriedades (backend)
+                    const formData = prompt.formData || {
+                        context: prompt.context || '',
+                        objective: prompt.objective || '',
+                        style: prompt.style || '',
+                        tone: prompt.tone || '',
+                        audience: prompt.audience || '',
+                        response: prompt.response || ''
+                    };
+
                     document.getElementById('context').value = formData.context;
                     document.getElementById('objective').value = formData.objective;
                     document.getElementById('style').value = formData.style;
@@ -984,7 +1066,7 @@ ${data.response}`;
             }
 
             copyPromptById(id) {
-                const prompt = this.savedPrompts.find(p => p.id === id);
+                const prompt = this.savedPrompts.find(p => p.id == id); // == para comparar string e number
                 if (prompt) {
                     navigator.clipboard.writeText(prompt.content).then(() => {
                         this.showAlert('Prompt copiado com sucesso!', 'success');
@@ -996,10 +1078,24 @@ ${data.response}`;
 
             deletePrompt(id) {
                 if (confirm('Tem certeza que deseja excluir este prompt?')) {
-                    this.savedPrompts = this.savedPrompts.filter(p => p.id !== id);
-                    localStorage.setItem('costarPrompts', JSON.stringify(this.savedPrompts));
+                    const prompt = this.savedPrompts.find(p => p.id == id);
+
+                    if (prompt && prompt.user_id) {
+                        // É um prompt do backend - apenas remover da visualização local
+                        // TODO: Implementar endpoint de delete no backend
+                        this.showAlert('Prompt do backend removido da visualização (funcionalidade de delete completa em desenvolvimento)', 'warning');
+                    }
+
+                    // Remover da lista local
+                    this.savedPrompts = this.savedPrompts.filter(p => p.id != id);
+                    // Atualizar localStorage apenas com prompts locais (sem user_id)
+                    const localPrompts = this.savedPrompts.filter(p => !p.user_id);
+                    localStorage.setItem('costarPrompts', JSON.stringify(localPrompts));
                     this.loadSavedPrompts();
-                    this.showAlert('Prompt excluído com sucesso!', 'success');
+
+                    if (!prompt || !prompt.user_id) {
+                        this.showAlert('Prompt excluído com sucesso!', 'success');
+                    }
                 }
             }
 
