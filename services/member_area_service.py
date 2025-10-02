@@ -241,14 +241,36 @@ class MemberAreaService:
                 # Filtrar por termo de busca se especificado
                 if search_term:
                     search_term_lower = search_term.lower()
-                    if (search_term_lower not in template_data['name'].lower() and
+                    if (search_term_lower not in template_data.get('title', template_data.get('name', '')).lower() and
                         search_term_lower not in template_data['description'].lower() and
                         not any(search_term_lower in tag.lower() for tag in template_data['tags'])):
                         continue
                 
-                template_data['created_at'] = datetime.fromisoformat(template_data['created_at'])
-                template_data['updated_at'] = datetime.fromisoformat(template_data['updated_at'])
-                public_templates.append(SavedPromptTemplate(**template_data))
+                # Mapear campos corretamente para a estrutura esperada
+                mapped_data = {
+                    'id': template_data['id'],
+                    'user_id': template_data.get('creator_id', ''),
+                    'name': template_data.get('title', template_data.get('name', '')),  # Mapear title -> name
+                    'description': template_data['description'],
+                    'category': template_data['category'],
+                    'template_content': {
+                        'context': template_data.get('context_template', ''),
+                        'task': '',
+                        'style': template_data.get('style', ''),
+                        'tone': template_data.get('tone', ''),
+                        'audience': '',
+                        'response': template_data.get('format', '')
+                    },
+                    'is_public': template_data['is_public'],
+                    'created_at': datetime.fromisoformat(template_data['created_at']),
+                    'updated_at': datetime.fromisoformat(template_data['updated_at']),
+                    'usage_count': template_data.get('usage_count', 0),
+                    'tags': template_data.get('tags', []),
+                    'rating': template_data.get('rating', 0.0),
+                    'votes': template_data.get('votes', 0)
+                }
+                
+                public_templates.append(SavedPromptTemplate(**mapped_data))
         
         # Ordenar por rating e número de usos
         public_templates.sort(key=lambda t: (t.rating, t.usage_count), reverse=True)
