@@ -146,6 +146,20 @@ class MemberAreaService:
                 profile_data['subscription_plan'] = SubscriptionPlan(plan_value)
                 profile_data['created_at'] = datetime.fromisoformat(profile_data['created_at'])
                 profile_data['last_login'] = datetime.fromisoformat(profile_data['last_login'])
+                
+                # Adicionar campos obrigatórios se não existirem
+                if 'custom_templates' not in profile_data:
+                    profile_data['custom_templates'] = []
+                if 'api_quota' not in profile_data:
+                    # Obter quota baseada no plano
+                    plan_quota = self.plan_quotas[profile_data['subscription_plan']]
+                    profile_data['api_quota'] = {
+                        'monthly_prompts': plan_quota['monthly_prompts'],
+                        'saved_templates': plan_quota['saved_templates'],
+                        'api_providers': plan_quota['api_providers'],
+                        'advanced_features': plan_quota['advanced_features']
+                    }
+                
                 return UserProfile(**profile_data)
         return None
     
@@ -664,8 +678,11 @@ class MemberAreaService:
             if not profile:
                 return {"allowed": False, "reason": "Perfil não encontrado"}
             
-            # Obter quota do plano (corrigindo acesso ao dicionário)
-            plan_limits = self.plan_quotas[profile.subscription_plan]
+            # Usar diretamente o enum como chave (não converter para string)
+            plan_key = profile.subscription_plan
+            
+            # Obter quota do plano usando enum diretamente
+            plan_limits = self.plan_quotas[plan_key]
             monthly_limit = plan_limits['monthly_prompts']
             
             if monthly_limit == -1:  # Enterprise ilimitado
@@ -721,4 +738,50 @@ class MemberAreaService:
             
         except Exception as e:
             print(f"Erro ao incrementar uso: {e}")
+            return False
+    
+    def create_member_profile_from_data(self, user_id: str, profile_data: dict) -> bool:
+        """Criar perfil de membro a partir de dados personalizados"""
+        try:
+            profiles = self._load_member_profiles()
+            
+            # Verificar se perfil já existe
+            for profile in profiles:
+                if profile['user_id'] == user_id:
+                    return False  # Perfil já existe
+            
+            # Adicionar novo perfil
+            profiles.append(profile_data)
+            
+            # Salvar
+            self._save_member_profiles(profiles)
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao criar perfil personalizado: {e}")
+            return False
+    
+    def save_public_template(self, user_id: str, template_data: dict) -> bool:
+        """Salvar template público"""
+        try:
+            # Carregar templates existentes
+            templates_file = self.templates_file
+            
+            if os.path.exists(templates_file):
+                with open(templates_file, 'r', encoding='utf-8') as f:
+                    templates = json.load(f)
+            else:
+                templates = []
+            
+            # Adicionar novo template
+            templates.append(template_data)
+            
+            # Salvar
+            with open(templates_file, 'w', encoding='utf-8') as f:
+                json.dump(templates, f, indent=2, ensure_ascii=False)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Erro ao salvar template público: {e}")
             return False

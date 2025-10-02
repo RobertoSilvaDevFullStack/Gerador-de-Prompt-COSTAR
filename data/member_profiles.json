@@ -109,5 +109,152 @@
       "api_calls": 0,
       "tokens_used": 0
     }
+  },
+  {
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "username": "Jo\u00e3o Silva",
+    "email": "joao.silva@email.com",
+    "subscription_plan": "free",
+    "created_at": "2025-09-01T22:34:48.851953",
+    "last_login": "2025-09-24T22:34:48.851967",
+    "preferences": {
+      "default_style": "professional",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini",
+        "groq"
+      ],
+      "auto_save_prompts": false,
+      "email_notifications": true,
+      "theme": "light"
+    },
+    "usage_stats": {
+      "total_prompts": 5,
+      "templates_created": 9,
+      "templates_shared": 0
+    },
+    "usage_current_month": {
+      "prompts_generated": 18,
+      "api_calls": 46,
+      "tokens_used": 7926
+    }
+  },
+  {
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "username": "Maria Santos",
+    "email": "maria.santos@email.com",
+    "subscription_plan": "premium",
+    "created_at": "2025-09-16T22:34:48.938852",
+    "last_login": "2025-09-27T22:34:48.938871",
+    "preferences": {
+      "default_style": "casual",
+      "default_tone": "enthusiastic",
+      "preferred_providers": [
+        "gemini",
+        "groq"
+      ],
+      "auto_save_prompts": false,
+      "email_notifications": true,
+      "theme": "light"
+    },
+    "usage_stats": {
+      "total_prompts": 78,
+      "templates_created": 9,
+      "templates_shared": 2
+    },
+    "usage_current_month": {
+      "prompts_generated": 9,
+      "api_calls": 20,
+      "tokens_used": 4494
+    }
+  },
+  {
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "username": "Pedro Oliveira",
+    "email": "pedro.oliveira@email.com",
+    "subscription_plan": "free",
+    "created_at": "2025-08-17T22:34:48.940864",
+    "last_login": "2025-10-01T22:34:48.940875",
+    "preferences": {
+      "default_style": "technical",
+      "default_tone": "formal",
+      "preferred_providers": [
+        "gemini",
+        "groq",
+        "huggingface"
+      ],
+      "auto_save_prompts": true,
+      "email_notifications": false,
+      "theme": "dark"
+    },
+    "usage_stats": {
+      "total_prompts": 78,
+      "templates_created": 5,
+      "templates_shared": 1
+    },
+    "usage_current_month": {
+      "prompts_generated": 26,
+      "api_calls": 42,
+      "tokens_used": 7236
+    }
+  },
+  {
+    "user_id": "b44ea634-4656-447a-a18a-e69936d01fe9",
+    "username": "Ana Costa",
+    "email": "ana.costa@email.com",
+    "subscription_plan": "enterprise",
+    "created_at": "2025-08-02T22:34:48.942885",
+    "last_login": "2025-09-30T22:34:48.942896",
+    "preferences": {
+      "default_style": "creative",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini",
+        "groq"
+      ],
+      "auto_save_prompts": false,
+      "email_notifications": true,
+      "theme": "dark"
+    },
+    "usage_stats": {
+      "total_prompts": 31,
+      "templates_created": 4,
+      "templates_shared": 1
+    },
+    "usage_current_month": {
+      "prompts_generated": 16,
+      "api_calls": 39,
+      "tokens_used": 1593
+    }
+  },
+  {
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "username": "Carlos Ferreira",
+    "email": "carlos.ferreira@email.com",
+    "subscription_plan": "premium",
+    "created_at": "2025-09-11T22:34:48.944942",
+    "last_login": "2025-09-26T22:34:48.944953",
+    "preferences": {
+      "default_style": "creative",
+      "default_tone": "neutral",
+      "preferred_providers": [
+        "gemini",
+        "groq",
+        "huggingface"
+      ],
+      "auto_save_prompts": true,
+      "email_notifications": true,
+      "theme": "dark"
+    },
+    "usage_stats": {
+      "total_prompts": 4,
+      "templates_created": 9,
+      "templates_shared": 1
+    },
+    "usage_current_month": {
+      "prompts_generated": 6,
+      "api_calls": 0,
+      "tokens_used": 1068
+    }
   }
 ]

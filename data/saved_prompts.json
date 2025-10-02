@@ -1,1 +1,614 @@
-[]
+[
+  {
+    "id": "b6ff8904-09fd-4776-a91e-64ed7da135da",
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "title": "Tutorial Passo a Passo - João Silva",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.949080",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "51866d69-1c8f-4410-b783-f5e39dcbe312",
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "title": "Post Viral Instagram - João Silva",
+    "content": "Desenvolva um post criativo para Instagram que tenha potencial viral, usando trending topics e técnicas de storytelling.",
+    "context": "Aumentar engajamento nas redes",
+    "style": "Criativo",
+    "tone": "Energético",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.950786",
+    "tags": [
+      "teste",
+      "demo",
+      "criativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "6e1ffbc2-ac31-41e9-88e0-fbb9181a879e",
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "title": "Artigo SEO sobre IA - João Silva",
+    "content": "Escreva um artigo completo sobre Inteligência Artificial para empresas, otimizado para SEO com foco na palavra-chave 'IA para negócios'.",
+    "context": "Blog corporativo sobre tecnologia",
+    "style": "Técnico",
+    "tone": "Informativo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.952338",
+    "tags": [
+      "teste",
+      "demo",
+      "técnico"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "d9aed4aa-0325-4c24-a59e-08edd8306580",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Email de Follow-up - Maria Santos",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.954074",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "50480b0e-73da-4729-afa3-de8ecdd856bc",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Artigo SEO sobre IA - Maria Santos",
+    "content": "Escreva um artigo completo sobre Inteligência Artificial para empresas, otimizado para SEO com foco na palavra-chave 'IA para negócios'.",
+    "context": "Blog corporativo sobre tecnologia",
+    "style": "Técnico",
+    "tone": "Informativo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.955732",
+    "tags": [
+      "teste",
+      "demo",
+      "técnico"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "89484d8f-2495-4a6a-aa9c-de7db5da488c",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Email de Follow-up - Maria Santos",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.957361",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "c998f45a-98a1-4ca7-99fb-7e769714b145",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Email de Follow-up - Maria Santos",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.958756",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "1f91b00b-8d22-4971-89f1-121540789952",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Tutorial Passo a Passo - Maria Santos",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.960512",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "d699be24-7dfd-4714-9218-f74a4155cf85",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Tutorial Passo a Passo - Pedro Oliveira",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.962305",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "f0cc34d1-69b5-4ebf-b259-ea3b6e74c3eb",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Estratégia de Marketing Digital - Pedro Oliveira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.964027",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "3e67a16f-998e-43db-9cce-9af4d375526e",
+    "user_id": "b44ea634-4656-447a-a18a-e69936d01fe9",
+    "title": "Tutorial Passo a Passo - Ana Costa",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.965879",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "18e8c9d3-fbaf-493c-9698-1e1b24620f80",
+    "user_id": "b44ea634-4656-447a-a18a-e69936d01fe9",
+    "title": "Post Viral Instagram - Ana Costa",
+    "content": "Desenvolva um post criativo para Instagram que tenha potencial viral, usando trending topics e técnicas de storytelling.",
+    "context": "Aumentar engajamento nas redes",
+    "style": "Criativo",
+    "tone": "Energético",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.977485",
+    "tags": [
+      "teste",
+      "demo",
+      "criativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "b8822bb5-3a04-42a7-8667-4443766ba8d6",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Email de Follow-up - Carlos Ferreira",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.979284",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "82a52d95-1525-45e9-8153-b3f8a4cf0eba",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Estratégia de Marketing Digital - Carlos Ferreira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.981488",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "4b44176a-2821-4a74-9b9c-e6db957f19b1",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Email de Follow-up - Carlos Ferreira",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.984429",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "c51963a1-5dd2-4eb9-878c-a296fd0a09bc",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Artigo SEO sobre IA - Carlos Ferreira",
+    "content": "Escreva um artigo completo sobre Inteligência Artificial para empresas, otimizado para SEO com foco na palavra-chave 'IA para negócios'.",
+    "context": "Blog corporativo sobre tecnologia",
+    "style": "Técnico",
+    "tone": "Informativo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:34:48.986346",
+    "tags": [
+      "teste",
+      "demo",
+      "técnico"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "2e677528-97c1-4143-97d4-1e79800533a7",
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "title": "Estratégia de Marketing Digital - João Silva",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.764105",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "0f5ca65f-5539-4702-b80a-cd4fea1db31f",
+    "user_id": "af761b53-2479-48ff-8795-65edb7e7b450",
+    "title": "Post Viral Instagram - João Silva",
+    "content": "Desenvolva um post criativo para Instagram que tenha potencial viral, usando trending topics e técnicas de storytelling.",
+    "context": "Aumentar engajamento nas redes",
+    "style": "Criativo",
+    "tone": "Energético",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.766252",
+    "tags": [
+      "teste",
+      "demo",
+      "criativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "1152974d-0356-4d84-ad58-fc3ac8fe0f42",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Estratégia de Marketing Digital - Maria Santos",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.768434",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "ccbb4524-b420-45f5-a18c-c0b70425d9f7",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Tutorial Passo a Passo - Maria Santos",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.770557",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "9962e5c4-8c7a-44f8-8f5c-71e6a87e1538",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Estratégia de Marketing Digital - Maria Santos",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.773208",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "2ccc9887-62ab-4639-9c7d-efcc5133e3e9",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Tutorial Passo a Passo - Maria Santos",
+    "content": "Desenvolva um tutorial passo a passo para ensinar iniciantes a usar uma ferramenta de automação, com linguagem simples e exemplos práticos.",
+    "context": "Conteúdo educacional para usuários",
+    "style": "Educativo",
+    "tone": "Didático",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.775506",
+    "tags": [
+      "teste",
+      "demo",
+      "educativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "6b90c4e5-f385-4074-bb63-93ef7dfa92f0",
+    "user_id": "464d4c4c-8932-425d-bdcd-b7b9a338daa6",
+    "title": "Email de Follow-up - Maria Santos",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.777796",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "b8fdb655-03a3-4ee1-9661-e2c658385eba",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Artigo SEO sobre IA - Pedro Oliveira",
+    "content": "Escreva um artigo completo sobre Inteligência Artificial para empresas, otimizado para SEO com foco na palavra-chave 'IA para negócios'.",
+    "context": "Blog corporativo sobre tecnologia",
+    "style": "Técnico",
+    "tone": "Informativo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.780388",
+    "tags": [
+      "teste",
+      "demo",
+      "técnico"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "667a7e71-5af0-4f48-bc56-7bbe7d1ef6aa",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Estratégia de Marketing Digital - Pedro Oliveira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.782876",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "3b9956ce-2977-4a7f-a1d6-ed17a6c47bdb",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Estratégia de Marketing Digital - Pedro Oliveira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.785129",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "0bd314e1-aac4-4c07-9611-892e9ecce3e1",
+    "user_id": "9f2d0e9a-a112-4eb8-855b-3cb609a80434",
+    "title": "Artigo SEO sobre IA - Pedro Oliveira",
+    "content": "Escreva um artigo completo sobre Inteligência Artificial para empresas, otimizado para SEO com foco na palavra-chave 'IA para negócios'.",
+    "context": "Blog corporativo sobre tecnologia",
+    "style": "Técnico",
+    "tone": "Informativo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.878526",
+    "tags": [
+      "teste",
+      "demo",
+      "técnico"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "a120166b-f2f8-4c0d-8bbf-815650efd50f",
+    "user_id": "b44ea634-4656-447a-a18a-e69936d01fe9",
+    "title": "Email de Follow-up - Ana Costa",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.881233",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "08b430e4-4672-47a0-8152-b0da85e0ba5b",
+    "user_id": "b44ea634-4656-447a-a18a-e69936d01fe9",
+    "title": "Estratégia de Marketing Digital - Ana Costa",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.884878",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "6431e11b-84b2-4df8-b55a-a9bc7510438b",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Post Viral Instagram - Carlos Ferreira",
+    "content": "Desenvolva um post criativo para Instagram que tenha potencial viral, usando trending topics e técnicas de storytelling.",
+    "context": "Aumentar engajamento nas redes",
+    "style": "Criativo",
+    "tone": "Energético",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.888016",
+    "tags": [
+      "teste",
+      "demo",
+      "criativo"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "bcf860dc-3b3c-45a4-a147-88f8932e66d7",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Estratégia de Marketing Digital - Carlos Ferreira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.890944",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "122a785e-9734-4756-98ee-0913433c6645",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Email de Follow-up - Carlos Ferreira",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.893891",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "a49bbe26-0365-47a0-9487-7d5f769b0125",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Estratégia de Marketing Digital - Carlos Ferreira",
+    "content": "Crie uma estratégia completa de marketing digital para o lançamento de um novo produto tech, incluindo cronograma, canais e métricas de sucesso.",
+    "context": "Campanha para lançamento de produto",
+    "style": "Profissional",
+    "tone": "Estratégico",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.897807",
+    "tags": [
+      "teste",
+      "demo",
+      "profissional"
+    ],
+    "category": "general"
+  },
+  {
+    "id": "e6d2526d-f390-492e-baa7-225ad87646b8",
+    "user_id": "de1cee01-e0d7-42a0-8787-30e40ef11ac4",
+    "title": "Email de Follow-up - Carlos Ferreira",
+    "content": "Crie um email de follow-up personalizado para leads que demonstraram interesse em nosso produto, focando em benefits e social proof.",
+    "context": "Nutrição de leads qualificados",
+    "style": "Comercial",
+    "tone": "Persuasivo",
+    "audience": "",
+    "response": "",
+    "created_at": "2025-10-01T22:36:56.900607",
+    "tags": [
+      "teste",
+      "demo",
+      "comercial"
+    ],
+    "category": "general"
+  }
+]

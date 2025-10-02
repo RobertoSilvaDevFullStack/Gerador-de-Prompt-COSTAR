@@ -883,18 +883,51 @@ async def get_admin_dashboard(admin_user = Depends(get_admin_user)):
 @admin_router.get("/users")
 async def get_all_users(admin_user = Depends(get_admin_user)):
     """Obter lista de todos os usuários"""
-    users = auth_service.get_all_users()
-    
-    # Enriquecer com dados de perfil de membro
-    enriched_users = []
-    for user in users:
-        profile = member_service.get_member_profile(user['id'])
-        enriched_users.append({
-            "user": user,
-            "member_profile": profile
-        })
-    
-    return {"users": enriched_users}
+    try:
+        print("DEBUG: Buscando todos os usuários...")
+        users = auth_service.get_all_users()
+        print(f"DEBUG: Encontrados {len(users)} usuários")
+        
+        # Enriquecer com dados de perfil de membro
+        enriched_users = []
+        for user in users:
+            try:
+                print(f"DEBUG: Processando usuário {user.get('id', 'N/A')}")
+                profile = member_service.get_member_profile(user['id'])
+                enriched_users.append({
+                    "id": user['id'],
+                    "email": user['email'],
+                    "username": user.get('username', user.get('full_name', 'N/A')),
+                    "role": user['role'],
+                    "subscription_plan": profile.subscription_plan.value if profile else 'free',
+                    "created_at": user.get('created_at'),
+                    "last_login": user.get('last_login'),
+                    "is_active": user.get('is_active', True),
+                    "member_profile": profile.__dict__ if profile else None
+                })
+            except Exception as e:
+                print(f"DEBUG: Erro ao processar usuário {user.get('id', 'N/A')}: {e}")
+                # Adicionar usuário sem perfil em caso de erro
+                enriched_users.append({
+                    "id": user['id'],
+                    "email": user['email'],
+                    "username": user.get('username', user.get('full_name', 'N/A')),
+                    "role": user['role'],
+                    "subscription_plan": 'free',
+                    "created_at": user.get('created_at'),
+                    "last_login": user.get('last_login'),
+                    "is_active": user.get('is_active', True),
+                    "member_profile": None
+                })
+        
+        print(f"DEBUG: Processados {len(enriched_users)} usuários enriquecidos")
+        return {"users": enriched_users}
+        
+    except Exception as e:
+        print(f"DEBUG ERROR: Erro geral no endpoint users: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
 
 @admin_router.get("/users/{user_id}")
 async def get_user_details(
@@ -955,19 +988,45 @@ async def activate_user(
 @admin_router.get("/templates")
 async def get_all_templates(admin_user = Depends(get_admin_user)):
     """Obter todos os templates (público e privados)"""
-    # Carregar todos os templates
-    all_templates = []
-    users = auth_service.get_all_users()
-    
-    for user in users:
-        user_templates = member_service.get_user_templates(user['id'])
-        for template in user_templates:
-            all_templates.append({
-                "template": template,
-                "user": user
-            })
-    
-    return {"templates": all_templates}
+    try:
+        # Carregar templates diretamente do arquivo
+        import os
+        import json
+        
+        all_templates = []
+        
+        # Carregar templates públicos do arquivo
+        templates_file = "data/saved_templates.json"
+        if os.path.exists(templates_file):
+            with open(templates_file, 'r', encoding='utf-8') as f:
+                public_templates = json.load(f)
+                
+            for template in public_templates:
+                all_templates.append({
+                    "id": template.get('id'),
+                    "title": template.get('title'),
+                    "description": template.get('description'),
+                    "category": template.get('category'),
+                    "creator_name": template.get('creator_name'),
+                    "is_public": template.get('is_public', True),
+                    "usage_count": template.get('usage_count', 0),
+                    "rating": template.get('rating', 0),
+                    "created_at": template.get('created_at'),
+                    "style": template.get('style'),
+                    "tone": template.get('tone'),
+                    "format": template.get('format'),
+                    "tags": template.get('tags', []),
+                    "type": "public"
+                })
+        
+        print(f"DEBUG: Encontrados {len(all_templates)} templates")
+        return {"templates": all_templates}
+        
+    except Exception as e:
+        print(f"Erro ao buscar templates: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"templates": []}
 
 @admin_router.delete("/templates/{template_id}")
 async def delete_template(
