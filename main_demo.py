@@ -417,17 +417,19 @@ async def analyze_prompt_quality(prompt_data: PromptData):
     """Analisar qualidade do prompt COSTAR usando Multi-AI"""
     try:
         # Usar Multi-AI Service (versão produção)
+        multi_ai_service = None
         try:
-            from services.production_multi_ai import multi_ai_service
+            from services.production_multi_ai import get_multi_ai_service
+            multi_ai_service = get_multi_ai_service()
+            logger.info("🤖 [ANALYZE] Usando ProductionMultiAIService")
         except ImportError:
+            logger.info("🔄 [ANALYZE] Fallback para MultiAIService original")
             from services.multi_ai_service import MultiAIService
             multi_ai_service = MultiAIService()
-        
-        multi_ai = MultiAIService()
-        await multi_ai.initialize()
+            await multi_ai_service.initialize()
         
         # Gerar prompt primeiro usando Multi-AI
-        prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai)
+        prompt_aprimorado = await generate_costar_prompt_with_multi_ai(prompt_data, multi_ai_service)
         
         # Criar prompt para análise de qualidade
         analysis_prompt = f"""
@@ -452,7 +454,7 @@ Forneça sua análise no seguinte formato JSON:
 """
         
         # Gerar análise usando Multi-AI
-        analysis_response = await multi_ai.generate_content(analysis_prompt)
+        analysis_response = await multi_ai_service.generate_content(analysis_prompt)
         
         # Tentar parsear JSON da resposta
         try:
