@@ -314,9 +314,31 @@ class MemberAreaService:
                 # Atualizar estatísticas do usuário
                 self.update_member_usage_stats(user_id, 'total_prompts', 1)
                 
-                template_data['created_at'] = datetime.fromisoformat(template_data['created_at'])
-                template_data['updated_at'] = datetime.fromisoformat(template_data['updated_at'])
-                return SavedPromptTemplate(**template_data)
+                # Mapear campos corretamente antes de retornar
+                mapped_data = {
+                    'id': template_data['id'],
+                    'user_id': template_data.get('creator_id', template_data.get('user_id', '')),
+                    'name': template_data.get('title', template_data.get('name', '')),
+                    'description': template_data['description'],
+                    'category': template_data['category'],
+                    'template_content': {
+                        'context': template_data.get('context_template', ''),
+                        'task': '',
+                        'style': template_data.get('style', ''),
+                        'tone': template_data.get('tone', ''),
+                        'audience': '',
+                        'response': template_data.get('format', '')
+                    },
+                    'is_public': template_data.get('is_public', False),
+                    'created_at': datetime.fromisoformat(template_data['created_at']),
+                    'updated_at': datetime.fromisoformat(template_data['updated_at']),
+                    'usage_count': template_data.get('usage_count', 0),
+                    'tags': template_data.get('tags', []),
+                    'rating': template_data.get('rating', 0.0),
+                    'votes': template_data.get('votes', 0)
+                }
+                
+                return SavedPromptTemplate(**mapped_data)
         
         return None
     
