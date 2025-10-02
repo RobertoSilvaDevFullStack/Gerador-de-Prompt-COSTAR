@@ -252,7 +252,7 @@ class MemberAreaService:
         return user_templates
     
     def get_public_templates(self, category: Optional[str] = None, 
-                           search_term: Optional[str] = None) -> List[SavedPromptTemplate]:
+                           search: Optional[str] = None) -> List[SavedPromptTemplate]:
         """Obter templates públicos"""
         templates = self._load_templates()
         public_templates = []
@@ -264,11 +264,11 @@ class MemberAreaService:
                     continue
                 
                 # Filtrar por termo de busca se especificado
-                if search_term:
-                    search_term_lower = search_term.lower()
-                    if (search_term_lower not in template_data.get('title', template_data.get('name', '')).lower() and
-                        search_term_lower not in template_data['description'].lower() and
-                        not any(search_term_lower in tag.lower() for tag in template_data['tags'])):
+                if search:
+                    search_lower = search.lower()
+                    if (search_lower not in template_data.get('title', template_data.get('name', '')).lower() and
+                        search_lower not in template_data['description'].lower() and
+                        not any(search_lower in tag.lower() for tag in template_data['tags'])):
                         continue
                 
                 # Mapear campos corretamente para a estrutura esperada

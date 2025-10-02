@@ -299,20 +299,22 @@ function displayUserTemplates(templates) {
 // Carregar templates públicos
 async function loadPublicTemplates(category = "", search = "") {
   try {
+    console.log("📡 loadPublicTemplates chamado com:", { category, search });
     const token = localStorage.getItem("authToken");
     const params = new URLSearchParams();
     if (category) params.append("category", category);
     if (search) params.append("search", search);
 
-    const response = await fetch(
-      `${API_BASE}/members/templates/public?${params}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const url = `${API_BASE}/members/templates/public?${params}`;
+    console.log("📡 URL da requisição:", url);
+
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     if (response.ok) {
       const data = await response.json();
+      console.log("📦 Dados recebidos:", data);
       // O endpoint retorna diretamente a lista de templates
       displayPublicTemplates(Array.isArray(data) ? data : data.templates || []);
     } else {
@@ -631,6 +633,7 @@ function initializeEventListeners() {
     .addEventListener("change", function () {
       const category = this.value;
       const search = document.getElementById("searchFilter").value;
+      console.log("🔍 Filtro categoria alterado:", category, "busca:", search);
       loadPublicTemplates(category, search);
     });
 
@@ -639,6 +642,7 @@ function initializeEventListeners() {
     .addEventListener("input", function () {
       const search = this.value;
       const category = document.getElementById("categoryFilter").value;
+      console.log("🔍 Filtro busca alterado:", search, "categoria:", category);
       // Debounce search
       clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(() => {
@@ -658,6 +662,9 @@ function initializeEventListeners() {
       }
     });
   });
+
+  // Inicializar event listeners das abas de prompts salvos
+  initializeTabEventListeners();
 }
 
 // Utilitários
@@ -1453,7 +1460,7 @@ async function saveGeneratedPrompt() {
 }
 
 // Atualizar dados quando a aba mudar (se necessário)
-function initializeEventListeners() {
+function initializeTabEventListeners() {
   // Event listener para mudança de abas
   document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
     tab.addEventListener("shown.bs.tab", function (event) {
