@@ -51,7 +51,9 @@ async function checkAdminAuthentication() {
 
     clearTimeout(timeoutId);
 
-    console.log(`📊 Resposta recebida: ${response.status} ${response.statusText}`);
+    console.log(
+      `📊 Resposta recebida: ${response.status} ${response.statusText}`
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -623,33 +625,35 @@ function generateRecentActivities() {
 // Carregar usuários
 async function loadUsers() {
   console.log("👥 Carregando usuários...");
-  
+
   try {
     const token = localStorage.getItem("authToken");
-    
+
     if (!token) {
       console.log("❌ Token não encontrado");
       showAlert("Token de autenticação não encontrado", "error");
       return;
     }
-    
+
     console.log("📡 Fazendo requisição para /admin/users...");
     const response = await fetch(`${API_BASE}/admin/users`, {
-      headers: { 
+      headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     });
 
-    console.log(`📊 Resposta usuários: ${response.status} ${response.statusText}`);
+    console.log(
+      `📊 Resposta usuários: ${response.status} ${response.statusText}`
+    );
 
     if (response.ok) {
       const data = await response.json();
       console.log("✅ Dados de usuários recebidos:", data);
-      
+
       // Verificar se os dados estão na estrutura esperada
       const users = data.users || data;
-      
+
       if (Array.isArray(users)) {
         console.log(`👥 Exibindo ${users.length} usuários`);
         displayUsers(users);
@@ -660,7 +664,11 @@ async function loadUsers() {
       }
     } else {
       const errorText = await response.text();
-      console.error("❌ Erro ao carregar usuários:", response.status, errorText);
+      console.error(
+        "❌ Erro ao carregar usuários:",
+        response.status,
+        errorText
+      );
       showAlert(`Erro ao carregar usuários: ${response.status}`, "error");
     }
   } catch (error) {
@@ -695,7 +703,9 @@ function displayUsers(users) {
     .map((user) => {
       // Os dados agora vêm diretamente no objeto user
       const profile = user.member_profile;
-      const subscription_plan = user.subscription_plan || (profile ? profile.subscription_plan : "free");
+      const subscription_plan =
+        user.subscription_plan ||
+        (profile ? profile.subscription_plan : "free");
 
       return `
             <tr>
@@ -746,7 +756,7 @@ function displayUsers(users) {
                           user.id
                         }', ${user.is_active})">
                             <i class="bi bi-${
-                            user.is_active ? "pause" : "play"
+                              user.is_active ? "pause" : "play"
                             }"></i>
                         </button>
                     </div>

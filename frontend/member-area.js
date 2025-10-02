@@ -113,7 +113,7 @@ function updateDashboardStats(analytics) {
     analytics.prompts_generated_this_month || 0;
   document.getElementById("savedTemplates").textContent =
     analytics.saved_prompts_count || 0; // Corrigido para prompts salvos
-  
+
   // Mostrar templates também se disponível
   const templatesElement = document.getElementById("templatesCount");
   if (templatesElement) {
@@ -128,7 +128,7 @@ function updateDashboardStats(analytics) {
     );
     document.getElementById("memberSince").textContent = `${months}m`;
   }
-  
+
   // Mostrar taxa de sucesso se disponível
   const successRateElement = document.getElementById("successRate");
   if (successRateElement && analytics.success_rate !== undefined) {
@@ -141,15 +141,17 @@ function updateQuotaDisplay(quotas) {
   // Nova estrutura de quota mensal
   if (quotas.used !== undefined && quotas.limit !== undefined) {
     document.getElementById("promptsUsed").textContent = quotas.used;
-    
+
     if (quotas.limit === "unlimited") {
       document.getElementById("promptsLimit").textContent = "∞";
       document.getElementById("promptsProgress").style.width = "100%";
-      document.getElementById("promptsProgress").className = "quota-progress good";
+      document.getElementById("promptsProgress").className =
+        "quota-progress good";
     } else {
       document.getElementById("promptsLimit").textContent = quotas.limit;
-      
-      const percentage = quotas.limit > 0 ? (quotas.used / quotas.limit) * 100 : 0;
+
+      const percentage =
+        quotas.limit > 0 ? (quotas.used / quotas.limit) * 100 : 0;
       const progressBar = document.getElementById("promptsProgress");
       progressBar.style.width = `${Math.min(percentage, 100)}%`;
 
@@ -158,12 +160,12 @@ function updateQuotaDisplay(quotas) {
         "quota-progress " +
         (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
     }
-    
+
     // Mostrar aviso se quota excedida
     if (!quotas.allowed && quotas.reason) {
       showAlert(`Atenção: ${quotas.reason}`, "warning");
     }
-    
+
     return;
   }
 
@@ -193,21 +195,24 @@ function updateQuotaDisplay(quotas) {
   const templatesQuota = quotas.templates;
   if (templatesQuota && templatesQuota.limit !== undefined) {
     if (templatesQuota.limit !== -1) {
-      document.getElementById("templatesUsed").textContent = templatesQuota.used;
-    document.getElementById("templatesLimit").textContent =
-      templatesQuota.limit;
+      document.getElementById("templatesUsed").textContent =
+        templatesQuota.used;
+      document.getElementById("templatesLimit").textContent =
+        templatesQuota.limit;
 
-    const percentage = templatesQuota.percentage;
-    const progressBar = document.getElementById("templatesProgress");
-    progressBar.style.width = `${percentage}%`;
+      const percentage = templatesQuota.percentage;
+      const progressBar = document.getElementById("templatesProgress");
+      progressBar.style.width = `${percentage}%`;
 
-    progressBar.className =
-      "quota-progress " +
-      (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
-  } else {
-    document.getElementById("templatesUsed").textContent = templatesQuota.used;
-    document.getElementById("templatesLimit").textContent = "∞";
-    document.getElementById("templatesProgress").style.width = "100%";
+      progressBar.className =
+        "quota-progress " +
+        (percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : "good");
+    } else {
+      document.getElementById("templatesUsed").textContent =
+        templatesQuota.used;
+      document.getElementById("templatesLimit").textContent = "∞";
+      document.getElementById("templatesProgress").style.width = "100%";
+    }
   }
 }
 
@@ -1171,19 +1176,19 @@ function showSuccessModal(title, message) {
 // Carregar prompts salvos do usuário
 async function loadSavedPrompts() {
   console.log("🔄 [MEMBER] Carregando prompts salvos...");
-  
+
   try {
     const token = localStorage.getItem("authToken");
     if (!token) {
       console.error("❌ [MEMBER] Token não encontrado");
       return;
     }
-    
+
     console.log("📡 [MEMBER] Fazendo requisição para /members/saved-prompts");
     const response = await fetch(`${API_BASE}/members/saved-prompts`, {
-      headers: { 
+      headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     });
 
@@ -1192,10 +1197,12 @@ async function loadSavedPrompts() {
     if (response.ok) {
       const data = await response.json();
       console.log("✅ [MEMBER] Dados recebidos:", data);
-      console.log(`📋 [MEMBER] Total prompts: ${data.total}, Array length: ${data.prompts?.length}`);
-      
+      console.log(
+        `📋 [MEMBER] Total prompts: ${data.total}, Array length: ${data.prompts?.length}`
+      );
+
       displaySavedPrompts(data.prompts);
-      
+
       // Atualizar contador no dashboard
       const savedPromptsCount = document.getElementById("savedTemplates");
       if (savedPromptsCount) {
@@ -1206,7 +1213,10 @@ async function loadSavedPrompts() {
       }
     } else {
       const errorText = await response.text();
-      console.error(`❌ [MEMBER] Erro na requisição: ${response.status}`, errorText);
+      console.error(
+        `❌ [MEMBER] Erro na requisição: ${response.status}`,
+        errorText
+      );
     }
   } catch (error) {
     console.error("❌ [MEMBER] Erro ao carregar prompts salvos:", error);
@@ -1216,15 +1226,19 @@ async function loadSavedPrompts() {
 // Exibir prompts salvos na interface
 function displaySavedPrompts(prompts) {
   console.log("🎨 [MEMBER] Exibindo prompts salvos:", prompts);
-  
+
   const container = document.getElementById("savedPromptsContainer");
   if (!container) {
-    console.error("❌ [MEMBER] Container 'savedPromptsContainer' não encontrado");
+    console.error(
+      "❌ [MEMBER] Container 'savedPromptsContainer' não encontrado"
+    );
     return;
   }
 
   if (!prompts || prompts.length === 0) {
-    console.log("📭 [MEMBER] Nenhum prompt encontrado, exibindo mensagem vazia");
+    console.log(
+      "📭 [MEMBER] Nenhum prompt encontrado, exibindo mensagem vazia"
+    );
     container.innerHTML = `
       <div class="text-center text-muted py-4">
         <i class="fas fa-save fa-3x mb-3"></i>
@@ -1236,19 +1250,24 @@ function displaySavedPrompts(prompts) {
   }
 
   console.log(`📋 [MEMBER] Renderizando ${prompts.length} prompts`);
-  
-  container.innerHTML = prompts.map((prompt, index) => {
-    console.log(`📄 [MEMBER] Prompt ${index + 1}:`, prompt.title);
-    return `
+
+  container.innerHTML = prompts
+    .map((prompt, index) => {
+      console.log(`📄 [MEMBER] Prompt ${index + 1}:`, prompt.title);
+      return `
     <div class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h6 class="mb-0">${prompt.title || 'Sem título'}</h6>
-        <small class="text-muted">${prompt.created_at ? new Date(prompt.created_at).toLocaleDateString() : 'Data não disponível'}</small>
+        <h6 class="mb-0">${prompt.title || "Sem título"}</h6>
+        <small class="text-muted">${
+          prompt.created_at
+            ? new Date(prompt.created_at).toLocaleDateString()
+            : "Data não disponível"
+        }</small>
       </div>
       <div class="card-body">
-        <p class="text-muted mb-2">${prompt.context || 'Sem contexto'}</p>
+        <p class="text-muted mb-2">${prompt.context || "Sem contexto"}</p>
         <div class="prompt-content" style="max-height: 150px; overflow-y: auto;">
-          ${prompt.content || 'Conteúdo não disponível'}
+          ${prompt.content || "Conteúdo não disponível"}
         </div>
         <div class="mt-2">
           <span class="badge bg-secondary me-1">${prompt.style}</span>
@@ -1257,14 +1276,16 @@ function displaySavedPrompts(prompts) {
         </div>
       </div>
     </div>
-  `).join('');
+    `;
+    })
+    .join("");
 }
 
 // Gerar prompt COSTAR com verificação de quota
 async function generatePromptWithQuota(promptData) {
   try {
     showLoading(true);
-    
+
     const token = localStorage.getItem("authToken");
     const response = await fetch(`${API_BASE}/members/generate-prompt`, {
       method: "POST",
@@ -1280,15 +1301,15 @@ async function generatePromptWithQuota(promptData) {
     if (response.ok) {
       // Sucesso - mostrar resultado
       displayGeneratedPrompt(data);
-      
+
       // Atualizar quota no dashboard
       if (data.metadata.quota_info) {
         updateQuotaDisplay(data.metadata.quota_info);
       }
-      
+
       // Recarregar analytics
       loadDashboardData();
-      
+
       return data;
     } else if (response.status === 429) {
       // Quota excedida
@@ -1324,7 +1345,9 @@ function displayGeneratedPrompt(data) {
           </div>
         </div>
         <div class="card-body">
-          <div id="generatedPromptText" style="white-space: pre-wrap;">${data.prompt_gerado}</div>
+          <div id="generatedPromptText" style="white-space: pre-wrap;">${
+            data.prompt_gerado
+          }</div>
           <div class="mt-3 text-muted">
             <small>
               Tokens estimados: ${data.metadata.tokens_estimated} | 
@@ -1368,13 +1391,15 @@ function showQuotaExceededModal(quotaInfo) {
       </div>
     </div>
   `;
-  
+
   // Adicionar modal ao DOM se não existir
   if (!document.getElementById("quotaExceededModal")) {
     document.body.insertAdjacentHTML("beforeend", modalHtml);
   }
-  
-  const modal = new bootstrap.Modal(document.getElementById("quotaExceededModal"));
+
+  const modal = new bootstrap.Modal(
+    document.getElementById("quotaExceededModal")
+  );
   modal.show();
 }
 
@@ -1407,7 +1432,7 @@ async function saveGeneratedPrompt() {
       body: JSON.stringify({
         title: title,
         content: promptText.textContent,
-        category: "generated"
+        category: "generated",
       }),
     });
 
@@ -1426,11 +1451,11 @@ async function saveGeneratedPrompt() {
 // Atualizar dados quando a aba mudar (se necessário)
 function initializeEventListeners() {
   // Event listener para mudança de abas
-  document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-    tab.addEventListener('shown.bs.tab', function (event) {
-      const targetId = event.target.getAttribute('data-bs-target');
-      
-      if (targetId === '#saved-prompts-tab') {
+  document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", function (event) {
+      const targetId = event.target.getAttribute("data-bs-target");
+
+      if (targetId === "#saved-prompts-tab") {
         loadSavedPrompts();
       }
     });
