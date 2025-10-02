@@ -1170,33 +1170,61 @@ function showSuccessModal(title, message) {
 
 // Carregar prompts salvos do usuário
 async function loadSavedPrompts() {
+  console.log("🔄 [MEMBER] Carregando prompts salvos...");
+  
   try {
     const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("❌ [MEMBER] Token não encontrado");
+      return;
+    }
+    
+    console.log("📡 [MEMBER] Fazendo requisição para /members/saved-prompts");
     const response = await fetch(`${API_BASE}/members/saved-prompts`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
     });
+
+    console.log(`📊 [MEMBER] Status da resposta: ${response.status}`);
 
     if (response.ok) {
       const data = await response.json();
+      console.log("✅ [MEMBER] Dados recebidos:", data);
+      console.log(`📋 [MEMBER] Total prompts: ${data.total}, Array length: ${data.prompts?.length}`);
+      
       displaySavedPrompts(data.prompts);
       
       // Atualizar contador no dashboard
       const savedPromptsCount = document.getElementById("savedTemplates");
       if (savedPromptsCount) {
         savedPromptsCount.textContent = data.total;
+        console.log(`📊 [MEMBER] Contador atualizado: ${data.total}`);
+      } else {
+        console.warn("⚠️ [MEMBER] Elemento savedTemplates não encontrado");
       }
+    } else {
+      const errorText = await response.text();
+      console.error(`❌ [MEMBER] Erro na requisição: ${response.status}`, errorText);
     }
   } catch (error) {
-    console.error("Erro ao carregar prompts salvos:", error);
+    console.error("❌ [MEMBER] Erro ao carregar prompts salvos:", error);
   }
 }
 
 // Exibir prompts salvos na interface
 function displaySavedPrompts(prompts) {
+  console.log("🎨 [MEMBER] Exibindo prompts salvos:", prompts);
+  
   const container = document.getElementById("savedPromptsContainer");
-  if (!container) return;
+  if (!container) {
+    console.error("❌ [MEMBER] Container 'savedPromptsContainer' não encontrado");
+    return;
+  }
 
-  if (prompts.length === 0) {
+  if (!prompts || prompts.length === 0) {
+    console.log("📭 [MEMBER] Nenhum prompt encontrado, exibindo mensagem vazia");
     container.innerHTML = `
       <div class="text-center text-muted py-4">
         <i class="fas fa-save fa-3x mb-3"></i>
@@ -1207,16 +1235,20 @@ function displaySavedPrompts(prompts) {
     return;
   }
 
-  container.innerHTML = prompts.map(prompt => `
+  console.log(`📋 [MEMBER] Renderizando ${prompts.length} prompts`);
+  
+  container.innerHTML = prompts.map((prompt, index) => {
+    console.log(`📄 [MEMBER] Prompt ${index + 1}:`, prompt.title);
+    return `
     <div class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h6 class="mb-0">${prompt.title}</h6>
-        <small class="text-muted">${new Date(prompt.created_at).toLocaleDateString()}</small>
+        <h6 class="mb-0">${prompt.title || 'Sem título'}</h6>
+        <small class="text-muted">${prompt.created_at ? new Date(prompt.created_at).toLocaleDateString() : 'Data não disponível'}</small>
       </div>
       <div class="card-body">
-        <p class="text-muted mb-2">${prompt.context}</p>
+        <p class="text-muted mb-2">${prompt.context || 'Sem contexto'}</p>
         <div class="prompt-content" style="max-height: 150px; overflow-y: auto;">
-          ${prompt.content}
+          ${prompt.content || 'Conteúdo não disponível'}
         </div>
         <div class="mt-2">
           <span class="badge bg-secondary me-1">${prompt.style}</span>
