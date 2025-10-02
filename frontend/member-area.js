@@ -313,7 +313,11 @@ async function loadPublicTemplates(category = "", search = "") {
 
     if (response.ok) {
       const data = await response.json();
-      displayPublicTemplates(data.templates);
+      // O endpoint retorna diretamente a lista de templates
+      displayPublicTemplates(Array.isArray(data) ? data : data.templates || []);
+    } else {
+      console.error("Erro ao carregar templates:", response.status);
+      displayPublicTemplates([]);
     }
   } catch (error) {
     console.error("Erro ao carregar templates públicos:", error);

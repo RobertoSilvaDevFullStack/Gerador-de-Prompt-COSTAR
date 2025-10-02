@@ -298,12 +298,6 @@
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="templates-tab" data-bs-toggle="pill" data-bs-target="#templates"
-                        type="button" role="tab">
-                        <i class="bi bi-collection me-2"></i>Meus Templates
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="saved-prompts-tab" data-bs-toggle="pill"
                         data-bs-target="#saved-prompts" type="button" role="tab">
                         <i class="bi bi-bookmark me-2"></i>Prompts Salvos
@@ -395,20 +389,6 @@
                 </div>
             </div>
 
-            <!-- Meus Templates -->
-            <div class="tab-pane fade" id="templates" role="tabpanel">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3>Meus Templates</h3>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTemplateModal">
-                        <i class="bi bi-plus-circle me-2"></i>Criar Template
-                    </button>
-                </div>
-
-                <div id="userTemplates" class="row">
-                    <!-- Templates serão carregados dinamicamente -->
-                </div>
-            </div>
-
             <!-- Prompts Salvos -->
             <div class="tab-pane fade" id="saved-prompts" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -437,18 +417,26 @@
 
             <!-- Explorar Templates -->
             <div class="tab-pane fade" id="explore" role="tabpanel">
-                <h3 class="mb-4">Explorar Templates Públicos</h3>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Explorar Templates Públicos</h3>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTemplateModal">
+                        <i class="bi bi-plus-circle me-2"></i>Criar Template
+                    </button>
+                </div>
 
                 <!-- Filtros -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <select class="form-select" id="categoryFilter">
                             <option value="">Todas as Categorias</option>
-                            <option value="marketing">Marketing</option>
-                            <option value="educacao">Educação</option>
-                            <option value="negocios">Negócios</option>
-                            <option value="criativo">Criativo</option>
-                            <option value="tecnico">Técnico</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Social Media">Social Media</option>
+                            <option value="SEO">SEO</option>
+                            <option value="Vendas">Vendas</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Negócios">Negócios</option>
+                            <option value="Criativo">Criativo</option>
+                            <option value="Técnico">Técnico</option>
                         </select>
                     </div>
                     <div class="col-md-6">
