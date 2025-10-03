@@ -1,0 +1,7 @@
+# Railway Deploy Trigger
+# Last updated: 2025-10-03 17:40
+
+echo "Forcing Railway redeploy..."
+echo "Using configuration: railway.json"
+echo "Entry point: start.py"
+echo "Build timestamp: $(date)"
