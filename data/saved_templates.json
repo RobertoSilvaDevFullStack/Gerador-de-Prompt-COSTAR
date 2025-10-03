@@ -2,7 +2,7 @@
   {
     "id": "a6ee45f7-a513-425f-bdc0-424772aa3d32",
     "title": "Email Marketing Profissional",
-    "description": "Template para criar emails de marketing com alta taxa de conversão",
+    "description": "Template para criar emails de marketing com alta taxa de convers\u00c3\u00a3o",
     "category": "Marketing",
     "context_template": "Criar um email marketing para {produto} direcionado para {publico_alvo}",
     "style": "Profissional",
@@ -15,9 +15,9 @@
       "conversao"
     ],
     "creator_id": "af761b53-2479-48ff-8795-65edb7e7b450",
-    "creator_name": "João Silva",
+    "creator_name": "Jo\u00c3\u00a3o Silva",
     "is_public": true,
-    "usage_count": 36,
+    "usage_count": 37,
     "rating": 4.5,
     "created_at": "2025-09-03T22:36:56.753694",
     "updated_at": "2025-10-01T22:36:56.753704"
@@ -29,7 +29,7 @@
     "category": "Social Media",
     "context_template": "Criar post para {rede_social} sobre {assunto} para gerar {objetivo}",
     "style": "Criativo",
-    "tone": "Amigável",
+    "tone": "Amig\u00c3\u00a1vel",
     "format": "Post",
     "tags": [
       "social-media",
@@ -47,11 +47,11 @@
   },
   {
     "id": "cdb423c3-3d9d-46e0-ba21-534e12f7cc75",
-    "title": "Artigo Técnico SEO",
-    "description": "Template para artigos técnicos otimizados para SEO",
+    "title": "Artigo T\u00c3\u00a9cnico SEO",
+    "description": "Template para artigos t\u00c3\u00a9cnicos otimizados para SEO",
     "category": "SEO",
-    "context_template": "Escrever artigo técnico sobre {tecnologia} focado em {palavra_chave}",
-    "style": "Técnico",
+    "context_template": "Escrever artigo t\u00c3\u00a9cnico sobre {tecnologia} focado em {palavra_chave}",
+    "style": "T\u00c3\u00a9cnico",
     "tone": "Formal",
     "format": "Artigo",
     "tags": [
@@ -93,12 +93,12 @@
   },
   {
     "id": "a310db93-7762-445c-8f39-741742c693b1",
-    "title": "Conteúdo Educacional",
-    "description": "Template para criar conteúdo educacional envolvente",
-    "category": "Educação",
+    "title": "Conte\u00c3\u00bado Educacional",
+    "description": "Template para criar conte\u00c3\u00bado educacional envolvente",
+    "category": "Educa\u00c3\u00a7\u00c3\u00a3o",
     "context_template": "Explicar {conceito} para {nivel_conhecimento} de forma {abordagem}",
     "style": "Educativo",
-    "tone": "Didático",
+    "tone": "Did\u00c3\u00a1tico",
     "format": "Tutorial",
     "tags": [
       "educacao",

@@ -16,7 +16,7 @@ load_dotenv()
 # Adicionar o diretório raiz ao path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from services.multi_ai_service import MultiAIService
+from app.services.multi_ai_service import MultiAIService
 import json
 
 async def test_multi_ai_system():

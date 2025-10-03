@@ -3023,5 +3023,83 @@
     "session_id": "session_4a2b9687-29b8-4bfb-80ea-105fc8bfa673",
     "endpoint": "/api/generate",
     "response_quality": 9.0
+  },
+  {
+    "id": "d23b1613-bdca-4c10-a720-ec4aa0927145",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 10:00:11.461240",
+    "response_time": 3.0507001876831055,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4368,
+    "ip_address": "",
+    "user_agent": ""
+  },
+  {
+    "id": "9e93a6a7-25a6-44ba-a430-ec6d4ebecc0a",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 10:00:27.553674",
+    "response_time": 2.3954367637634277,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4127,
+    "ip_address": "",
+    "user_agent": ""
+  },
+  {
+    "id": "342f89b7-1722-40cd-a11d-e0463826d535",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 10:01:46.410734",
+    "response_time": 2.3433847427368164,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4287,
+    "ip_address": "",
+    "user_agent": ""
+  },
+  {
+    "id": "2759f0dc-0cdb-4a96-8336-d41a061b7f17",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 10:01:51.297507",
+    "response_time": 2.544423818588257,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4804,
+    "ip_address": "",
+    "user_agent": ""
+  },
+  {
+    "id": "6e003d4f-6cb5-419b-bae5-740c113a42b4",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 12:04:36.718095",
+    "response_time": 4.163256406784058,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4957,
+    "ip_address": "",
+    "user_agent": ""
+  },
+  {
+    "id": "576152f9-0ca7-48c5-b5a8-143211dd2bd9",
+    "provider": "groq",
+    "user_id": null,
+    "prompt_type": "costar",
+    "request_time": "2025-10-03 12:04:42.350316",
+    "response_time": 2.525282859802246,
+    "success": true,
+    "error_message": null,
+    "tokens_used": 4554,
+    "ip_address": "",
+    "user_agent": ""
   }
 ]

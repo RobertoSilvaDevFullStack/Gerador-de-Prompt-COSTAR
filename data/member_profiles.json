@@ -129,12 +129,12 @@
       "theme": "light"
     },
     "usage_stats": {
-      "total_prompts": 5,
+      "total_prompts": 6,
       "templates_created": 9,
       "templates_shared": 0
     },
     "usage_current_month": {
-      "prompts_generated": 18,
+      "prompts_generated": 19,
       "api_calls": 46,
       "tokens_used": 7926
     }

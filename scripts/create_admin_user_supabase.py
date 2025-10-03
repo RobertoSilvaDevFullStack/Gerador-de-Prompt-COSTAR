@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from services.supabase_auth_service import SupabaseAuthService
+from app.services.supabase_auth_service import SupabaseAuthService
 import getpass
 
 def create_admin_user():

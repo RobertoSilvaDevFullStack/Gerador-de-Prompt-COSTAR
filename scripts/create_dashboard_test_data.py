@@ -67,7 +67,7 @@ def test_analytics_service():
     import sys
     sys.path.append('.')
     
-    from services.admin_analytics_service import AdminAnalyticsService
+    from app.services.admin_analytics_service import AdminAnalyticsService
     
     analytics = AdminAnalyticsService()
     metrics = analytics.get_dashboard_metrics()
