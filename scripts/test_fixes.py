@@ -7,8 +7,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from services.integrated_data_service import get_data_service
-from services.auth_service import AuthService
+from app.services.integrated_data_service import get_data_service
+from app.services.auth_service import AuthService
 
 async def test_fixes():
     print("🔧 TESTANDO CORREÇÕES DOS PROBLEMAS")

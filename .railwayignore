@@ -37,9 +37,6 @@ README.md
 .git/
 .gitignore
 
-# Local requirements (use requirements-deploy.txt)
-requirements.txt
-
 # Docker files (not needed in Railway)
 docker/
 Dockerfile*

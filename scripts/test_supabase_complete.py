@@ -7,7 +7,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from services.integrated_data_service import get_data_service
+from app.services.integrated_data_service import get_data_service
 
 async def test_full_supabase():
     print("🚀 TESTE COMPLETO DO SUPABASE APÓS DEPLOYMENT")

@@ -1,0 +1,3642 @@
+{
+  "summary": {
+    "total_python_files": 94,
+    "files_with_local_imports": 33,
+    "files_with_relative_imports": 0,
+    "main_files_found": 2
+  },
+  "main_files": {
+    "main.py": {
+      "size": 421,
+      "dependencies": 0,
+      "is_entry_point": true
+    },
+    "main_demo.py": {
+      "size": 67210,
+      "dependencies": 12,
+      "is_entry_point": true
+    }
+  },
+  "files_by_directory": {
+    ".": [
+      "analyze_dependencies.py",
+      "app_render.py",
+      "debug_auth_complete.py",
+      "debug_dashboard_endpoints.py",
+      "debug_member_area.py",
+      "debug_member_area_complete.py",
+      "debug_quota_specific.py",
+      "main.py",
+      "main_demo.py",
+      "simulate_production_login.py",
+      "start_render.py",
+      "streamlit_app.py",
+      "test_admin_dashboard.py",
+      "test_ai_models.py",
+      "test_dashboard_debug.py",
+      "test_dashboard_final.py",
+      "test_endpoints.py",
+      "test_endpoints_debug.py",
+      "test_frontend_simulation.py",
+      "test_member_specific.py",
+      "test_quota_direct.py",
+      "test_quota_system.py",
+      "test_user_data.py"
+    ],
+    "api": [
+      "api\\index.py"
+    ],
+    "config": [
+      "config\\paths.py",
+      "config\\supabase_config.py",
+      "config\\__init__.py"
+    ],
+    "debug": [
+      "debug\\debug_endpoints.py",
+      "debug\\debug_env.py",
+      "debug\\debug_frontend_workflow.py",
+      "debug\\debug_gemini.py",
+      "debug\\debug_multi_ai.py",
+      "debug\\debug_prompt.py",
+      "debug\\__init__.py"
+    ],
+    "routes": [
+      "routes\\member_admin_routes.py",
+      "routes\\status_routes.py",
+      "routes\\__init__.py"
+    ],
+    "scripts": [
+      "scripts\\add_real_analytics.py",
+      "scripts\\create_admin_user.py",
+      "scripts\\create_admin_user_supabase.py",
+      "scripts\\create_dashboard_test_data.py",
+      "scripts\\create_test_data.py",
+      "scripts\\debug_jwt.py",
+      "scripts\\debug_user_role.py",
+      "scripts\\deploy_supabase_schema.py",
+      "scripts\\manual_deploy_guide.py",
+      "scripts\\setup_costar_users_table.py",
+      "scripts\\show_admin_data_summary.py",
+      "scripts\\show_clean_sql.py",
+      "scripts\\show_reset_sql.py",
+      "scripts\\test_admin_direct.py",
+      "scripts\\test_endpoints.py",
+      "scripts\\test_fixes.py",
+      "scripts\\test_frontend.py",
+      "scripts\\test_login_direct.py",
+      "scripts\\test_login_fixed.py",
+      "scripts\\test_multi_ai.py",
+      "scripts\\test_rapido.py",
+      "scripts\\test_sistema_final.py",
+      "scripts\\test_supabase_complete.py",
+      "scripts\\test_supabase_integration.py",
+      "scripts\\test_supabase_setup.py",
+      "scripts\\validate_api_keys.py",
+      "scripts\\validate_structure.py",
+      "scripts\\__init__.py"
+    ],
+    "services": [
+      "services\\admin_analytics_service.py",
+      "services\\analytics_service.py",
+      "services\\auth_service.py",
+      "services\\backup_service.py",
+      "services\\cache_service.py",
+      "services\\gemini_service.py",
+      "services\\integrated_data_service.py",
+      "services\\member_area_service.py",
+      "services\\multi_ai_service.py",
+      "services\\notification_service.py",
+      "services\\production_multi_ai.py",
+      "services\\supabase_auth_service.py",
+      "services\\supabase_base_service.py",
+      "services\\supabase_service.py",
+      "services\\__init__.py"
+    ],
+    "tests": [
+      "tests\\test_admin.py",
+      "tests\\test_admin_dashboard.py",
+      "tests\\test_analysis_endpoint.py",
+      "tests\\test_analyze_simple.py",
+      "tests\\test_api_direta.py",
+      "tests\\test_final_integrado.py",
+      "tests\\test_prompt_generation.py",
+      "tests\\test_server.py",
+      "tests\\test_supabase_connection.py",
+      "tests\\test_supabase_schema.py",
+      "tests\\test_template_fix.py",
+      "tests\\__init__.py"
+    ],
+    "tools\\testing": [
+      "tools\\testing\\test_members.py",
+      "tools\\testing\\test_quick.py"
+    ]
+  },
+  "high_risk_files": [
+    {
+      "file": "services\\multi_ai_service.py",
+      "risk_score": 14,
+      "references": 14,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "main_demo.py",
+      "risk_score": 12,
+      "references": 0,
+      "local_imports": 12,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\auth_service.py",
+      "risk_score": 11,
+      "references": 11,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\supabase_auth_service.py",
+      "risk_score": 11,
+      "references": 10,
+      "local_imports": 1,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\member_area_service.py",
+      "risk_score": 8,
+      "references": 8,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\supabase_base_service.py",
+      "risk_score": 8,
+      "references": 8,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "routes\\member_admin_routes.py",
+      "risk_score": 7,
+      "references": 1,
+      "local_imports": 6,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\admin_analytics_service.py",
+      "risk_score": 7,
+      "references": 7,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\analytics_service.py",
+      "risk_score": 7,
+      "references": 7,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "config\\supabase_config.py",
+      "risk_score": 5,
+      "references": 5,
+      "local_imports": 0,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\integrated_data_service.py",
+      "risk_score": 5,
+      "references": 3,
+      "local_imports": 2,
+      "relative_imports": 0
+    },
+    {
+      "file": "routes\\status_routes.py",
+      "risk_score": 4,
+      "references": 1,
+      "local_imports": 3,
+      "relative_imports": 0
+    },
+    {
+      "file": "scripts\\test_supabase_integration.py",
+      "risk_score": 4,
+      "references": 0,
+      "local_imports": 4,
+      "relative_imports": 0
+    },
+    {
+      "file": "services\\production_multi_ai.py",
+      "risk_score": 4,
+      "references": 4,
+      "local_imports": 0,
+      "relative_imports": 0
+    }
+  ],
+  "move_plan": {
+    "phase_1_safe_moves": [
+      "test_*.py -> tests/",
+      "debug_*.py -> debug/",
+      "*.md -> docs/ (exceto README.md)"
+    ],
+    "phase_2_medium_risk": [
+      "services/ -> app/services/",
+      "routes/ -> app/routes/",
+      "config/ -> app/config/"
+    ],
+    "phase_3_high_risk": [
+      "main_*.py -> reorganizar",
+      "api/ -> app/api/",
+      "frontend/ -> static/"
+    ]
+  },
+  "dependencies": {
+    "analyze_dependencies.py": {
+      "imports": [
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 8,
+          "import": "import re",
+          "module": "re"
+        },
+        {
+          "line": 9,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 10,
+          "import": "from pathlib import Path",
+          "module": "pathlib"
+        },
+        {
+          "line": 11,
+          "import": "from typing import Dict, List, Set",
+          "module": "typing"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 10523
+    },
+    "app_render.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 6,
+          "import": "from fastapi import FastAPI, HTTPException",
+          "module": "fastapi"
+        },
+        {
+          "line": 7,
+          "import": "from fastapi.staticfiles import StaticFiles",
+          "module": "fastapi.staticfiles"
+        },
+        {
+          "line": 8,
+          "import": "from fastapi.responses import FileResponse, HTMLResponse",
+          "module": "fastapi.responses"
+        },
+        {
+          "line": 9,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6407
+    },
+    "debug_auth_complete.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4394
+    },
+    "debug_dashboard_endpoints.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2699
+    },
+    "debug_member_area.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2917
+    },
+    "debug_member_area_complete.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 5286
+    },
+    "debug_quota_specific.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 50,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 10,
+          "import": "from services.member_area_service import MemberAreaService",
+          "module": "services.member_area_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1896
+    },
+    "main.py": {
+      "imports": [
+        {
+          "line": 2,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 3,
+          "import": "from main_demo import app",
+          "module": "main_demo"
+        },
+        {
+          "line": 11,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 421
+    },
+    "main_demo.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "from fastapi import FastAPI, HTTPException, status",
+          "module": "fastapi"
+        },
+        {
+          "line": 2,
+          "import": "from fastapi.middleware.cors import CORSMiddleware",
+          "module": "fastapi.middleware.cors"
+        },
+        {
+          "line": 3,
+          "import": "from fastapi.staticfiles import StaticFiles",
+          "module": "fastapi.staticfiles"
+        },
+        {
+          "line": 4,
+          "import": "from fastapi.responses import HTMLResponse, Response",
+          "module": "fastapi.responses"
+        },
+        {
+          "line": 5,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        },
+        {
+          "line": 6,
+          "import": "from typing import List, Optional, Dict, Any",
+          "module": "typing"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 8,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 9,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 10,
+          "import": "import logging",
+          "module": "logging"
+        },
+        {
+          "line": 11,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        },
+        {
+          "line": 12,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 74,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 322,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 461,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 1685,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 108,
+          "import": "from services.production_multi_ai import get_multi_ai_service",
+          "module": "services.production_multi_ai"
+        },
+        {
+          "line": 190,
+          "import": "from routes.member_admin_routes import member_router, admin_router",
+          "module": "routes.member_admin_routes"
+        },
+        {
+          "line": 201,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        },
+        {
+          "line": 213,
+          "import": "from routes.status_routes import router as status_router",
+          "module": "routes.status_routes"
+        },
+        {
+          "line": 313,
+          "import": "from services.production_multi_ai import get_multi_ai_service",
+          "module": "services.production_multi_ai"
+        },
+        {
+          "line": 340,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        },
+        {
+          "line": 422,
+          "import": "from services.production_multi_ai import get_multi_ai_service",
+          "module": "services.production_multi_ai"
+        },
+        {
+          "line": 427,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        },
+        {
+          "line": 504,
+          "import": "from services.gemini_service import GeminiService",
+          "module": "services.gemini_service"
+        },
+        {
+          "line": 577,
+          "import": "from services.gemini_service import GeminiService",
+          "module": "services.gemini_service"
+        },
+        {
+          "line": 632,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        },
+        {
+          "line": 662,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 67210
+    },
+    "simulate_production_login.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 136,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 5608
+    },
+    "start_render.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 22,
+          "import": "from app_render import app, main as app_main",
+          "module": "app_render"
+        },
+        {
+          "line": 32,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        },
+        {
+          "line": 33,
+          "import": "from main import app",
+          "module": "main"
+        },
+        {
+          "line": 43,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        },
+        {
+          "line": 44,
+          "import": "from main_demo import app",
+          "module": "main_demo"
+        },
+        {
+          "line": 54,
+          "import": "import uvicorn",
+          "module": "uvicorn"
+        },
+        {
+          "line": 55,
+          "import": "from fastapi import FastAPI",
+          "module": "fastapi"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2388
+    },
+    "streamlit_app.py": {
+      "imports": [
+        {
+          "line": 2,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 3,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1878
+    },
+    "test_admin_dashboard.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4809
+    },
+    "test_ai_models.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 8,
+          "import": "from services.production_multi_ai import ProductionMultiAIService",
+          "module": "services.production_multi_ai"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1942
+    },
+    "test_dashboard_debug.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 8,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 9,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 115,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 5189
+    },
+    "test_dashboard_final.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 8,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 9,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 98,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6058
+    },
+    "test_endpoints.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2611
+    },
+    "test_endpoints_debug.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2665
+    },
+    "test_frontend_simulation.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 10,
+          "import": "from services.member_area_service import MemberAreaService",
+          "module": "services.member_area_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 2467
+    },
+    "test_member_specific.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4266
+    },
+    "test_quota_direct.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 10,
+          "import": "from services.member_area_service import MemberAreaService",
+          "module": "services.member_area_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1467
+    },
+    "test_quota_system.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 8,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 7982
+    },
+    "test_user_data.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2122
+    },
+    "api\\index.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "from pathlib import Path",
+          "module": "pathlib"
+        },
+        {
+          "line": 15,
+          "import": "from fastapi import FastAPI, HTTPException, Request",
+          "module": "fastapi"
+        },
+        {
+          "line": 16,
+          "import": "from fastapi.staticfiles import StaticFiles",
+          "module": "fastapi.staticfiles"
+        },
+        {
+          "line": 17,
+          "import": "from fastapi.responses import HTMLResponse, JSONResponse",
+          "module": "fastapi.responses"
+        },
+        {
+          "line": 18,
+          "import": "from fastapi.middleware.cors import CORSMiddleware",
+          "module": "fastapi.middleware.cors"
+        },
+        {
+          "line": 19,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 51,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        },
+        {
+          "line": 57,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 11274
+    },
+    "config\\paths.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 5,
+          "import": "from pathlib import Path",
+          "module": "pathlib"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2195
+    },
+    "config\\supabase_config.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 5,
+          "import": "from typing import Optional, Dict, Any",
+          "module": "typing"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4382
+    },
+    "config\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 45
+    },
+    "debug\\debug_endpoints.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4947
+    },
+    "debug\\debug_env.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1073
+    },
+    "debug\\debug_frontend_workflow.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import time",
+          "module": "time"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 5900
+    },
+    "debug\\debug_gemini.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 12,
+          "import": "from services.gemini_service import GeminiService",
+          "module": "services.gemini_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 2945
+    },
+    "debug\\debug_multi_ai.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 14,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 13,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 2913
+    },
+    "debug\\debug_prompt.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 2,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 3,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 4,
+          "import": "from main_demo import PromptData, generate_costar_prompt_with_multi_ai",
+          "module": "main_demo"
+        },
+        {
+          "line": 44,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 5,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1771
+    },
+    "debug\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 43
+    },
+    "routes\\member_admin_routes.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "from fastapi import APIRouter, HTTPException, Depends, status",
+          "module": "fastapi"
+        },
+        {
+          "line": 5,
+          "import": "from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials",
+          "module": "fastapi.security"
+        },
+        {
+          "line": 6,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        },
+        {
+          "line": 7,
+          "import": "from typing import Dict, List, Optional, Any",
+          "module": "typing"
+        },
+        {
+          "line": 8,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 9,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 10,
+          "import": "import re",
+          "module": "re"
+        },
+        {
+          "line": 11,
+          "import": "import logging",
+          "module": "logging"
+        },
+        {
+          "line": 12,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 18,
+          "import": "import jwt",
+          "module": "jwt"
+        },
+        {
+          "line": 21,
+          "import": "from jose import jwt",
+          "module": "jose"
+        },
+        {
+          "line": 458,
+          "import": "from main_demo import PromptData, generate_costar_prompt_basic",
+          "module": "main_demo"
+        },
+        {
+          "line": 928,
+          "import": "import traceback",
+          "module": "traceback"
+        },
+        {
+          "line": 993,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 994,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 1027,
+          "import": "import traceback",
+          "module": "traceback"
+        },
+        {
+          "line": 1062,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 1063,
+          "import": "import re",
+          "module": "re"
+        },
+        {
+          "line": 1064,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 1152,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 25,
+          "import": "from services.supabase_auth_service import SupabaseAuthService, UserRole",
+          "module": "services.supabase_auth_service"
+        },
+        {
+          "line": 26,
+          "import": "from services.member_area_service import MemberAreaService, SubscriptionPlan",
+          "module": "services.member_area_service"
+        },
+        {
+          "line": 27,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        },
+        {
+          "line": 344,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        },
+        {
+          "line": 480,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        },
+        {
+          "line": 656,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 43034
+    },
+    "routes\\status_routes.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "from fastapi import APIRouter, HTTPException",
+          "module": "fastapi"
+        },
+        {
+          "line": 5,
+          "import": "from typing import Dict, Any, List",
+          "module": "typing"
+        },
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 121,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 8,
+          "import": "from services.integrated_data_service import get_data_service",
+          "module": "services.integrated_data_service"
+        },
+        {
+          "line": 9,
+          "import": "from config.supabase_config import check_configuration",
+          "module": "config.supabase_config"
+        },
+        {
+          "line": 167,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 8351
+    },
+    "routes\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 44
+    },
+    "scripts\\add_real_analytics.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 2,
+          "import": "import uuid",
+          "module": "uuid"
+        },
+        {
+          "line": 3,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 4,
+          "import": "import random",
+          "module": "random"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2737
+    },
+    "scripts\\create_admin_user.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 10,
+          "import": "import getpass",
+          "module": "getpass"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 9,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 2065
+    },
+    "scripts\\create_admin_user_supabase.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 10,
+          "import": "import getpass",
+          "module": "getpass"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 9,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4467
+    },
+    "scripts\\create_dashboard_test_data.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 67,
+          "import": "import sys",
+          "module": "sys"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 70,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4341
+    },
+    "scripts\\create_test_data.py": {
+      "imports": [
+        {
+          "line": 9,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 10,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 11,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 12,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 13,
+          "import": "import uuid",
+          "module": "uuid"
+        },
+        {
+          "line": 14,
+          "import": "import random",
+          "module": "random"
+        },
+        {
+          "line": 420,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 19,
+          "import": "from services.member_area_service import MemberAreaService, SubscriptionPlan",
+          "module": "services.member_area_service"
+        },
+        {
+          "line": 20,
+          "import": "from services.supabase_auth_service import SupabaseAuthService, UserRole",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 17402
+    },
+    "scripts\\debug_jwt.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import jwt",
+          "module": "jwt"
+        },
+        {
+          "line": 6,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 7,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 8,
+          "import": "import base64",
+          "module": "base64"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1949
+    },
+    "scripts\\debug_user_role.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1991
+    },
+    "scripts\\deploy_supabase_schema.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "from typing import Dict, Any",
+          "module": "typing"
+        },
+        {
+          "line": 9,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 17,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        },
+        {
+          "line": 18,
+          "import": "from config.supabase_config import get_config, check_configuration",
+          "module": "config.supabase_config"
+        }
+      ],
+      "relative_imports": [],
+      "size": 11168
+    },
+    "scripts\\manual_deploy_guide.py": {
+      "imports": [
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 8,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 9,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 17,
+          "import": "from config.supabase_config import get_config, check_configuration",
+          "module": "config.supabase_config"
+        }
+      ],
+      "relative_imports": [],
+      "size": 5642
+    },
+    "scripts\\setup_costar_users_table.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 8,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4567
+    },
+    "scripts\\show_admin_data_summary.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 8,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 9,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 14,
+          "import": "from services.member_area_service import MemberAreaService",
+          "module": "services.member_area_service"
+        },
+        {
+          "line": 15,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4824
+    },
+    "scripts\\show_clean_sql.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1336
+    },
+    "scripts\\show_reset_sql.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1351
+    },
+    "scripts\\test_admin_direct.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 8,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        },
+        {
+          "line": 28,
+          "import": "from services.supabase_auth_service import UserRole",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1598
+    },
+    "scripts\\test_endpoints.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import time",
+          "module": "time"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2178
+    },
+    "scripts\\test_fixes.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 66,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 10,
+          "import": "from services.integrated_data_service import get_data_service",
+          "module": "services.integrated_data_service"
+        },
+        {
+          "line": 11,
+          "import": "from services.auth_service import AuthService",
+          "module": "services.auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 2596
+    },
+    "scripts\\test_frontend.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import time",
+          "module": "time"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4475
+    },
+    "scripts\\test_login_direct.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 10,
+          "import": "import logging",
+          "module": "logging"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 9,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4060
+    },
+    "scripts\\test_login_fixed.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 3170
+    },
+    "scripts\\test_multi_ai.py": {
+      "imports": [
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 8,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 9,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 10,
+          "import": "from pathlib import Path",
+          "module": "pathlib"
+        },
+        {
+          "line": 13,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        },
+        {
+          "line": 20,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 19,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 6019
+    },
+    "scripts\\test_rapido.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import subprocess",
+          "module": "subprocess"
+        },
+        {
+          "line": 6,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 7,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 8,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 9,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 10,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4004
+    },
+    "scripts\\test_sistema_final.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import time",
+          "module": "time"
+        },
+        {
+          "line": 8,
+          "import": "import subprocess",
+          "module": "subprocess"
+        },
+        {
+          "line": 9,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 10,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6084
+    },
+    "scripts\\test_supabase_complete.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 79,
+          "import": "import traceback",
+          "module": "traceback"
+        },
+        {
+          "line": 91,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 10,
+          "import": "from services.integrated_data_service import get_data_service",
+          "module": "services.integrated_data_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 4233
+    },
+    "scripts\\test_supabase_integration.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 12,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 225,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 9,
+          "import": "from services.supabase_auth_service import SupabaseAuthService",
+          "module": "services.supabase_auth_service"
+        },
+        {
+          "line": 10,
+          "import": "from services.member_area_service import MemberAreaService",
+          "module": "services.member_area_service"
+        },
+        {
+          "line": 11,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        },
+        {
+          "line": 101,
+          "import": "from services.member_area_service import SubscriptionPlan",
+          "module": "services.member_area_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 8220
+    },
+    "scripts\\test_supabase_setup.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "from typing import Dict, Any",
+          "module": "typing"
+        },
+        {
+          "line": 9,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 17,
+          "import": "from config.supabase_config import check_configuration, get_config",
+          "module": "config.supabase_config"
+        },
+        {
+          "line": 18,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 7967
+    },
+    "scripts\\validate_api_keys.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 8,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        },
+        {
+          "line": 15,
+          "import": "from groq import AsyncGroq",
+          "module": "groq"
+        },
+        {
+          "line": 38,
+          "import": "import httpx",
+          "module": "httpx"
+        },
+        {
+          "line": 73,
+          "import": "import httpx",
+          "module": "httpx"
+        },
+        {
+          "line": 107,
+          "import": "import httpx",
+          "module": "httpx"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 5718
+    },
+    "scripts\\validate_structure.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 0
+    },
+    "scripts\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 45
+    },
+    "services\\admin_analytics_service.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 6,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 7,
+          "import": "from typing import Dict, List, Optional",
+          "module": "typing"
+        },
+        {
+          "line": 8,
+          "import": "from dataclasses import dataclass, asdict",
+          "module": "dataclasses"
+        },
+        {
+          "line": 9,
+          "import": "import uuid",
+          "module": "uuid"
+        },
+        {
+          "line": 10,
+          "import": "from collections import defaultdict, Counter",
+          "module": "collections"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 14749
+    },
+    "services\\analytics_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 2,
+          "import": "from typing import Dict, List, Any, Optional",
+          "module": "typing"
+        },
+        {
+          "line": 3,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 4,
+          "import": "from collections import defaultdict",
+          "module": "collections"
+        },
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6409
+    },
+    "services\\auth_service.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import hashlib",
+          "module": "hashlib"
+        },
+        {
+          "line": 5,
+          "import": "import jwt",
+          "module": "jwt"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 8,
+          "import": "from typing import Optional, Dict, List",
+          "module": "typing"
+        },
+        {
+          "line": 9,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 10,
+          "import": "import uuid",
+          "module": "uuid"
+        },
+        {
+          "line": 11,
+          "import": "from dataclasses import dataclass, asdict",
+          "module": "dataclasses"
+        },
+        {
+          "line": 12,
+          "import": "from enum import Enum",
+          "module": "enum"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 10747
+    },
+    "services\\backup_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 3,
+          "import": "import zipfile",
+          "module": "zipfile"
+        },
+        {
+          "line": 4,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "from typing import Dict, Any",
+          "module": "typing"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4922
+    },
+    "services\\cache_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import redis",
+          "module": "redis"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 3,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 4,
+          "import": "from typing import Any, Optional, List",
+          "module": "typing"
+        },
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 3725
+    },
+    "services\\gemini_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 2,
+          "import": "import httpx",
+          "module": "httpx"
+        },
+        {
+          "line": 3,
+          "import": "from typing import Dict, Any, Optional",
+          "module": "typing"
+        },
+        {
+          "line": 4,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 6,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6418
+    },
+    "services\\integrated_data_service.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "from typing import Dict, List, Optional, Any, Union",
+          "module": "typing"
+        },
+        {
+          "line": 8,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 9,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 13,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        },
+        {
+          "line": 14,
+          "import": "from config.supabase_config import get_config, check_configuration",
+          "module": "config.supabase_config"
+        }
+      ],
+      "relative_imports": [],
+      "size": 20695
+    },
+    "services\\member_area_service.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 6,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 7,
+          "import": "from typing import Dict, List, Optional, Any",
+          "module": "typing"
+        },
+        {
+          "line": 8,
+          "import": "from dataclasses import dataclass, asdict",
+          "module": "dataclasses"
+        },
+        {
+          "line": 9,
+          "import": "import uuid",
+          "module": "uuid"
+        },
+        {
+          "line": 10,
+          "import": "from enum import Enum",
+          "module": "enum"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 36110
+    },
+    "services\\multi_ai_service.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 5,
+          "import": "import random",
+          "module": "random"
+        },
+        {
+          "line": 6,
+          "import": "from typing import Dict, List, Optional, Any",
+          "module": "typing"
+        },
+        {
+          "line": 7,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 8,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 9,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 10,
+          "import": "import httpx",
+          "module": "httpx"
+        },
+        {
+          "line": 11,
+          "import": "from dataclasses import dataclass",
+          "module": "dataclasses"
+        },
+        {
+          "line": 12,
+          "import": "import logging",
+          "module": "logging"
+        },
+        {
+          "line": 13,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        },
+        {
+          "line": 248,
+          "import": "from groq import AsyncGroq",
+          "module": "groq"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 26791
+    },
+    "services\\notification_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import smtplib",
+          "module": "smtplib"
+        },
+        {
+          "line": 2,
+          "import": "from email.mime.text import MIMEText",
+          "module": "email.mime.text"
+        },
+        {
+          "line": 3,
+          "import": "from email.mime.multipart import MIMEMultipart",
+          "module": "email.mime.multipart"
+        },
+        {
+          "line": 4,
+          "import": "from typing import Dict, List, Optional",
+          "module": "typing"
+        },
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "import aiohttp",
+          "module": "aiohttp"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 6454
+    },
+    "services\\production_multi_ai.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import httpx",
+          "module": "httpx"
+        },
+        {
+          "line": 8,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 9,
+          "import": "from typing import Dict, Any, Optional",
+          "module": "typing"
+        },
+        {
+          "line": 10,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 11,
+          "import": "import logging",
+          "module": "logging"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 15481
+    },
+    "services\\supabase_auth_service.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import logging",
+          "module": "logging"
+        },
+        {
+          "line": 8,
+          "import": "from typing import Optional, Dict, Any, List",
+          "module": "typing"
+        },
+        {
+          "line": 9,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 10,
+          "import": "from dataclasses import dataclass",
+          "module": "dataclasses"
+        },
+        {
+          "line": 11,
+          "import": "from enum import Enum",
+          "module": "enum"
+        },
+        {
+          "line": 12,
+          "import": "import hashlib",
+          "module": "hashlib"
+        },
+        {
+          "line": 13,
+          "import": "import secrets",
+          "module": "secrets"
+        },
+        {
+          "line": 14,
+          "import": "import jwt",
+          "module": "jwt"
+        },
+        {
+          "line": 358,
+          "import": "import uuid",
+          "module": "uuid"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 16,
+          "import": "from services.supabase_base_service import SupabaseService",
+          "module": "services.supabase_base_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 15027
+    },
+    "services\\supabase_base_service.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 7,
+          "import": "import logging",
+          "module": "logging"
+        },
+        {
+          "line": 8,
+          "import": "from typing import Optional, Dict, Any, List",
+          "module": "typing"
+        },
+        {
+          "line": 9,
+          "import": "from supabase import create_client, Client",
+          "module": "supabase"
+        },
+        {
+          "line": 10,
+          "import": "from dotenv import load_dotenv",
+          "module": "dotenv"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 8699
+    },
+    "services\\supabase_service.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "from supabase import create_client, Client",
+          "module": "supabase"
+        },
+        {
+          "line": 2,
+          "import": "from typing import List, Dict, Optional, Any",
+          "module": "typing"
+        },
+        {
+          "line": 3,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 4,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        },
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 8852
+    },
+    "services\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 46
+    },
+    "tests\\test_admin.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 3088
+    },
+    "tests\\test_admin_dashboard.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "from datetime import datetime, timedelta",
+          "module": "datetime"
+        },
+        {
+          "line": 8,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 9,
+          "import": "import sys",
+          "module": "sys"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 12,
+          "import": "from services.admin_analytics_service import AdminAnalyticsService",
+          "module": "services.admin_analytics_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 6153
+    },
+    "tests\\test_analysis_endpoint.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "from datetime import datetime",
+          "module": "datetime"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2063
+    },
+    "tests\\test_analyze_simple.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 5,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 724
+    },
+    "tests\\test_api_direta.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 11,
+          "import": "from main_demo import generate_costar_prompt_with_multi_ai",
+          "module": "main_demo"
+        },
+        {
+          "line": 13,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        },
+        {
+          "line": 89,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 12,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 3371
+    },
+    "tests\\test_final_integrado.py": {
+      "imports": [
+        {
+          "line": 6,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 7,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 8,
+          "import": "import os",
+          "module": "os"
+        },
+        {
+          "line": 12,
+          "import": "from pydantic import BaseModel",
+          "module": "pydantic"
+        },
+        {
+          "line": 144,
+          "import": "import traceback",
+          "module": "traceback"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 11,
+          "import": "from services.multi_ai_service import MultiAIService",
+          "module": "services.multi_ai_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 5582
+    },
+    "tests\\test_prompt_generation.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 4241
+    },
+    "tests\\test_server.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 3044
+    },
+    "tests\\test_supabase_connection.py": {
+      "imports": [
+        {
+          "line": 4,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 5,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 6,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 11,
+          "import": "from services.supabase_base_service import supabase_service",
+          "module": "services.supabase_base_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 1876
+    },
+    "tests\\test_supabase_schema.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import asyncio",
+          "module": "asyncio"
+        },
+        {
+          "line": 6,
+          "import": "import sys",
+          "module": "sys"
+        },
+        {
+          "line": 7,
+          "import": "import os",
+          "module": "os"
+        }
+      ],
+      "local_imports": [
+        {
+          "line": 12,
+          "import": "from services.supabase_base_service import supabase_service",
+          "module": "services.supabase_base_service"
+        }
+      ],
+      "relative_imports": [],
+      "size": 6050
+    },
+    "tests\\test_template_fix.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import json",
+          "module": "json"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 597
+    },
+    "tests\\__init__.py": {
+      "imports": [],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 43
+    },
+    "tools\\testing\\test_members.py": {
+      "imports": [
+        {
+          "line": 5,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 6,
+          "import": "import json",
+          "module": "json"
+        },
+        {
+          "line": 7,
+          "import": "import time",
+          "module": "time"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 2903
+    },
+    "tools\\testing\\test_quick.py": {
+      "imports": [
+        {
+          "line": 1,
+          "import": "import requests",
+          "module": "requests"
+        },
+        {
+          "line": 2,
+          "import": "import time",
+          "module": "time"
+        }
+      ],
+      "local_imports": [],
+      "relative_imports": [],
+      "size": 1050
+    }
+  },
+  "cross_references": {
+    "analyze_dependencies.py": [],
+    "app_render.py": [],
+    "debug_auth_complete.py": [],
+    "debug_dashboard_endpoints.py": [],
+    "debug_member_area.py": [],
+    "debug_member_area_complete.py": [],
+    "debug_quota_specific.py": [],
+    "main.py": [],
+    "main_demo.py": [],
+    "simulate_production_login.py": [],
+    "start_render.py": [],
+    "streamlit_app.py": [],
+    "test_admin_dashboard.py": [],
+    "test_ai_models.py": [],
+    "test_dashboard_debug.py": [],
+    "test_dashboard_final.py": [],
+    "test_endpoints.py": [],
+    "test_endpoints_debug.py": [],
+    "test_frontend_simulation.py": [],
+    "test_member_specific.py": [],
+    "test_quota_direct.py": [],
+    "test_quota_system.py": [],
+    "test_user_data.py": [],
+    "api\\index.py": [],
+    "config\\paths.py": [],
+    "config\\supabase_config.py": [
+      {
+        "referenced_by": "routes\\status_routes.py",
+        "line": 9,
+        "import_statement": "from config.supabase_config import check_configuration"
+      },
+      {
+        "referenced_by": "scripts\\deploy_supabase_schema.py",
+        "line": 18,
+        "import_statement": "from config.supabase_config import get_config, check_configuration"
+      },
+      {
+        "referenced_by": "scripts\\manual_deploy_guide.py",
+        "line": 17,
+        "import_statement": "from config.supabase_config import get_config, check_configuration"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_setup.py",
+        "line": 17,
+        "import_statement": "from config.supabase_config import check_configuration, get_config"
+      },
+      {
+        "referenced_by": "services\\integrated_data_service.py",
+        "line": 14,
+        "import_statement": "from config.supabase_config import get_config, check_configuration"
+      }
+    ],
+    "config\\__init__.py": [],
+    "debug\\debug_endpoints.py": [],
+    "debug\\debug_env.py": [],
+    "debug\\debug_frontend_workflow.py": [],
+    "debug\\debug_gemini.py": [],
+    "debug\\debug_multi_ai.py": [],
+    "debug\\debug_prompt.py": [],
+    "debug\\__init__.py": [],
+    "routes\\member_admin_routes.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 190,
+        "import_statement": "from routes.member_admin_routes import member_router, admin_router"
+      }
+    ],
+    "routes\\status_routes.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 213,
+        "import_statement": "from routes.status_routes import router as status_router"
+      }
+    ],
+    "routes\\__init__.py": [],
+    "scripts\\add_real_analytics.py": [],
+    "scripts\\create_admin_user.py": [],
+    "scripts\\create_admin_user_supabase.py": [],
+    "scripts\\create_dashboard_test_data.py": [],
+    "scripts\\create_test_data.py": [],
+    "scripts\\debug_jwt.py": [],
+    "scripts\\debug_user_role.py": [],
+    "scripts\\deploy_supabase_schema.py": [],
+    "scripts\\manual_deploy_guide.py": [],
+    "scripts\\setup_costar_users_table.py": [],
+    "scripts\\show_admin_data_summary.py": [],
+    "scripts\\show_clean_sql.py": [],
+    "scripts\\show_reset_sql.py": [],
+    "scripts\\test_admin_direct.py": [],
+    "scripts\\test_endpoints.py": [],
+    "scripts\\test_fixes.py": [],
+    "scripts\\test_frontend.py": [],
+    "scripts\\test_login_direct.py": [],
+    "scripts\\test_login_fixed.py": [],
+    "scripts\\test_multi_ai.py": [],
+    "scripts\\test_rapido.py": [],
+    "scripts\\test_sistema_final.py": [],
+    "scripts\\test_supabase_complete.py": [],
+    "scripts\\test_supabase_integration.py": [],
+    "scripts\\test_supabase_setup.py": [],
+    "scripts\\validate_api_keys.py": [],
+    "scripts\\validate_structure.py": [],
+    "scripts\\__init__.py": [],
+    "services\\admin_analytics_service.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 201,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 27,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 344,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 480,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "scripts\\create_dashboard_test_data.py",
+        "line": 70,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 11,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "tests\\test_admin_dashboard.py",
+        "line": 12,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      }
+    ],
+    "services\\analytics_service.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 201,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 27,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 344,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 480,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "scripts\\create_dashboard_test_data.py",
+        "line": 70,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 11,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      },
+      {
+        "referenced_by": "tests\\test_admin_dashboard.py",
+        "line": 12,
+        "import_statement": "from services.admin_analytics_service import AdminAnalyticsService"
+      }
+    ],
+    "services\\auth_service.py": [
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 25,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService, UserRole"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 656,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_admin_user.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_admin_user_supabase.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_test_data.py",
+        "line": 20,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService, UserRole"
+      },
+      {
+        "referenced_by": "scripts\\show_admin_data_summary.py",
+        "line": 15,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_admin_direct.py",
+        "line": 8,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_admin_direct.py",
+        "line": 28,
+        "import_statement": "from services.supabase_auth_service import UserRole"
+      },
+      {
+        "referenced_by": "scripts\\test_fixes.py",
+        "line": 11,
+        "import_statement": "from services.auth_service import AuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_login_direct.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      }
+    ],
+    "services\\backup_service.py": [],
+    "services\\cache_service.py": [],
+    "services\\gemini_service.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 504,
+        "import_statement": "from services.gemini_service import GeminiService"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 577,
+        "import_statement": "from services.gemini_service import GeminiService"
+      },
+      {
+        "referenced_by": "debug\\debug_gemini.py",
+        "line": 12,
+        "import_statement": "from services.gemini_service import GeminiService"
+      }
+    ],
+    "services\\integrated_data_service.py": [
+      {
+        "referenced_by": "routes\\status_routes.py",
+        "line": 8,
+        "import_statement": "from services.integrated_data_service import get_data_service"
+      },
+      {
+        "referenced_by": "scripts\\test_fixes.py",
+        "line": 10,
+        "import_statement": "from services.integrated_data_service import get_data_service"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_complete.py",
+        "line": 10,
+        "import_statement": "from services.integrated_data_service import get_data_service"
+      }
+    ],
+    "services\\member_area_service.py": [
+      {
+        "referenced_by": "debug_quota_specific.py",
+        "line": 10,
+        "import_statement": "from services.member_area_service import MemberAreaService"
+      },
+      {
+        "referenced_by": "test_frontend_simulation.py",
+        "line": 10,
+        "import_statement": "from services.member_area_service import MemberAreaService"
+      },
+      {
+        "referenced_by": "test_quota_direct.py",
+        "line": 10,
+        "import_statement": "from services.member_area_service import MemberAreaService"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 26,
+        "import_statement": "from services.member_area_service import MemberAreaService, SubscriptionPlan"
+      },
+      {
+        "referenced_by": "scripts\\create_test_data.py",
+        "line": 19,
+        "import_statement": "from services.member_area_service import MemberAreaService, SubscriptionPlan"
+      },
+      {
+        "referenced_by": "scripts\\show_admin_data_summary.py",
+        "line": 14,
+        "import_statement": "from services.member_area_service import MemberAreaService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 10,
+        "import_statement": "from services.member_area_service import MemberAreaService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 101,
+        "import_statement": "from services.member_area_service import SubscriptionPlan"
+      }
+    ],
+    "services\\multi_ai_service.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 108,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 313,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 340,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 422,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 427,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 632,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 662,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "api\\index.py",
+        "line": 57,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "debug\\debug_multi_ai.py",
+        "line": 13,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "debug\\debug_prompt.py",
+        "line": 5,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "routes\\status_routes.py",
+        "line": 167,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "scripts\\test_multi_ai.py",
+        "line": 19,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "tests\\test_api_direta.py",
+        "line": 12,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      },
+      {
+        "referenced_by": "tests\\test_final_integrado.py",
+        "line": 11,
+        "import_statement": "from services.multi_ai_service import MultiAIService"
+      }
+    ],
+    "services\\notification_service.py": [],
+    "services\\production_multi_ai.py": [
+      {
+        "referenced_by": "main_demo.py",
+        "line": 108,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 313,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "main_demo.py",
+        "line": 422,
+        "import_statement": "from services.production_multi_ai import get_multi_ai_service"
+      },
+      {
+        "referenced_by": "test_ai_models.py",
+        "line": 8,
+        "import_statement": "from services.production_multi_ai import ProductionMultiAIService"
+      }
+    ],
+    "services\\supabase_auth_service.py": [
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 25,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService, UserRole"
+      },
+      {
+        "referenced_by": "routes\\member_admin_routes.py",
+        "line": 656,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_admin_user.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_admin_user_supabase.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\create_test_data.py",
+        "line": 20,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService, UserRole"
+      },
+      {
+        "referenced_by": "scripts\\show_admin_data_summary.py",
+        "line": 15,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_admin_direct.py",
+        "line": 8,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_admin_direct.py",
+        "line": 28,
+        "import_statement": "from services.supabase_auth_service import UserRole"
+      },
+      {
+        "referenced_by": "scripts\\test_login_direct.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_integration.py",
+        "line": 9,
+        "import_statement": "from services.supabase_auth_service import SupabaseAuthService"
+      }
+    ],
+    "services\\supabase_base_service.py": [
+      {
+        "referenced_by": "api\\index.py",
+        "line": 51,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "scripts\\deploy_supabase_schema.py",
+        "line": 17,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "scripts\\setup_costar_users_table.py",
+        "line": 8,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "scripts\\test_supabase_setup.py",
+        "line": 18,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "services\\integrated_data_service.py",
+        "line": 13,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "services\\supabase_auth_service.py",
+        "line": 16,
+        "import_statement": "from services.supabase_base_service import SupabaseService"
+      },
+      {
+        "referenced_by": "tests\\test_supabase_connection.py",
+        "line": 11,
+        "import_statement": "from services.supabase_base_service import supabase_service"
+      },
+      {
+        "referenced_by": "tests\\test_supabase_schema.py",
+        "line": 12,
+        "import_statement": "from services.supabase_base_service import supabase_service"
+      }
+    ],
+    "services\\supabase_service.py": [
+      {
+        "referenced_by": "tests\\test_supabase_connection.py",
+        "line": 11,
+        "import_statement": "from services.supabase_base_service import supabase_service"
+      },
+      {
+        "referenced_by": "tests\\test_supabase_schema.py",
+        "line": 12,
+        "import_statement": "from services.supabase_base_service import supabase_service"
+      }
+    ],
+    "services\\__init__.py": [],
+    "tests\\test_admin.py": [],
+    "tests\\test_admin_dashboard.py": [],
+    "tests\\test_analysis_endpoint.py": [],
+    "tests\\test_analyze_simple.py": [],
+    "tests\\test_api_direta.py": [],
+    "tests\\test_final_integrado.py": [],
+    "tests\\test_prompt_generation.py": [],
+    "tests\\test_server.py": [],
+    "tests\\test_supabase_connection.py": [],
+    "tests\\test_supabase_schema.py": [],
+    "tests\\test_template_fix.py": [],
+    "tests\\__init__.py": [],
+    "tools\\testing\\test_members.py": [],
+    "tools\\testing\\test_quick.py": []
+  }
+}

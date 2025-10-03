@@ -14,8 +14,8 @@ load_dotenv()
 # Adiciona o diretório raiz ao path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.supabase_config import check_configuration, get_config
-from services.supabase_base_service import SupabaseService
+from app.config.supabase_config import check_configuration, get_config
+from app.services.supabase_base_service import SupabaseService
 
 class SupabaseSetupTester:
     """Classe para testar e configurar Supabase"""

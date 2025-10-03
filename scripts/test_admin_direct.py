@@ -5,7 +5,7 @@ Teste direto da função get_admin_user
 import sys
 sys.path.append('.')
 
-from services.supabase_auth_service import SupabaseAuthService
+from app.services.supabase_auth_service import SupabaseAuthService
 
 def test_admin_user_directly():
     """Teste direto do usuário admin"""
@@ -25,7 +25,7 @@ def test_admin_user_directly():
         print(f'  🆔 ID: {user.id}')
         
         # Testar comparações
-        from services.supabase_auth_service import UserRole
+        from app.services.supabase_auth_service import UserRole
         
         print(f'\n🔍 COMPARAÇÕES:')
         print(f'  user.role == "admin": {user.role == "admin"}')

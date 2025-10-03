@@ -6,9 +6,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from services.supabase_auth_service import SupabaseAuthService
-from services.member_area_service import MemberAreaService
-from services.admin_analytics_service import AdminAnalyticsService
+from app.services.supabase_auth_service import SupabaseAuthService
+from app.services.member_area_service import MemberAreaService
+from app.services.admin_analytics_service import AdminAnalyticsService
 import asyncio
 
 def test_supabase_integration():
@@ -98,7 +98,7 @@ def test_supabase_integration():
     print("\n4. 🏠 TESTANDO ÁREA DE MEMBROS...")
     
     # Criar perfil de membro
-    from services.member_area_service import SubscriptionPlan
+    from app.services.member_area_service import SubscriptionPlan
     profile = member_service.get_member_profile(user.id)
     if not profile:
         profile = member_service.create_member_profile(
